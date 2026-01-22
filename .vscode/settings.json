@@ -1,0 +1,10 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "npm install": true,
+        "/^npm ls @prisma/adapter-libsql 2>&1$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "npx prisma": true
+    }
+}
