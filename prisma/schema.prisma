@@ -1,0 +1,184 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// 店舗マスター
+// ============================================
+model Shop {
+  id        Int      @id @default(autoincrement())
+  name      String   // 店舗名（必須）
+  address   String?  // 住所
+  url       String?  // WebサイトURL
+  notes     String?  // メモ
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // リレーション
+  coffeeBeans CoffeeBean[]
+
+  @@map("shops")
+}
+
+// ============================================
+// ドリッパーマスター
+// ============================================
+model Dripper {
+  id           Int      @id @default(autoincrement())
+  name         String   // ドリッパー名（必須）
+  manufacturer String?  // メーカー
+  notes        String?  // メモ
+  imagePath    String?  // 画像パス
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // リレーション
+  tastingEntries TastingEntry[]
+
+  @@map("drippers")
+}
+
+// ============================================
+// フィルターマスター
+// ============================================
+model Filter {
+  id        Int         @id @default(autoincrement())
+  name      String      // フィルター名（必須）
+  type      FilterType? // 種類（ペーパー/金属/布）
+  notes     String?     // メモ
+  imagePath String?     // 画像パス
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  // リレーション
+  tastingEntries TastingEntry[]
+
+  @@map("filters")
+}
+
+// フィルター種類
+enum FilterType {
+  PAPER // ペーパー
+  METAL // 金属
+  CLOTH // 布
+}
+
+// ============================================
+// コーヒー豆マスター
+// ============================================
+model CoffeeBean {
+  id           Int         @id @default(autoincrement())
+  name         String      // 銘柄（必須）
+  origin       String?     // 産地
+  roastLevel   RoastLevel? // 焙煎度（8段階）
+  process      Process?    // 精製方法
+  isDecaf      Boolean     @default(false) // デカフェフラグ
+  beanType     BeanType?   // ブレンド/シングルオリジン
+  notes        String?     // メモ（パッケージ説明など）
+  purchaseDate DateTime?   // 購入日
+  price        Int?        // 価格（円）
+  amount       Int?        // 購入量（g）
+  status       BeanStatus  @default(IN_STOCK) // ステータス
+  finishedDate DateTime?   // 飲み切り日
+  imagePath    String?     // 画像パス
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // 外部キー
+  shopId Int?
+  shop   Shop? @relation(fields: [shopId], references: [id], onDelete: SetNull)
+
+  // リレーション
+  tastingEntries TastingEntry[]
+
+  // インデックス
+  @@index([status])
+  @@index([shopId])
+  @@index([origin])
+  @@index([roastLevel])
+  @@map("coffee_beans")
+}
+
+// 焙煎度（8段階）
+enum RoastLevel {
+  LIGHT     // ライトロースト → 浅煎り
+  CINNAMON  // シナモンロースト → 浅煎り
+  MEDIUM    // ミディアムロースト → 中浅煎り
+  HIGH      // ハイロースト → 中煎り
+  CITY      // シティロースト → 中煎り
+  FULL_CITY // フルシティロースト → 中深煎り
+  FRENCH    // フレンチロースト → 深煎り
+  ITALIAN   // イタリアンロースト → 深煎り
+}
+
+// 精製方法
+enum Process {
+  WASHED        // ウォッシュド
+  NATURAL       // ナチュラル
+  HONEY         // ハニー
+  PULPED_NATURAL // パルプドナチュラル
+  SEMI_WASHED   // セミウォッシュド
+}
+
+// 豆タイプ
+enum BeanType {
+  SINGLE_ORIGIN // シングルオリジン
+  BLEND         // ブレンド
+}
+
+// 豆ステータス
+enum BeanStatus {
+  IN_STOCK // 在庫中
+  FINISHED // 飲み切り
+}
+
+// ============================================
+// 試飲記録
+// ============================================
+model TastingEntry {
+  id            Int       @id @default(autoincrement())
+  grindSize     Float?    // 挽き方（1.0-10.0、0.5刻み）
+  brewDate      DateTime  // 抽出日（必須）
+  acidity       Int?      // 酸味（1-10）
+  bitterness    Int?      // 苦味（1-10）
+  sweetness     Int?      // 甘味（1-10）
+  body          Body?     // ボディ
+  aftertaste    Int?      // 後味（1-10）
+  flavorTags    String?   // フレーバータグ（JSON配列として保存）
+  overallRating Int?      // 総合評価（1-5）
+  notes         String?   // テイスティングノート
+  imagePath     String?   // 画像パス
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // 外部キー
+  coffeeBeanId Int
+  coffeeBean   CoffeeBean @relation(fields: [coffeeBeanId], references: [id], onDelete: Cascade)
+
+  dripperId Int?
+  dripper   Dripper? @relation(fields: [dripperId], references: [id], onDelete: SetNull)
+
+  filterId Int?
+  filter   Filter? @relation(fields: [filterId], references: [id], onDelete: SetNull)
+
+  // インデックス
+  @@index([coffeeBeanId])
+  @@index([brewDate])
+  @@index([overallRating])
+  @@map("tasting_entries")
+}
+
+// ボディ
+enum Body {
+  LIGHT  // 軽い
+  MEDIUM // 中程度
+  HEAVY  // 重い
+}
