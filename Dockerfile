@@ -29,12 +29,21 @@ RUN npm ci
 FROM base AS builder
 WORKDIR /app
 
+# Set DATABASE_URL for Prisma generate
+ENV DATABASE_URL="file:/app/data/database.db"
+
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Create data directory for build-time database access
+RUN mkdir -p /app/data
+
 # Generate Prisma Client
 RUN npx prisma generate
+
+# Run migrations to create tables for build
+RUN npx prisma migrate deploy
 
 # Build Next.js
 RUN npm run build
@@ -51,6 +60,15 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
+# Copy package files and install production dependencies
+COPY package.json package-lock.json ./
+COPY prisma ./prisma/
+COPY prisma.config.ts ./
+RUN npm ci --omit=dev
+
+# Generate Prisma Client for production
+RUN npx prisma generate
+
 # Copy public assets
 COPY --from=builder /app/public ./public
 
@@ -58,18 +76,13 @@ COPY --from=builder /app/public ./public
 RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
 
 # Set up standalone output
-# Automatically copy traced dependencies
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy Prisma files for migrations
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/prisma.config.ts ./
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
-COPY --from=builder /app/node_modules/@prisma/adapter-better-sqlite3 ./node_modules/@prisma/adapter-better-sqlite3
+# Overwrite Prisma client in standalone with the one we generated
+# (standalone bundles its own node_modules, so we need to update it)
+RUN cp -r /app/node_modules/.prisma ./node_modules/.prisma || true
+RUN cp -r /app/node_modules/@prisma ./node_modules/@prisma || true
 
 # Copy entrypoint script
 COPY --chown=nextjs:nodejs docker-entrypoint.sh ./

@@ -2,6 +2,9 @@ import Link from "next/link";
 import Button from "@/components/Button";
 import { prisma } from "@/lib/prisma";
 
+// 常に最新のデータを取得する（キャッシュ無効化）
+export const dynamic = "force-dynamic";
+
 const ROAST_LEVEL_LABELS: Record<string, string> = {
   LIGHT: "ライトロースト",
   CINNAMON: "シナモンロースト",

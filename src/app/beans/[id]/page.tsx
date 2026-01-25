@@ -5,6 +5,9 @@ import DeleteButton from "./DeleteButton";
 import StatusButton from "./StatusButton";
 import { prisma } from "@/lib/prisma";
 
+// 常に最新のデータを取得する（キャッシュ無効化）
+export const dynamic = "force-dynamic";
+
 const ROAST_LEVEL_LABELS: Record<string, string> = {
   LIGHT: "ライトロースト（浅煎り）",
   CINNAMON: "シナモンロースト（浅煎り）",

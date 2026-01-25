@@ -3,6 +3,9 @@ import Button from "@/components/Button";
 import BeanFilter from "@/components/BeanFilter";
 import { prisma } from "@/lib/prisma";
 
+// 常に最新のデータを取得する（キャッシュ無効化）
+export const dynamic = "force-dynamic";
+
 async function getTastings(beanId?: string) {
   const where = beanId ? { coffeeBeanId: parseInt(beanId, 10) } : {};
   return prisma.tastingEntry.findMany({

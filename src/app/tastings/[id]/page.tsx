@@ -4,6 +4,9 @@ import Button from "@/components/Button";
 import DeleteButton from "./DeleteButton";
 import { prisma } from "@/lib/prisma";
 
+// 常に最新のデータを取得する（キャッシュ無効化）
+export const dynamic = "force-dynamic";
+
 const BODY_LABELS: Record<string, string> = {
   LIGHT: "軽い",
   MEDIUM: "中程度",
