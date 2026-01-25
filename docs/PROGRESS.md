@@ -2,6 +2,23 @@
 
 ## 完了した作業
 
+### 2026-01-25: TastingEntry API 実装（TDD）
+
+1. **TastingEntry API 実装（TDD: Red → Green → Refactor）**
+   - `src/__tests__/api/tastings.test.ts`: 24テストケース作成
+   - `src/app/api/tastings/route.ts`: GET（一覧・フィルタリング）/ POST（作成）
+   - `src/app/api/tastings/[id]/route.ts`: GET（詳細）/ PUT（更新）/ DELETE（削除）
+   - 豆ステータス制約: 在庫中（IN_STOCK）の豆のみ試飲記録作成可能
+   - 評価値バリデーション: 酸味・苦味・甘味・後味（1-10）、総合評価（1-5）
+   - Body値（LIGHT/MEDIUM/HEAVY）のバリデーション
+   - フレーバータグ（JSON配列）対応
+   - 関連エンティティ（coffeeBean, dripper, filter）のinclude対応
+   - 全24テストがパス
+
+2. **テスト設定の改善**
+   - `vitest.config.ts`: `fileParallelism: false` を追加
+   - テストファイル間のDB干渉を防止し、全92テストが安定してパス
+
 ### 2026-01-25: CoffeeBean API 実装（TDD）
 
 1. **CoffeeBean API 実装（TDD: Red → Green → Refactor）**
@@ -85,18 +102,14 @@
 
 ### 優先度: 高
 
-1. **TDD: TastingEntry API**
-   - 試飲記録のCRUD API
-   - 豆選択時は在庫中のみ表示
-
-### 優先度: 中
-
-2. **UI実装**
+1. **UI実装**
    - ホーム画面
    - 各マスターの一覧・詳細・編集画面
    - 試飲記録の入力・一覧画面
 
-3. **Docker化**
+### 優先度: 中
+
+2. **Docker化**
    - Dockerfile作成
    - docker-compose.yml作成
 
