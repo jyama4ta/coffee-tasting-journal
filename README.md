@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Coffee Tasting Journal ☕
 
-## Getting Started
+自宅でハンドドリップしたコーヒーの試飲記録を管理するWebアプリケーション。
+産地・銘柄・焙煎具合・挽き方を記録し、味の感想を評価できます。
 
-First, run the development server:
+## 技術スタック
+
+- **フレームワーク**: Next.js (App Router) + TypeScript
+- **データベース**: SQLite + Prisma ORM
+- **UI**: React + Tailwind CSS
+- **テスト**: Vitest + Testing Library
+
+## 開発環境のセットアップ
+
+### 方法1: Dev Container（推奨）
+
+VS Code と Docker がインストールされていれば、Dev Container で簡単に開発環境を構築できます。
+
+1. VS Code で [Dev Containers 拡張機能](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) をインストール
+2. このリポジトリをクローン
+3. VS Code でフォルダを開く
+4. コマンドパレット（`Ctrl+Shift+P` / `Cmd+Shift+P`）から「Dev Containers: Reopen in Container」を実行
+5. コンテナのビルドが完了したら、開発サーバーを起動:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 方法2: ローカル環境
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Node.js（LTS版推奨）がインストールされている場合:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# 依存関係のインストール
+npm install
 
-## Learn More
+# 環境変数ファイルの作成
+cp .env.example .env
 
-To learn more about Next.js, take a look at the following resources:
+# Prisma クライアントの生成
+npx prisma generate
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# データベースのマイグレーション
+npx prisma migrate dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# 開発サーバーの起動
+npm run dev
+```
 
-## Deploy on Vercel
+[http://localhost:3000](http://localhost:3000) をブラウザで開くと、アプリケーションが表示されます。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 利用可能なスクリプト
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev          # 開発サーバーの起動
+npm run build        # 本番用ビルド
+npm run start        # 本番サーバーの起動
+npm run lint         # ESLint による静的解析
+npm run test         # テストの実行
+npm run test:ui      # テストUIの起動
+npm run test:coverage # カバレッジレポート付きテスト
+npm run db:migrate   # データベースマイグレーション
+npm run db:studio    # Prisma Studio の起動（ポート5555）
+npm run db:generate  # Prisma クライアントの再生成
+```
+
+## ドキュメント
+
+- [データモデル](docs/data-model.md)
+- [アーキテクチャ](docs/architecture.md)
+- [状態遷移図](docs/state-diagram.md)
+- [進捗状況](docs/PROGRESS.md)
+
+## ライセンス
+
+MIT
