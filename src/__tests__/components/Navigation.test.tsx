@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Navigation from "@/components/Navigation";
 
 // usePathnameをモック
@@ -113,6 +114,74 @@ describe("Navigation コンポーネント", () => {
       // classNameをスペースで分割して、独立した"bg-amber-800"クラスがないことを確認
       const classes = shopsLink?.className.split(" ") || [];
       expect(classes).not.toContain("bg-amber-800");
+    });
+  });
+
+  describe("モバイルメニュー（ハンバーガーメニュー）", () => {
+    it("ハンバーガーメニューボタンが表示される", () => {
+      render(<Navigation />);
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      expect(menuButton).toBeInTheDocument();
+    });
+
+    it("初期状態ではモバイルメニューが閉じている", () => {
+      render(<Navigation />);
+      const mobileMenu = screen.queryByTestId("mobile-menu");
+      expect(mobileMenu).not.toBeInTheDocument();
+    });
+
+    it("ハンバーガーボタンをクリックするとモバイルメニューが開く", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton);
+
+      const mobileMenu = screen.getByTestId("mobile-menu");
+      expect(mobileMenu).toBeInTheDocument();
+    });
+
+    it("モバイルメニューに全てのナビゲーションリンクが表示される", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton);
+
+      const mobileMenu = screen.getByTestId("mobile-menu");
+      expect(mobileMenu).toHaveTextContent("ホーム");
+      expect(mobileMenu).toHaveTextContent("試飲記録");
+      expect(mobileMenu).toHaveTextContent("豆");
+      expect(mobileMenu).toHaveTextContent("店舗");
+      expect(mobileMenu).toHaveTextContent("ドリッパー");
+      expect(mobileMenu).toHaveTextContent("フィルター");
+    });
+
+    it("モバイルメニューが開いている時に再度ボタンをクリックすると閉じる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton); // 開く
+      expect(screen.getByTestId("mobile-menu")).toBeInTheDocument();
+
+      await user.click(menuButton); // 閉じる
+      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
+    });
+
+    it("モバイルメニュー内のリンクをクリックするとメニューが閉じる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton);
+
+      const mobileMenu = screen.getByTestId("mobile-menu");
+      const tastingsLink = mobileMenu.querySelector('a[href="/tastings"]');
+      expect(tastingsLink).toBeInTheDocument();
+
+      await user.click(tastingsLink!);
+      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
     });
   });
 });

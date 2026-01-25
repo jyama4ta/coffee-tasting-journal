@@ -8,6 +8,7 @@
     "npx prisma": true,
     "npx vitest": true,
     "git add": true,
-    "git commit": true
+    "git commit": true,
+    "true": true
   }
 }

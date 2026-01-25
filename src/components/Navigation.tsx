@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const navItems = [
   { href: "/", label: "ホーム", icon: "☕" },
@@ -14,6 +15,10 @@ const navItems = [
 
 export default function Navigation() {
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <nav className="bg-amber-900 text-white shadow-lg">
@@ -25,8 +30,8 @@ export default function Navigation() {
             <span className="hidden sm:inline">Coffee Tasting Journal</span>
           </Link>
 
-          {/* Navigation Links */}
-          <div className="flex items-center gap-1">
+          {/* Desktop Navigation Links */}
+          <div className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
               const isActive =
                 item.href === "/"
@@ -42,16 +47,81 @@ export default function Navigation() {
                       : "text-amber-100 hover:bg-amber-800 hover:text-white"
                   }`}
                 >
-                  <span className="sm:hidden">{item.icon}</span>
-                  <span className="hidden sm:inline">
-                    {item.icon} {item.label}
-                  </span>
+                  {item.icon} {item.label}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={toggleMenu}
+            className="md:hidden p-2 rounded-md hover:bg-amber-800 transition-colors"
+            aria-label="メニューを開く"
+          >
+            {isMenuOpen ? (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div
+          data-testid="mobile-menu"
+          className="md:hidden bg-amber-800 border-t border-amber-700"
+        >
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            {navItems.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={closeMenu}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                    isActive
+                      ? "bg-amber-900 text-white"
+                      : "text-amber-100 hover:bg-amber-900 hover:text-white"
+                  }`}
+                >
+                  {item.icon} {item.label}
                 </Link>
               );
             })}
           </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 }
