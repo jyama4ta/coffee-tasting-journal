@@ -2,6 +2,23 @@
 
 ## 完了した作業
 
+### 2026-01-25: Shop API 実装（TDD）
+
+1. **データベースマイグレーション実行**
+   - `prisma.config.ts`の設定を修正（`migrate.url` → `datasource.url`）
+   - `npx prisma migrate dev --name init` 実行成功
+   - SQLiteデータベースが`data/database.db`に作成
+
+2. **Prismaアダプター設定修正**
+   - `@prisma/adapter-better-sqlite3`に変更（Vitest環境での互換性向上）
+   - `src/lib/prisma.ts`でbetter-sqlite3アダプターを使用
+
+3. **Shop API 実装（TDD: Red → Green → Refactor）**
+   - `src/__tests__/api/shops.test.ts`: 14テストケース作成
+   - `src/app/api/shops/route.ts`: GET（一覧）/ POST（作成）
+   - `src/app/api/shops/[id]/route.ts`: GET（詳細）/ PUT（更新）/ DELETE（削除）
+   - 全14テストがパス
+
 ### 2026-01-23: プロジェクト初期化
 
 1. **プロジェクト要件定義**
@@ -40,28 +57,22 @@
 
 ### 優先度: 高
 
-1. **データベースマイグレーション実行**
-   - `npx prisma migrate dev --name init` を実行
-   - Prisma 7.xの新しい設定方法でエラーが発生中
-   - `prisma.config.ts`の`datasource.url`設定を確認・修正
+1. **TDD: Dripper API**
+   - `src/__tests__/api/drippers.test.ts`: ドリッパーCRUD APIのテスト作成
+   - `src/app/api/drippers/route.ts`: 実装
 
-2. **TDD開始: Shop API**
-   - `src/__tests__/api/shops.test.ts`: 店舗CRUD APIのテスト作成
-   - テストが失敗することを確認（Red）
-   - `src/app/api/shops/route.ts`: 実装（Green）
-   - リファクタリング（Refactor）
+2. **TDD: Filter API**
+   - `src/__tests__/api/filters.test.ts`: フィルターCRUD APIのテスト作成
+   - `src/app/api/filters/route.ts`: 実装
 
 ### 優先度: 中
 
-3. **TDD: Dripper/Filter API**
-   - ドリッパー・フィルターマスターのCRUD API
-
-4. **TDD: CoffeeBean API**
+3. **TDD: CoffeeBean API**
    - 豆マスターのCRUD API
    - ステータス変更API（在庫中⇔飲み切り）
    - 産地オートコンプリートAPI
 
-5. **TDD: TastingEntry API**
+4. **TDD: TastingEntry API**
    - 試飲記録のCRUD API
    - 豆選択時は在庫中のみ表示
 
@@ -78,21 +89,17 @@
 
 ## 技術的な課題
 
-### Prisma 7.x 移行対応
+### 解決済み: Prisma 7.x 移行対応
 
-Prisma 7.xでは以下の変更が必要:
+Prisma 7.xでは以下の変更が必要だった:
 
 1. `schema.prisma`から`url`プロパティを削除
-2. `prisma.config.ts`でマイグレーション用URLを設定
-3. PrismaClientにはアダプター経由で接続
+2. `prisma.config.ts`で`datasource.url`を設定（`migrate.url()`ではなく）
+3. PrismaClientには`@prisma/adapter-better-sqlite3`アダプター経由で接続
 
 現在の設定:
-- `prisma.config.ts`: migrate.url()で環境変数から取得
-- `src/lib/prisma.ts`: libSQLアダプターでPrismaClientを初期化
-
-エラー: `The datasource.url property is required in your Prisma config file when using prisma db push`
-
-→ `prisma.config.ts`の設定を見直す必要あり
+- `prisma.config.ts`: `datasource.url`で環境変数またはデフォルトパスから取得
+- `src/lib/prisma.ts`: better-sqlite3アダプターでPrismaClientを初期化
 
 ## コマンドメモ
 
