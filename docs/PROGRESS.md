@@ -2,6 +2,23 @@
 
 ## 完了した作業
 
+### 2026-01-25: Filter API 実装（TDD）
+
+1. **Filter API 実装（TDD: Red → Green → Refactor）**
+   - `src/__tests__/api/filters.test.ts`: 16テストケース作成
+   - `src/app/api/filters/route.ts`: GET（一覧）/ POST（作成）
+   - `src/app/api/filters/[id]/route.ts`: GET（詳細）/ PUT（更新）/ DELETE（削除）
+   - FilterType（PAPER/METAL/CLOTH）のバリデーション実装
+   - 全16テストがパス
+
+### 2026-01-25: Dripper API 実装（TDD）
+
+1. **Dripper API 実装（TDD: Red → Green → Refactor）**
+   - `src/__tests__/api/drippers.test.ts`: 14テストケース作成
+   - `src/app/api/drippers/route.ts`: GET（一覧）/ POST（作成）
+   - `src/app/api/drippers/[id]/route.ts`: GET（詳細）/ PUT（更新）/ DELETE（削除）
+   - 全14テストがパス
+
 ### 2026-01-25: Shop API 実装（TDD）
 
 1. **データベースマイグレーション実行**
@@ -57,33 +74,23 @@
 
 ### 優先度: 高
 
-1. **TDD: Dripper API**
-   - `src/__tests__/api/drippers.test.ts`: ドリッパーCRUD APIのテスト作成
-   - `src/app/api/drippers/route.ts`: 実装
-
-2. **TDD: Filter API**
-   - `src/__tests__/api/filters.test.ts`: フィルターCRUD APIのテスト作成
-   - `src/app/api/filters/route.ts`: 実装
-
-### 優先度: 中
-
-3. **TDD: CoffeeBean API**
+1. **TDD: CoffeeBean API**
    - 豆マスターのCRUD API
    - ステータス変更API（在庫中⇔飲み切り）
    - 産地オートコンプリートAPI
 
-4. **TDD: TastingEntry API**
+2. **TDD: TastingEntry API**
    - 試飲記録のCRUD API
    - 豆選択時は在庫中のみ表示
 
-### 優先度: 低
+### 優先度: 中
 
-6. **UI実装**
+3. **UI実装**
    - ホーム画面
    - 各マスターの一覧・詳細・編集画面
    - 試飲記録の入力・一覧画面
 
-7. **Docker化**
+4. **Docker化**
    - Dockerfile作成
    - docker-compose.yml作成
 
@@ -98,6 +105,7 @@ Prisma 7.xでは以下の変更が必要だった:
 3. PrismaClientには`@prisma/adapter-better-sqlite3`アダプター経由で接続
 
 現在の設定:
+
 - `prisma.config.ts`: `datasource.url`で環境変数またはデフォルトパスから取得
 - `src/lib/prisma.ts`: better-sqlite3アダプターでPrismaClientを初期化
 

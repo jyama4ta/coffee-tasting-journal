@@ -147,11 +147,257 @@ interface Shop {
 
 ## Dripper API（ドリッパーマスター）
 
-_（未実装）_
+ドリッパーを管理するAPI。
+
+### エンドポイント一覧
+
+| メソッド | パス                 | 説明               |
+| -------- | -------------------- | ------------------ |
+| GET      | `/api/drippers`      | ドリッパー一覧取得 |
+| POST     | `/api/drippers`      | ドリッパー作成     |
+| GET      | `/api/drippers/[id]` | ドリッパー詳細取得 |
+| PUT      | `/api/drippers/[id]` | ドリッパー更新     |
+| DELETE   | `/api/drippers/[id]` | ドリッパー削除     |
+
+### データモデル
+
+```typescript
+interface Dripper {
+  id: number; // ドリッパーID（自動採番）
+  name: string; // ドリッパー名（必須）
+  manufacturer: string | null; // メーカー名
+  notes: string | null; // メモ
+  imagePath: string | null; // 画像パス
+  createdAt: string; // 作成日時（ISO 8601形式）
+  updatedAt: string; // 更新日時（ISO 8601形式）
+}
+```
+
+### GET /api/drippers
+
+全てのドリッパーを取得します。
+
+**レスポンス例:**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "V60",
+    "manufacturer": "HARIO",
+    "notes": "プラスチック製、1-2杯用",
+    "imagePath": null,
+    "createdAt": "2026-01-25T10:00:00.000Z",
+    "updatedAt": "2026-01-25T10:00:00.000Z"
+  }
+]
+```
+
+### POST /api/drippers
+
+新しいドリッパーを作成します。
+
+**リクエストボディ:**
+
+```json
+{
+  "name": "ドリッパー名", // 必須
+  "manufacturer": "メーカー名", // 任意
+  "notes": "メモ", // 任意
+  "imagePath": "/images/..." // 任意
+}
+```
+
+**バリデーション:**
+
+- `name`: 必須、空文字不可
+
+**レスポンス:** 201 Created + 作成されたドリッパーデータ
+
+### GET /api/drippers/[id]
+
+指定したIDのドリッパーを取得します。
+
+**パラメータ:**
+
+- `id`: ドリッパーID（数値）
+
+**エラー:**
+
+- 400: IDが数値でない場合
+- 404: ドリッパーが存在しない場合
+
+### PUT /api/drippers/[id]
+
+ドリッパー情報を更新します。
+
+**リクエストボディ:**
+
+```json
+{
+  "name": "更新後の名前", // 任意（指定時は空文字不可）
+  "manufacturer": "更新後のメーカー", // 任意
+  "notes": "更新後のメモ", // 任意
+  "imagePath": "/images/..." // 任意
+}
+```
+
+**バリデーション:**
+
+- `name`: 指定する場合は空文字不可
+
+**エラー:**
+
+- 400: IDが数値でない、または名前が空の場合
+- 404: ドリッパーが存在しない場合
+
+### DELETE /api/drippers/[id]
+
+ドリッパーを削除します。
+
+**レスポンス:** 204 No Content
+
+**エラー:**
+
+- 400: IDが数値でない場合
+- 404: ドリッパーが存在しない場合
+
+**注意:** 削除されたドリッパーに紐づく試飲記録の`dripperId`は`null`に設定されます（`onDelete: SetNull`）。
+
+---
 
 ## Filter API（フィルターマスター）
 
-_（未実装）_
+フィルターを管理するAPI。
+
+### エンドポイント一覧
+
+| メソッド | パス                | 説明               |
+| -------- | ------------------- | ------------------ |
+| GET      | `/api/filters`      | フィルター一覧取得 |
+| POST     | `/api/filters`      | フィルター作成     |
+| GET      | `/api/filters/[id]` | フィルター詳細取得 |
+| PUT      | `/api/filters/[id]` | フィルター更新     |
+| DELETE   | `/api/filters/[id]` | フィルター削除     |
+
+### データモデル
+
+```typescript
+type FilterType = "PAPER" | "METAL" | "CLOTH";
+
+interface Filter {
+  id: number; // フィルターID（自動採番）
+  name: string; // フィルター名（必須）
+  type: FilterType | null; // フィルター種類（PAPER/METAL/CLOTH）
+  notes: string | null; // メモ
+  imagePath: string | null; // 画像パス
+  createdAt: string; // 作成日時（ISO 8601形式）
+  updatedAt: string; // 更新日時（ISO 8601形式）
+}
+```
+
+### フィルター種類（FilterType）
+
+| 値      | 説明               |
+| ------- | ------------------ |
+| `PAPER` | ペーパーフィルター |
+| `METAL` | 金属フィルター     |
+| `CLOTH` | 布フィルター       |
+
+### GET /api/filters
+
+全てのフィルターを取得します。
+
+**レスポンス例:**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "V60用ペーパーフィルター",
+    "type": "PAPER",
+    "notes": "白色、02サイズ",
+    "imagePath": null,
+    "createdAt": "2026-01-25T10:00:00.000Z",
+    "updatedAt": "2026-01-25T10:00:00.000Z"
+  }
+]
+```
+
+### POST /api/filters
+
+新しいフィルターを作成します。
+
+**リクエストボディ:**
+
+```json
+{
+  "name": "フィルター名", // 必須
+  "type": "PAPER", // 任意（PAPER/METAL/CLOTH）
+  "notes": "メモ", // 任意
+  "imagePath": "/images/..." // 任意
+}
+```
+
+**バリデーション:**
+
+- `name`: 必須、空文字不可
+- `type`: 指定する場合は `PAPER`, `METAL`, `CLOTH` のいずれか
+
+**レスポンス:** 201 Created + 作成されたフィルターデータ
+
+### GET /api/filters/[id]
+
+指定したIDのフィルターを取得します。
+
+**パラメータ:**
+
+- `id`: フィルターID（数値）
+
+**エラー:**
+
+- 400: IDが数値でない場合
+- 404: フィルターが存在しない場合
+
+### PUT /api/filters/[id]
+
+フィルター情報を更新します。
+
+**リクエストボディ:**
+
+```json
+{
+  "name": "更新後の名前", // 任意（指定時は空文字不可）
+  "type": "METAL", // 任意（PAPER/METAL/CLOTH）
+  "notes": "更新後のメモ", // 任意
+  "imagePath": "/images/..." // 任意
+}
+```
+
+**バリデーション:**
+
+- `name`: 指定する場合は空文字不可
+- `type`: 指定する場合は `PAPER`, `METAL`, `CLOTH` のいずれか
+
+**エラー:**
+
+- 400: IDが数値でない、名前が空、または無効なフィルター種類の場合
+- 404: フィルターが存在しない場合
+
+### DELETE /api/filters/[id]
+
+フィルターを削除します。
+
+**レスポンス:** 204 No Content
+
+**エラー:**
+
+- 400: IDが数値でない場合
+- 404: フィルターが存在しない場合
+
+**注意:** 削除されたフィルターに紐づく試飲記録の`filterId`は`null`に設定されます（`onDelete: SetNull`）。
+
+---
 
 ## CoffeeBean API（コーヒー豆マスター）
 

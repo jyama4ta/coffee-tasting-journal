@@ -11,44 +11,44 @@ function parseId(id: string): number | null {
   return isNaN(parsed) ? null : parsed;
 }
 
-// GET /api/shops/[id] - 指定した店舗を取得
+// GET /api/drippers/[id] - 指定したドリッパーを取得
 export async function GET(_request: Request, context: Context) {
   try {
     const { id } = await context.params;
-    const shopId = parseId(id);
+    const dripperId = parseId(id);
 
-    if (shopId === null) {
+    if (dripperId === null) {
       return NextResponse.json({ error: "無効なIDです" }, { status: 400 });
     }
 
-    const shop = await prisma.shop.findUnique({
-      where: { id: shopId },
+    const dripper = await prisma.dripper.findUnique({
+      where: { id: dripperId },
     });
 
-    if (!shop) {
+    if (!dripper) {
       return NextResponse.json(
-        { error: "店舗が見つかりません" },
+        { error: "ドリッパーが見つかりません" },
         { status: 404 },
       );
     }
 
-    return NextResponse.json(shop);
+    return NextResponse.json(dripper);
   } catch (error) {
-    console.error("Failed to fetch shop:", error);
+    console.error("Failed to fetch dripper:", error);
     return NextResponse.json(
-      { error: "店舗の取得に失敗しました" },
+      { error: "ドリッパーの取得に失敗しました" },
       { status: 500 },
     );
   }
 }
 
-// PUT /api/shops/[id] - 店舗を更新
+// PUT /api/drippers/[id] - ドリッパーを更新
 export async function PUT(request: Request, context: Context) {
   try {
     const { id } = await context.params;
-    const shopId = parseId(id);
+    const dripperId = parseId(id);
 
-    if (shopId === null) {
+    if (dripperId === null) {
       return NextResponse.json({ error: "無効なIDです" }, { status: 400 });
     }
 
@@ -60,74 +60,75 @@ export async function PUT(request: Request, context: Context) {
       (typeof body.name !== "string" || body.name.trim() === "")
     ) {
       return NextResponse.json(
-        { error: "店舗名は空にできません" },
+        { error: "ドリッパー名は空にできません" },
         { status: 400 },
       );
     }
 
-    // 店舗の存在確認
-    const existing = await prisma.shop.findUnique({
-      where: { id: shopId },
+    // ドリッパーの存在確認
+    const existing = await prisma.dripper.findUnique({
+      where: { id: dripperId },
     });
 
     if (!existing) {
       return NextResponse.json(
-        { error: "店舗が見つかりません" },
+        { error: "ドリッパーが見つかりません" },
         { status: 404 },
       );
     }
 
-    const shop = await prisma.shop.update({
-      where: { id: shopId },
+    const dripper = await prisma.dripper.update({
+      where: { id: dripperId },
       data: {
         name: body.name !== undefined ? body.name.trim() : undefined,
-        address: body.address !== undefined ? body.address : undefined,
-        url: body.url !== undefined ? body.url : undefined,
+        manufacturer:
+          body.manufacturer !== undefined ? body.manufacturer : undefined,
         notes: body.notes !== undefined ? body.notes : undefined,
+        imagePath: body.imagePath !== undefined ? body.imagePath : undefined,
       },
     });
 
-    return NextResponse.json(shop);
+    return NextResponse.json(dripper);
   } catch (error) {
-    console.error("Failed to update shop:", error);
+    console.error("Failed to update dripper:", error);
     return NextResponse.json(
-      { error: "店舗の更新に失敗しました" },
+      { error: "ドリッパーの更新に失敗しました" },
       { status: 500 },
     );
   }
 }
 
-// DELETE /api/shops/[id] - 店舗を削除
+// DELETE /api/drippers/[id] - ドリッパーを削除
 export async function DELETE(_request: Request, context: Context) {
   try {
     const { id } = await context.params;
-    const shopId = parseId(id);
+    const dripperId = parseId(id);
 
-    if (shopId === null) {
+    if (dripperId === null) {
       return NextResponse.json({ error: "無効なIDです" }, { status: 400 });
     }
 
-    // 店舗の存在確認
-    const existing = await prisma.shop.findUnique({
-      where: { id: shopId },
+    // ドリッパーの存在確認
+    const existing = await prisma.dripper.findUnique({
+      where: { id: dripperId },
     });
 
     if (!existing) {
       return NextResponse.json(
-        { error: "店舗が見つかりません" },
+        { error: "ドリッパーが見つかりません" },
         { status: 404 },
       );
     }
 
-    await prisma.shop.delete({
-      where: { id: shopId },
+    await prisma.dripper.delete({
+      where: { id: dripperId },
     });
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    console.error("Failed to delete shop:", error);
+    console.error("Failed to delete dripper:", error);
     return NextResponse.json(
-      { error: "店舗の削除に失敗しました" },
+      { error: "ドリッパーの削除に失敗しました" },
       { status: 500 },
     );
   }
