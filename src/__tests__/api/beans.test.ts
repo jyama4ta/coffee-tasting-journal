@@ -233,6 +233,28 @@ describe("CoffeeBean API", () => {
       expect(response.status).toBe(400);
       expect(data.error).toBeDefined();
     });
+
+    it("飲み切りステータスでの新規登録は400エラー", async () => {
+      const beanData = { name: "テスト豆", status: "FINISHED" };
+
+      const request = createRequest("POST", beanData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain("在庫中");
+    });
+
+    it("statusを指定しても常に在庫中で作成される", async () => {
+      const beanData = { name: "テスト豆", status: "IN_STOCK" };
+
+      const request = createRequest("POST", beanData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.status).toBe("IN_STOCK");
+    });
   });
 
   describe("GET /api/beans/[id]", () => {

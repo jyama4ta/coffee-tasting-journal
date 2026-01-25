@@ -542,8 +542,13 @@ interface CoffeeBean {
 - `roastLevel`: 有効な焙煎度のいずれか
 - `process`: 有効な精製方法のいずれか
 - `shopId`: 指定する場合は存在する店舗ID
+- `status`: **新規登録時は「飲み切り（FINISHED）」での登録不可**（購入→在庫中→飲み切りのフローのみ）
 
-**レスポンス:** 201 Created + 作成された豆データ
+**レスポンス:** 201 Created + 作成された豆データ（ステータスは常に`IN_STOCK`）
+
+**エラー:**
+
+- 400: 必須項目がない、無効な値、または`status: "FINISHED"`を指定した場合
 
 ### GET /api/beans/[id]
 

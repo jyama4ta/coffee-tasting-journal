@@ -132,6 +132,18 @@ export async function POST(request: Request) {
       }
     }
 
+    // バリデーション: 新規登録時は飲み切りステータスでの登録不可
+    // （豆は購入時に在庫中で登録し、後から飲み切りに変更するフローのみ）
+    if (body.status === "FINISHED") {
+      return NextResponse.json(
+        {
+          error:
+            "新規登録時は在庫中ステータスのみ指定可能です。飲み切りへの変更はPATCHで行ってください",
+        },
+        { status: 400 },
+      );
+    }
+
     const bean = await prisma.coffeeBean.create({
       data: {
         name: body.name.trim(),
