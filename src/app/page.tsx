@@ -51,18 +51,10 @@ export default async function Home() {
           ハンドドリップコーヒーの試飲記録を管理しましょう
         </p>
         <div className="flex gap-4">
-          <Button
-            href="/tastings/new"
-            variant="outline"
-            className="text-white! border-white! hover:bg-amber-700!"
-          >
+          <Button href="/tastings/new" variant="outline-light">
             + 試飲記録を追加
           </Button>
-          <Button
-            href="/beans/new"
-            variant="outline"
-            className="text-white! border-white! hover:bg-amber-700!"
-          >
+          <Button href="/beans/new" variant="outline-light">
             + 豆を追加
           </Button>
         </div>

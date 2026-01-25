@@ -3,7 +3,7 @@ import Link from "next/link";
 interface ButtonProps {
   href?: string;
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "danger" | "outline";
+  variant?: "primary" | "secondary" | "danger" | "outline" | "outline-light";
   size?: "sm" | "md" | "lg";
   children: React.ReactNode;
   disabled?: boolean;
@@ -17,6 +17,8 @@ const variantStyles = {
   danger: "bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300",
   outline:
     "bg-white text-amber-600 border-2 border-amber-600 hover:bg-amber-50 disabled:border-amber-300 disabled:text-amber-300",
+  "outline-light":
+    "bg-transparent text-white border-2 border-white hover:bg-white/20 disabled:border-white/50 disabled:text-white/50",
 };
 
 const sizeStyles = {
