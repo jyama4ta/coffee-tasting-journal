@@ -45,6 +45,9 @@ export default function NewBeanForm() {
 
   const defaultShopId = searchParams.get("shopId") || "";
 
+  // 今日の日付をYYYY-MM-DD形式で取得
+  const today = new Date().toISOString().split("T")[0];
+
   useEffect(() => {
     async function fetchShops() {
       const response = await fetch("/api/shops");
@@ -266,6 +269,7 @@ export default function NewBeanForm() {
               type="date"
               id="purchaseDate"
               name="purchaseDate"
+              defaultValue={today}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
