@@ -153,6 +153,17 @@
 - **ドキュメント管理**: `/docs` フォルダ配下で一元管理
 - **同期更新**: ソースコード修正時は関連ドキュメントも必ず更新すること
 - 状態遷移図、API仕様、アーキテクチャ図などを含む
+- **ドキュメント構成**:
+  - `PROGRESS.md`: 開発進捗メモ（完了した作業、TODO、技術的課題）
+  - `api-specification.md`: API仕様書（エンドポイント、データモデル、バリデーション）
+  - `test-specification.md`: テスト仕様書（テストケース一覧、テスト設計方針）
+  - `data-model.md`: ER図とエンティティ詳細
+  - `state-diagram.md`: 状態遷移図とバリデーションルール
+  - `architecture.md`: システムアーキテクチャ設計
+- **API実装時の更新ルール**:
+  1. 新規API実装時は`api-specification.md`にエンドポイント仕様を追加
+  2. テスト作成時は`test-specification.md`にテストケース一覧を追加
+  3. 機能完了時は`PROGRESS.md`の完了作業に記録し、TODOを更新
 
 ### Tech Stack
 - **フレームワーク**: Next.js (App Router) - TypeScript
