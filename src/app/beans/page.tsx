@@ -43,7 +43,7 @@ export default async function BeansPage({ searchParams }: Props) {
           <h1 className="text-2xl font-bold text-gray-900">🫘 豆一覧</h1>
           <p className="text-gray-600">コーヒー豆を管理</p>
         </div>
-        <Button href="/beans/new">+ 新規登録</Button>
+        {status !== "FINISHED" && <Button href="/beans/new">+ 新規登録</Button>}
       </div>
 
       {/* Filter Tabs */}
