@@ -184,4 +184,191 @@ describe("Navigation コンポーネント", () => {
       expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
     });
   });
+
+  describe("デスクトップメニューリンクのクリック", () => {
+    it("ホームリンクをクリックできる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      // デスクトップメニューのホームリンクを取得
+      const links = screen.getAllByRole("link");
+      const homeLink = links.find(
+        (link) =>
+          link.getAttribute("href") === "/" &&
+          link.textContent?.includes("ホーム"),
+      );
+
+      expect(homeLink).toBeInTheDocument();
+      await user.click(homeLink!);
+      // Next.jsのLinkコンポーネントなのでナビゲーションが発生する
+      // （実際のナビゲーションはjsdomでは発生しないが、クリック可能であることを確認）
+    });
+
+    it("試飲記録リンクをクリックできる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const links = screen.getAllByRole("link");
+      const tastingsLink = links.find(
+        (link) =>
+          link.getAttribute("href") === "/tastings" &&
+          link.textContent?.includes("試飲記録"),
+      );
+
+      expect(tastingsLink).toBeInTheDocument();
+      await user.click(tastingsLink!);
+    });
+
+    it("豆リンクをクリックできる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const links = screen.getAllByRole("link");
+      const beansLink = links.find(
+        (link) =>
+          link.getAttribute("href") === "/beans" &&
+          link.textContent?.includes("豆"),
+      );
+
+      expect(beansLink).toBeInTheDocument();
+      await user.click(beansLink!);
+    });
+
+    it("店舗リンクをクリックできる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const links = screen.getAllByRole("link");
+      const shopsLink = links.find(
+        (link) =>
+          link.getAttribute("href") === "/shops" &&
+          link.textContent?.includes("店舗"),
+      );
+
+      expect(shopsLink).toBeInTheDocument();
+      await user.click(shopsLink!);
+    });
+
+    it("ドリッパーリンクをクリックできる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const links = screen.getAllByRole("link");
+      const drippersLink = links.find(
+        (link) =>
+          link.getAttribute("href") === "/drippers" &&
+          link.textContent?.includes("ドリッパー"),
+      );
+
+      expect(drippersLink).toBeInTheDocument();
+      await user.click(drippersLink!);
+    });
+
+    it("フィルターリンクをクリックできる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const links = screen.getAllByRole("link");
+      const filtersLink = links.find(
+        (link) =>
+          link.getAttribute("href") === "/filters" &&
+          link.textContent?.includes("フィルター"),
+      );
+
+      expect(filtersLink).toBeInTheDocument();
+      await user.click(filtersLink!);
+    });
+  });
+
+  describe("モバイルメニューリンクのクリック", () => {
+    it("モバイルメニューのホームリンクをクリックするとメニューが閉じる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton);
+
+      const mobileMenu = screen.getByTestId("mobile-menu");
+      const homeLink = mobileMenu.querySelector('a[href="/"]');
+      expect(homeLink).toBeInTheDocument();
+
+      await user.click(homeLink!);
+      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
+    });
+
+    it("モバイルメニューの試飲記録リンクをクリックするとメニューが閉じる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton);
+
+      const mobileMenu = screen.getByTestId("mobile-menu");
+      const tastingsLink = mobileMenu.querySelector('a[href="/tastings"]');
+      expect(tastingsLink).toBeInTheDocument();
+
+      await user.click(tastingsLink!);
+      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
+    });
+
+    it("モバイルメニューの豆リンクをクリックするとメニューが閉じる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton);
+
+      const mobileMenu = screen.getByTestId("mobile-menu");
+      const beansLink = mobileMenu.querySelector('a[href="/beans"]');
+      expect(beansLink).toBeInTheDocument();
+
+      await user.click(beansLink!);
+      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
+    });
+
+    it("モバイルメニューの店舗リンクをクリックするとメニューが閉じる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton);
+
+      const mobileMenu = screen.getByTestId("mobile-menu");
+      const shopsLink = mobileMenu.querySelector('a[href="/shops"]');
+      expect(shopsLink).toBeInTheDocument();
+
+      await user.click(shopsLink!);
+      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
+    });
+
+    it("モバイルメニューのドリッパーリンクをクリックするとメニューが閉じる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton);
+
+      const mobileMenu = screen.getByTestId("mobile-menu");
+      const drippersLink = mobileMenu.querySelector('a[href="/drippers"]');
+      expect(drippersLink).toBeInTheDocument();
+
+      await user.click(drippersLink!);
+      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
+    });
+
+    it("モバイルメニューのフィルターリンクをクリックするとメニューが閉じる", async () => {
+      const user = userEvent.setup();
+      render(<Navigation />);
+
+      const menuButton = screen.getByRole("button", { name: /メニュー/i });
+      await user.click(menuButton);
+
+      const mobileMenu = screen.getByTestId("mobile-menu");
+      const filtersLink = mobileMenu.querySelector('a[href="/filters"]');
+      expect(filtersLink).toBeInTheDocument();
+
+      await user.click(filtersLink!);
+      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
+    });
+  });
 });
