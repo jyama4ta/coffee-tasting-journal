@@ -43,8 +43,9 @@ describe("StatsSection コンポーネント", () => {
     it("グリッドコンテナがレスポンシブクラスを持つ", () => {
       render(<StatsSection stats={mockStats} />);
       // グリッドコンテナを取得（Cardを含むdiv）
-      const gridContainer = screen.getByText("試飲記録").closest("a")
-        ?.parentElement;
+      const gridContainer = screen
+        .getByText("試飲記録")
+        .closest("a")?.parentElement;
       // スマホで1列、sm:2列、md:3列、lg:6列
       expect(gridContainer?.className).toContain("grid-cols-1");
       expect(gridContainer?.className).toContain("sm:grid-cols-2");

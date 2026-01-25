@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Button from "@/components/Button";
+import BeanFilter from "@/components/BeanFilter";
 import { prisma } from "@/lib/prisma";
 
 async function getTastings(beanId?: string) {
@@ -52,42 +53,7 @@ export default async function TastingsPage({ searchParams }: Props) {
       </div>
 
       {/* Filter */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <div className="flex items-center gap-4">
-          <label
-            htmlFor="beanFilter"
-            className="text-sm font-medium text-gray-700"
-          >
-            豆で絞り込み:
-          </label>
-          <select
-            id="beanFilter"
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            defaultValue={beanId || ""}
-            onChange={(e) => {
-              const value = e.target.value;
-              window.location.href = value
-                ? `/tastings?beanId=${value}`
-                : "/tastings";
-            }}
-          >
-            <option value="">すべて</option>
-            {beans.map((bean) => (
-              <option key={bean.id} value={bean.id}>
-                {bean.name}
-              </option>
-            ))}
-          </select>
-          {beanId && (
-            <Link
-              href="/tastings"
-              className="text-sm text-amber-600 hover:text-amber-800"
-            >
-              クリア
-            </Link>
-          )}
-        </div>
-      </div>
+      <BeanFilter beans={beans} selectedBeanId={beanId} />
 
       {/* List */}
       {tastings.length > 0 ? (
