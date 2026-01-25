@@ -401,7 +401,238 @@ interface Filter {
 
 ## CoffeeBean API（コーヒー豆マスター）
 
-_（未実装）_
+コーヒー豆を管理するAPI。
+
+### エンドポイント一覧
+
+| メソッド | パス              | 説明           |
+| -------- | ----------------- | -------------- |
+| GET      | `/api/beans`      | 豆一覧取得     |
+| POST     | `/api/beans`      | 豆作成         |
+| GET      | `/api/beans/[id]` | 豆詳細取得     |
+| PUT      | `/api/beans/[id]` | 豆更新         |
+| PATCH    | `/api/beans/[id]` | ステータス変更 |
+| DELETE   | `/api/beans/[id]` | 豆削除         |
+
+### データモデル
+
+```typescript
+type RoastLevel =
+  | "LIGHT"
+  | "CINNAMON"
+  | "MEDIUM"
+  | "HIGH"
+  | "CITY"
+  | "FULL_CITY"
+  | "FRENCH"
+  | "ITALIAN";
+type Process =
+  | "WASHED"
+  | "NATURAL"
+  | "HONEY"
+  | "PULPED_NATURAL"
+  | "SEMI_WASHED";
+type BeanType = "SINGLE_ORIGIN" | "BLEND";
+type BeanStatus = "IN_STOCK" | "FINISHED";
+
+interface CoffeeBean {
+  id: number; // 豆ID（自動採番）
+  name: string; // 銘柄名（必須）
+  origin: string | null; // 産地
+  roastLevel: RoastLevel | null; // 焙煎度
+  process: Process | null; // 精製方法
+  isDecaf: boolean; // デカフェフラグ（デフォルト: false）
+  beanType: BeanType | null; // ブレンド/シングル
+  notes: string | null; // メモ
+  purchaseDate: string | null; // 購入日（ISO 8601形式）
+  price: number | null; // 価格（円）
+  amount: number | null; // 購入量（g）
+  status: BeanStatus; // ステータス（デフォルト: IN_STOCK）
+  finishedDate: string | null; // 飲み切り日（ISO 8601形式）
+  imagePath: string | null; // 画像パス
+  shopId: number | null; // 店舗ID（外部キー）
+  createdAt: string; // 作成日時（ISO 8601形式）
+  updatedAt: string; // 更新日時（ISO 8601形式）
+}
+```
+
+### 焙煎度（RoastLevel）
+
+| 値          | 説明               | カテゴリ |
+| ----------- | ------------------ | -------- |
+| `LIGHT`     | ライトロースト     | 浅煎り   |
+| `CINNAMON`  | シナモンロースト   | 浅煎り   |
+| `MEDIUM`    | ミディアムロースト | 中浅煎り |
+| `HIGH`      | ハイロースト       | 中煎り   |
+| `CITY`      | シティロースト     | 中煎り   |
+| `FULL_CITY` | フルシティロースト | 中深煎り |
+| `FRENCH`    | フレンチロースト   | 深煎り   |
+| `ITALIAN`   | イタリアンロースト | 深煎り   |
+
+### 精製方法（Process）
+
+| 値               | 説明               |
+| ---------------- | ------------------ |
+| `WASHED`         | ウォッシュド       |
+| `NATURAL`        | ナチュラル         |
+| `HONEY`          | ハニー             |
+| `PULPED_NATURAL` | パルプドナチュラル |
+| `SEMI_WASHED`    | セミウォッシュド   |
+
+### GET /api/beans
+
+全ての豆を取得します。
+
+**クエリパラメータ:**
+
+- `status`: `IN_STOCK` または `FINISHED` でフィルタリング
+
+**レスポンス例:**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "エチオピア イルガチェフェ",
+    "origin": "エチオピア",
+    "roastLevel": "LIGHT",
+    "process": "WASHED",
+    "isDecaf": false,
+    "beanType": "SINGLE_ORIGIN",
+    "notes": "フルーティーな香り",
+    "purchaseDate": "2026-01-20T00:00:00.000Z",
+    "price": 1500,
+    "amount": 200,
+    "status": "IN_STOCK",
+    "finishedDate": null,
+    "imagePath": null,
+    "shopId": 1,
+    "shop": { "id": 1, "name": "テスト店舗" },
+    "createdAt": "2026-01-25T10:00:00.000Z",
+    "updatedAt": "2026-01-25T10:00:00.000Z"
+  }
+]
+```
+
+### POST /api/beans
+
+新しい豆を作成します。
+
+**リクエストボディ:**
+
+```json
+{
+  "name": "銘柄名", // 必須
+  "origin": "産地", // 任意
+  "roastLevel": "LIGHT", // 任意（8段階のいずれか）
+  "process": "WASHED", // 任意（5種類のいずれか）
+  "isDecaf": false, // 任意（デフォルト: false）
+  "beanType": "SINGLE_ORIGIN", // 任意
+  "notes": "メモ", // 任意
+  "purchaseDate": "2026-01-20", // 任意
+  "price": 1500, // 任意
+  "amount": 200, // 任意
+  "shopId": 1 // 任意（店舗ID）
+}
+```
+
+**バリデーション:**
+
+- `name`: 必須、空文字不可
+- `roastLevel`: 有効な焙煎度のいずれか
+- `process`: 有効な精製方法のいずれか
+- `shopId`: 指定する場合は存在する店舗ID
+
+**レスポンス:** 201 Created + 作成された豆データ
+
+### GET /api/beans/[id]
+
+指定したIDの豆を取得します（関連する試飲記録も含む）。
+
+**パラメータ:**
+
+- `id`: 豆ID（数値）
+
+**レスポンス例:**
+
+```json
+{
+  "id": 1,
+  "name": "エチオピア イルガチェフェ",
+  "shop": { "id": 1, "name": "テスト店舗" },
+  "tastingEntries": [
+    { "id": 1, "brewDate": "2026-01-25T10:00:00.000Z", "overallRating": 4 }
+  ]
+}
+```
+
+**エラー:**
+
+- 400: IDが数値でない場合
+- 404: 豆が存在しない場合
+
+### PUT /api/beans/[id]
+
+豆情報を更新します。
+
+**リクエストボディ:**
+
+```json
+{
+  "name": "更新後の名前", // 任意（指定時は空文字不可）
+  "origin": "更新後の産地", // 任意
+  "roastLevel": "MEDIUM", // 任意
+  "notes": "更新後のメモ" // 任意
+}
+```
+
+**バリデーション:**
+
+- `name`: 指定する場合は空文字不可
+- `roastLevel`: 有効な焙煎度のいずれか
+- `process`: 有効な精製方法のいずれか
+
+**エラー:**
+
+- 400: IDが数値でない、名前が空、または無効な値の場合
+- 404: 豆が存在しない場合
+
+### PATCH /api/beans/[id]
+
+豆のステータスを変更します。
+
+**リクエストボディ:**
+
+```json
+{
+  "status": "FINISHED" // IN_STOCK または FINISHED
+}
+```
+
+**動作:**
+
+- `FINISHED` に変更: `finishedDate` に現在日時を自動設定
+- `IN_STOCK` に戻す: `finishedDate` を `null` にクリア
+
+**エラー:**
+
+- 400: 無効なステータスの場合
+- 404: 豆が存在しない場合
+
+### DELETE /api/beans/[id]
+
+豆を削除します。
+
+**レスポンス:** 204 No Content
+
+**エラー:**
+
+- 400: IDが数値でない場合
+- 404: 豆が存在しない場合
+
+**注意:** 削除された豆に紐づく試飲記録も一緒に削除されます（`onDelete: Cascade`）。
+
+---
 
 ## TastingEntry API（試飲記録）
 

@@ -2,6 +2,17 @@
 
 ## 完了した作業
 
+### 2026-01-25: CoffeeBean API 実装（TDD）
+
+1. **CoffeeBean API 実装（TDD: Red → Green → Refactor）**
+   - `src/__tests__/api/beans.test.ts`: 24テストケース作成
+   - `src/app/api/beans/route.ts`: GET（一覧・フィルタリング）/ POST（作成）
+   - `src/app/api/beans/[id]/route.ts`: GET（詳細・関連データ含む）/ PUT（更新）/ PATCH（ステータス変更）/ DELETE（削除）
+   - RoastLevel（8段階）、Process（5種類）、BeanStatus（2種類）のバリデーション実装
+   - ステータス変更時のfinishedDate自動設定/クリア機能
+   - 関連エンティティ（shop, tastingEntries）のinclude対応
+   - 全24テストがパス
+
 ### 2026-01-25: Filter API 実装（TDD）
 
 1. **Filter API 実装（TDD: Red → Green → Refactor）**
@@ -74,23 +85,18 @@
 
 ### 優先度: 高
 
-1. **TDD: CoffeeBean API**
-   - 豆マスターのCRUD API
-   - ステータス変更API（在庫中⇔飲み切り）
-   - 産地オートコンプリートAPI
-
-2. **TDD: TastingEntry API**
+1. **TDD: TastingEntry API**
    - 試飲記録のCRUD API
    - 豆選択時は在庫中のみ表示
 
 ### 優先度: 中
 
-3. **UI実装**
+2. **UI実装**
    - ホーム画面
    - 各マスターの一覧・詳細・編集画面
    - 試飲記録の入力・一覧画面
 
-4. **Docker化**
+3. **Docker化**
    - Dockerfile作成
    - docker-compose.yml作成
 
