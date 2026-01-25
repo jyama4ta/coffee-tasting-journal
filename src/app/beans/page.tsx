@@ -183,7 +183,7 @@ export default async function BeansPage({ searchParams }: Props) {
                 ? "飲み切った豆がありません"
                 : "まだ豆が登録されていません"}
           </p>
-          <Button href="/beans/new">豆を登録</Button>
+          {status !== "FINISHED" && <Button href="/beans/new">豆を登録</Button>}
         </div>
       )}
     </div>
