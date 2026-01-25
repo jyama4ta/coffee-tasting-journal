@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
+import StarRating from "@/components/StarRating";
 
 interface Bean {
   id: number;
@@ -73,6 +74,13 @@ export default function EditTastingPage({ params }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  // 評価のState（5段階）
+  const [acidity, setAcidity] = useState<number | null>(null);
+  const [bitterness, setBitterness] = useState<number | null>(null);
+  const [sweetness, setSweetness] = useState<number | null>(null);
+  const [aftertaste, setAftertaste] = useState<number | null>(null);
+  const [overallRating, setOverallRating] = useState<number | null>(null);
+
   useEffect(() => {
     async function fetchData() {
       const { id } = await params;
@@ -92,6 +100,13 @@ export default function EditTastingPage({ params }: Props) {
         const tastingData = await tastingRes.json();
         setTasting(tastingData);
         setSelectedTags(tastingData.flavorTags || []);
+
+        // 評価値の初期化
+        setAcidity(tastingData.acidity);
+        setBitterness(tastingData.bitterness);
+        setSweetness(tastingData.sweetness);
+        setAftertaste(tastingData.aftertaste);
+        setOverallRating(tastingData.overallRating);
 
         if (beansRes.ok) setBeans(await beansRes.json());
         if (drippersRes.ok) setDrippers(await drippersRes.json());
@@ -131,23 +146,13 @@ export default function EditTastingPage({ params }: Props) {
         ? parseFloat(formData.get("grindSize") as string)
         : null,
       brewDate: formData.get("brewDate") as string,
-      acidity: formData.get("acidity")
-        ? parseInt(formData.get("acidity") as string, 10)
-        : null,
-      bitterness: formData.get("bitterness")
-        ? parseInt(formData.get("bitterness") as string, 10)
-        : null,
-      sweetness: formData.get("sweetness")
-        ? parseInt(formData.get("sweetness") as string, 10)
-        : null,
+      acidity,
+      bitterness,
+      sweetness,
       body: (formData.get("body") as string) || null,
-      aftertaste: formData.get("aftertaste")
-        ? parseInt(formData.get("aftertaste") as string, 10)
-        : null,
+      aftertaste,
       flavorTags: selectedTags.length > 0 ? selectedTags : null,
-      overallRating: formData.get("overallRating")
-        ? parseInt(formData.get("overallRating") as string, 10)
-        : null,
+      overallRating,
       notes: (formData.get("notes") as string) || null,
     };
 
@@ -334,77 +339,33 @@ export default function EditTastingPage({ params }: Props) {
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <label
-                htmlFor="acidity"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                酸味（1-10）
-              </label>
-              <input
-                type="number"
-                id="acidity"
-                name="acidity"
-                min="1"
-                max="10"
-                defaultValue={tasting.acidity || ""}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="bitterness"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                苦味（1-10）
-              </label>
-              <input
-                type="number"
-                id="bitterness"
-                name="bitterness"
-                min="1"
-                max="10"
-                defaultValue={tasting.bitterness || ""}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="sweetness"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                甘味（1-10）
-              </label>
-              <input
-                type="number"
-                id="sweetness"
-                name="sweetness"
-                min="1"
-                max="10"
-                defaultValue={tasting.sweetness || ""}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="aftertaste"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                後味（1-10）
-              </label>
-              <input
-                type="number"
-                id="aftertaste"
-                name="aftertaste"
-                min="1"
-                max="10"
-                defaultValue={tasting.aftertaste || ""}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              />
-            </div>
+            <StarRating
+              name="acidity"
+              label="酸味"
+              value={acidity}
+              onChange={setAcidity}
+            />
+            <StarRating
+              name="bitterness"
+              label="苦味"
+              value={bitterness}
+              onChange={setBitterness}
+            />
+            <StarRating
+              name="sweetness"
+              label="甘味"
+              value={sweetness}
+              onChange={setSweetness}
+            />
+            <StarRating
+              name="aftertaste"
+              label="後味"
+              value={aftertaste}
+              onChange={setAftertaste}
+            />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label
                 htmlFor="body"
@@ -425,27 +386,12 @@ export default function EditTastingPage({ params }: Props) {
                 ))}
               </select>
             </div>
-            <div>
-              <label
-                htmlFor="overallRating"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                総合評価（1-5）
-              </label>
-              <select
-                id="overallRating"
-                name="overallRating"
-                defaultValue={tasting.overallRating || ""}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              >
-                <option value="">選択なし</option>
-                <option value="1">★☆☆☆☆ (1)</option>
-                <option value="2">★★☆☆☆ (2)</option>
-                <option value="3">★★★☆☆ (3)</option>
-                <option value="4">★★★★☆ (4)</option>
-                <option value="5">★★★★★ (5)</option>
-              </select>
-            </div>
+            <StarRating
+              name="overallRating"
+              label="総合評価"
+              value={overallRating}
+              onChange={setOverallRating}
+            />
           </div>
         </div>
 

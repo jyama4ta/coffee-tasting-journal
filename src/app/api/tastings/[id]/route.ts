@@ -4,14 +4,14 @@ import { prisma } from "@/lib/prisma";
 // 有効なBody値
 const VALID_BODY_VALUES = ["LIGHT", "MEDIUM", "HEAVY"];
 
-// 評価値のバリデーション（1-10）
+// 評価値のバリデーション（1-5）
 function validateRating(
   value: number | undefined | null,
   fieldName: string,
 ): string | null {
   if (value !== undefined && value !== null) {
-    if (value < 1 || value > 10) {
-      return `${fieldName}は1から10の範囲で指定してください`;
+    if (value < 1 || value > 5) {
+      return `${fieldName}は1から5の範囲で指定してください`;
     }
   }
   return null;

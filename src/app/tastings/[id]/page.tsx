@@ -167,16 +167,12 @@ export default async function TastingDetailPage({ params }: Props) {
               <div key={item.label}>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-gray-500">{item.label}</span>
-                  <span className="text-gray-900">{item.value || "-"}/10</span>
+                  <span className="text-amber-500">
+                    {item.value
+                      ? "★".repeat(item.value) + "☆".repeat(5 - item.value)
+                      : "-"}
+                  </span>
                 </div>
-                {item.value && (
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-amber-500 rounded-full"
-                      style={{ width: `${(item.value / 10) * 100}%` }}
-                    />
-                  </div>
-                )}
               </div>
             ))}
             <div className="flex justify-between pt-2 border-t">

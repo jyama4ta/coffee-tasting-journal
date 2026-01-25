@@ -2,6 +2,36 @@
 
 ## 完了した作業
 
+### 2026-01-26: 試飲記録の5段階評価UI実装
+
+1. **StarRatingコンポーネント実装（TDD）**
+   - `src/__tests__/components/StarRating.test.tsx`: 18テストケース作成
+   - `src/components/StarRating.tsx`: 5段階のインタラクティブな星評価入力コンポーネント
+   - クリック操作、ホバーエフェクト、キーボードナビゲーション対応
+   - 星アイコンと豆アイコンの切り替え対応
+   - アクセシビリティ対応（role="radiogroup", aria-checked, aria-label）
+
+2. **評価スケールの変更（1-10 → 1-5）**
+   - `prisma/schema.prisma`: コメント更新（acidity, bitterness, sweetness, aftertaste）
+   - `src/app/api/tastings/route.ts`: バリデーション関数を1-5範囲に変更
+   - `src/app/api/tastings/[id]/route.ts`: 同上
+   - `src/__tests__/api/tastings.test.ts`: テストデータを1-5範囲に更新
+
+3. **フォームUI更新**
+   - `src/app/tastings/new/NewTastingForm.tsx`: StarRatingコンポーネント統合
+   - `src/app/tastings/[id]/edit/page.tsx`: StarRatingコンポーネント統合
+   - number inputからインタラクティブな星選択UIに変更
+
+4. **表示画面更新**
+   - `src/app/tastings/page.tsx`: 評価表示を/5形式に変更
+   - `src/app/tastings/[id]/page.tsx`: 星表示に変更（★★★☆☆形式）
+
+5. **ドキュメント更新**
+   - `docs/data-model.md`: 評価スケールを1-5に更新
+   - `docs/api-specification.md`: バリデーション仕様を1-5に更新
+
+6. **テスト結果**: 全175テストがパス
+
 ### 2026-01-25: TastingEntry API 実装（TDD）
 
 1. **TastingEntry API 実装（TDD: Red → Green → Refactor）**
@@ -9,7 +39,7 @@
    - `src/app/api/tastings/route.ts`: GET（一覧・フィルタリング）/ POST（作成）
    - `src/app/api/tastings/[id]/route.ts`: GET（詳細）/ PUT（更新）/ DELETE（削除）
    - 豆ステータス制約: 在庫中（IN_STOCK）の豆のみ試飲記録作成可能
-   - 評価値バリデーション: 酸味・苦味・甘味・後味（1-10）、総合評価（1-5）
+   - 評価値バリデーション: 酸味・苦味・甘味・後味・総合評価（1-5）
    - Body値（LIGHT/MEDIUM/HEAVY）のバリデーション
    - フレーバータグ（JSON配列）対応
    - 関連エンティティ（coffeeBean, dripper, filter）のinclude対応

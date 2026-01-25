@@ -658,11 +658,11 @@ interface TastingEntry {
   filterId: number | null; // フィルターID
   grindSize: number | null; // 挽き方（1.0-10.0、0.5刻み）
   brewDate: string; // 抽出日（必須、ISO 8601形式）
-  acidity: number | null; // 酸味（1-10）
-  bitterness: number | null; // 苦味（1-10）
-  sweetness: number | null; // 甘味（1-10）
+  acidity: number | null; // 酸味（1-5）
+  bitterness: number | null; // 苦味（1-5）
+  sweetness: number | null; // 甘味（1-5）
   body: string | null; // ボディ（LIGHT/MEDIUM/HEAVY）
-  aftertaste: number | null; // 後味（1-10）
+  aftertaste: number | null; // 後味（1-5）
   flavorTags: string | null; // フレーバータグ（JSON配列）
   overallRating: number | null; // 総合評価（1-5）
   notes: string | null; // テイスティングノート
@@ -697,10 +697,10 @@ type Body = "LIGHT" | "MEDIUM" | "HEAVY";
     "grindSize": 5.5,
     "brewDate": "2026-01-25T10:00:00.000Z",
     "acidity": 7,
-    "bitterness": 5,
-    "sweetness": 6,
+    "bitterness": 3,
+    "sweetness": 5,
     "body": "MEDIUM",
-    "aftertaste": 8,
+    "aftertaste": 2,
     "flavorTags": "[\"BERRY\",\"CITRUS\"]",
     "overallRating": 4,
     "notes": "フルーティーで美味しい",
@@ -726,11 +726,11 @@ type Body = "LIGHT" | "MEDIUM" | "HEAVY";
   "dripperId": 1, // 任意
   "filterId": 1, // 任意
   "grindSize": 5.5, // 任意
-  "acidity": 7, // 任意（1-10）
-  "bitterness": 5, // 任意（1-10）
-  "sweetness": 6, // 任意（1-10）
+  "acidity": 4, // 任意（1-5）
+  "bitterness": 3, // 任意（1-5）
+  "sweetness": 5, // 任意（1-5）
   "body": "MEDIUM", // 任意（LIGHT/MEDIUM/HEAVY）
-  "aftertaste": 8, // 任意（1-10）
+  "aftertaste": 2, // 任意（1-5）
   "flavorTags": ["BERRY", "CITRUS"], // 任意（配列）
   "overallRating": 4, // 任意（1-5）
   "notes": "テイスティングノート" // 任意
@@ -741,7 +741,7 @@ type Body = "LIGHT" | "MEDIUM" | "HEAVY";
 
 - `coffeeBeanId`: 必須、存在する豆ID、かつステータスが「在庫中」であること
 - `brewDate`: 必須
-- `acidity`, `bitterness`, `sweetness`, `aftertaste`: 1-10の範囲
+- `acidity`, `bitterness`, `sweetness`, `aftertaste`: 1-5の範囲
 - `overallRating`: 1-5の範囲
 - `body`: LIGHT/MEDIUM/HEAVYのいずれか
 

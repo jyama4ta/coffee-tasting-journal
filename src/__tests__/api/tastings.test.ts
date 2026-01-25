@@ -195,11 +195,11 @@ describe("TastingEntry API", () => {
       const tastingData = {
         coffeeBeanId: testBeanId,
         brewDate: "2026-01-25",
-        acidity: 7,
-        bitterness: 5,
-        sweetness: 6,
+        acidity: 4,
+        bitterness: 3,
+        sweetness: 5,
         body: "MEDIUM",
-        aftertaste: 8,
+        aftertaste: 2,
       };
 
       const request = createRequest("POST", tastingData);
@@ -207,11 +207,11 @@ describe("TastingEntry API", () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.acidity).toBe(7);
-      expect(data.bitterness).toBe(5);
-      expect(data.sweetness).toBe(6);
+      expect(data.acidity).toBe(4);
+      expect(data.bitterness).toBe(3);
+      expect(data.sweetness).toBe(5);
       expect(data.body).toBe("MEDIUM");
-      expect(data.aftertaste).toBe(8);
+      expect(data.aftertaste).toBe(2);
     });
 
     it("フレーバータグを複数設定できる", async () => {
@@ -315,11 +315,11 @@ describe("TastingEntry API", () => {
       expect(data.error).toBeDefined();
     });
 
-    it("評価値が範囲外の場合は400エラー（1-10）", async () => {
+    it("評価値が範囲外の場合は400エラー（1-5）", async () => {
       const tastingData = {
         coffeeBeanId: testBeanId,
         brewDate: "2026-01-25",
-        acidity: 15, // 範囲外
+        acidity: 6, // 範囲外（1-5）
       };
 
       const request = createRequest("POST", tastingData);
@@ -413,7 +413,7 @@ describe("TastingEntry API", () => {
       const updateData = {
         overallRating: 5,
         notes: "更新メモ",
-        acidity: 8,
+        acidity: 4,
       };
 
       const request = createRequest(
@@ -427,7 +427,7 @@ describe("TastingEntry API", () => {
       expect(response.status).toBe(200);
       expect(data.overallRating).toBe(5);
       expect(data.notes).toBe("更新メモ");
-      expect(data.acidity).toBe(8);
+      expect(data.acidity).toBe(4);
     });
 
     it("存在しないIDの場合は404エラー", async () => {
@@ -453,7 +453,7 @@ describe("TastingEntry API", () => {
 
       const request = createRequest(
         "PUT",
-        { acidity: 15 },
+        { acidity: 6 },
         `http://localhost:3000/api/tastings/${tasting.id}`,
       );
       const response = await PUT(request, createContext(String(tasting.id)));

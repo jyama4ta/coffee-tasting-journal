@@ -15,10 +15,10 @@ datasource db {
 // ============================================
 model Shop {
   id        Int      @id @default(autoincrement())
-  name      String   // 店舗名（必須）
-  address   String?  // 住所
-  url       String?  // WebサイトURL
-  notes     String?  // メモ
+  name      String // 店舗名（必須）
+  address   String? // 住所
+  url       String? // WebサイトURL
+  notes     String? // メモ
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -33,10 +33,10 @@ model Shop {
 // ============================================
 model Dripper {
   id           Int      @id @default(autoincrement())
-  name         String   // ドリッパー名（必須）
-  manufacturer String?  // メーカー
-  notes        String?  // メモ
-  imagePath    String?  // 画像パス
+  name         String // ドリッパー名（必須）
+  manufacturer String? // メーカー
+  notes        String? // メモ
+  imagePath    String? // 画像パス
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -51,10 +51,10 @@ model Dripper {
 // ============================================
 model Filter {
   id        Int         @id @default(autoincrement())
-  name      String      // フィルター名（必須）
+  name      String // フィルター名（必須）
   type      FilterType? // 種類（ペーパー/金属/布）
-  notes     String?     // メモ
-  imagePath String?     // 画像パス
+  notes     String? // メモ
+  imagePath String? // 画像パス
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 
@@ -76,19 +76,19 @@ enum FilterType {
 // ============================================
 model CoffeeBean {
   id           Int         @id @default(autoincrement())
-  name         String      // 銘柄（必須）
-  origin       String?     // 産地
+  name         String // 銘柄（必須）
+  origin       String? // 産地
   roastLevel   RoastLevel? // 焙煎度（8段階）
-  process      Process?    // 精製方法
+  process      Process? // 精製方法
   isDecaf      Boolean     @default(false) // デカフェフラグ
-  beanType     BeanType?   // ブレンド/シングルオリジン
-  notes        String?     // メモ（パッケージ説明など）
-  purchaseDate DateTime?   // 購入日
-  price        Int?        // 価格（円）
-  amount       Int?        // 購入量（g）
+  beanType     BeanType? // ブレンド/シングルオリジン
+  notes        String? // メモ（パッケージ説明など）
+  purchaseDate DateTime? // 購入日
+  price        Int? // 価格（円）
+  amount       Int? // 購入量（g）
   status       BeanStatus  @default(IN_STOCK) // ステータス
-  finishedDate DateTime?   // 飲み切り日
-  imagePath    String?     // 画像パス
+  finishedDate DateTime? // 飲み切り日
+  imagePath    String? // 画像パス
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -109,29 +109,29 @@ model CoffeeBean {
 
 // 焙煎度（8段階）
 enum RoastLevel {
-  LIGHT     // ライトロースト → 浅煎り
-  CINNAMON  // シナモンロースト → 浅煎り
-  MEDIUM    // ミディアムロースト → 中浅煎り
-  HIGH      // ハイロースト → 中煎り
-  CITY      // シティロースト → 中煎り
+  LIGHT // ライトロースト → 浅煎り
+  CINNAMON // シナモンロースト → 浅煎り
+  MEDIUM // ミディアムロースト → 中浅煎り
+  HIGH // ハイロースト → 中煎り
+  CITY // シティロースト → 中煎り
   FULL_CITY // フルシティロースト → 中深煎り
-  FRENCH    // フレンチロースト → 深煎り
-  ITALIAN   // イタリアンロースト → 深煎り
+  FRENCH // フレンチロースト → 深煎り
+  ITALIAN // イタリアンロースト → 深煎り
 }
 
 // 精製方法
 enum Process {
-  WASHED        // ウォッシュド
-  NATURAL       // ナチュラル
-  HONEY         // ハニー
+  WASHED // ウォッシュド
+  NATURAL // ナチュラル
+  HONEY // ハニー
   PULPED_NATURAL // パルプドナチュラル
-  SEMI_WASHED   // セミウォッシュド
+  SEMI_WASHED // セミウォッシュド
 }
 
 // 豆タイプ
 enum BeanType {
   SINGLE_ORIGIN // シングルオリジン
-  BLEND         // ブレンド
+  BLEND // ブレンド
 }
 
 // 豆ステータス
@@ -144,20 +144,20 @@ enum BeanStatus {
 // 試飲記録
 // ============================================
 model TastingEntry {
-  id            Int       @id @default(autoincrement())
-  grindSize     Float?    // 挽き方（1.0-10.0、0.5刻み）
-  brewDate      DateTime  // 抽出日（必須）
-  acidity       Int?      // 酸味（1-10）
-  bitterness    Int?      // 苦味（1-10）
-  sweetness     Int?      // 甘味（1-10）
-  body          Body?     // ボディ
-  aftertaste    Int?      // 後味（1-10）
-  flavorTags    String?   // フレーバータグ（JSON配列として保存）
-  overallRating Int?      // 総合評価（1-5）
-  notes         String?   // テイスティングノート
-  imagePath     String?   // 画像パス
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id            Int      @id @default(autoincrement())
+  grindSize     Float? // 挽き方（1.0-10.0、0.5刻み）
+  brewDate      DateTime // 抽出日（必須）
+  acidity       Int? // 酸味（1-5）
+  bitterness    Int? // 苦味（1-5）
+  sweetness     Int? // 甘味（1-5）
+  body          Body? // ボディ
+  aftertaste    Int? // 後味（1-5）
+  flavorTags    String? // フレーバータグ（JSON配列として保存）
+  overallRating Int? // 総合評価（1-5）
+  notes         String? // テイスティングノート
+  imagePath     String? // 画像パス
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // 外部キー
   coffeeBeanId Int
@@ -178,7 +178,7 @@ model TastingEntry {
 
 // ボディ
 enum Body {
-  LIGHT  // 軽い
+  LIGHT // 軽い
   MEDIUM // 中程度
-  HEAVY  // 重い
+  HEAVY // 重い
 }

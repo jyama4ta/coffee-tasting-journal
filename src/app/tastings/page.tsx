@@ -115,12 +115,12 @@ export default async function TastingsPage({ searchParams }: Props) {
                   </div>
                   {/* Ratings Preview */}
                   <div className="ml-4 text-right text-xs text-gray-500">
-                    {tasting.acidity && <div>酸味: {tasting.acidity}/10</div>}
+                    {tasting.acidity && <div>酸味: {tasting.acidity}/5</div>}
                     {tasting.bitterness && (
-                      <div>苦味: {tasting.bitterness}/10</div>
+                      <div>苦味: {tasting.bitterness}/5</div>
                     )}
                     {tasting.sweetness && (
-                      <div>甘味: {tasting.sweetness}/10</div>
+                      <div>甘味: {tasting.sweetness}/5</div>
                     )}
                   </div>
                 </div>
