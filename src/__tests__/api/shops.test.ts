@@ -41,8 +41,7 @@ describe("Shop API", () => {
 
   describe("GET /api/shops", () => {
     it("空の配列を返す（店舗が存在しない場合）", async () => {
-      const request = createRequest("GET");
-      const response = await GET(request);
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -58,8 +57,7 @@ describe("Shop API", () => {
         ],
       });
 
-      const request = createRequest("GET");
-      const response = await GET(request);
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
