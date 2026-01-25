@@ -49,6 +49,35 @@ npm run dev
 
 [http://localhost:3000](http://localhost:3000) をブラウザで開くと、アプリケーションが表示されます。
 
+## Docker でデプロイ
+
+本番環境へのデプロイには Docker を使用します。
+
+### イメージのビルド
+
+```bash
+docker build -t coffee-tasting-journal:latest .
+```
+
+### Docker Compose で起動
+
+```bash
+docker-compose up -d
+```
+
+データは `coffee-tasting-journal-data` ボリュームに永続化されます。
+
+### 手動で起動する場合
+
+```bash
+docker run -d \
+  --name coffee-tasting-journal \
+  -p 3000:3000 \
+  -v coffee-data:/app/data \
+  -e DATABASE_URL=file:/app/data/database.db \
+  coffee-tasting-journal:latest
+```
+
 ## 利用可能なスクリプト
 
 ```bash

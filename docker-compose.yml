@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coffee-tasting-journal
+    ports:
+      - "3000:3000"
+    volumes:
+      # SQLite database persistence
+      - coffee-data:/app/data
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/database.db
+    restart: unless-stopped
+
+volumes:
+  coffee-data:
+    name: coffee-tasting-journal-data

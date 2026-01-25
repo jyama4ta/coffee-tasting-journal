@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+
+# Build outputs
+.next
+out
+
+# Development files
+.devcontainer
+.vscode
+.git
+.github
+
+# Test files
+*.test.ts
+*.test.tsx
+**/__tests__
+vitest.config.ts
+coverage
+
+# Data files
+data
+*.db
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Misc
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
