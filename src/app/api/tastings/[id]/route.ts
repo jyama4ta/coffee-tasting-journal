@@ -5,7 +5,10 @@ import { prisma } from "@/lib/prisma";
 const VALID_BODY_VALUES = ["LIGHT", "MEDIUM", "HEAVY"];
 
 // 評価値のバリデーション（1-10）
-function validateRating(value: number | undefined | null, fieldName: string): string | null {
+function validateRating(
+  value: number | undefined | null,
+  fieldName: string,
+): string | null {
   if (value !== undefined && value !== null) {
     if (value < 1 || value > 10) {
       return `${fieldName}は1から10の範囲で指定してください`;
@@ -15,7 +18,9 @@ function validateRating(value: number | undefined | null, fieldName: string): st
 }
 
 // 総合評価のバリデーション（1-5）
-function validateOverallRating(value: number | undefined | null): string | null {
+function validateOverallRating(
+  value: number | undefined | null,
+): string | null {
   if (value !== undefined && value !== null) {
     if (value < 1 || value > 5) {
       return "総合評価は1から5の範囲で指定してください";
@@ -25,7 +30,11 @@ function validateOverallRating(value: number | undefined | null): string | null 
 }
 
 // IDパラメータのパースとバリデーション
-function parseId(id: string): { valid: boolean; value?: number; error?: string } {
+function parseId(id: string): {
+  valid: boolean;
+  value?: number;
+  error?: string;
+} {
   const parsed = parseInt(id, 10);
   if (isNaN(parsed)) {
     return { valid: false, error: "無効なIDです" };
@@ -61,7 +70,7 @@ export async function GET(request: Request, context: Context) {
   if (!tasting) {
     return NextResponse.json(
       { error: "試飲記録が見つかりません" },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -88,7 +97,7 @@ export async function PUT(request: Request, context: Context) {
   if (!existingTasting) {
     return NextResponse.json(
       { error: "試飲記録が見つかりません" },
-      { status: 404 }
+      { status: 404 },
     );
   }
 
@@ -111,8 +120,10 @@ export async function PUT(request: Request, context: Context) {
   // ボディのバリデーション
   if (bodyValue && !VALID_BODY_VALUES.includes(bodyValue)) {
     return NextResponse.json(
-      { error: `無効なボディ値です。有効な値: ${VALID_BODY_VALUES.join(", ")}` },
-      { status: 400 }
+      {
+        error: `無効なボディ値です。有効な値: ${VALID_BODY_VALUES.join(", ")}`,
+      },
+      { status: 400 },
     );
   }
 
@@ -194,7 +205,7 @@ export async function DELETE(request: Request, context: Context) {
   if (!existingTasting) {
     return NextResponse.json(
       { error: "試飲記録が見つかりません" },
-      { status: 404 }
+      { status: 404 },
     );
   }
 

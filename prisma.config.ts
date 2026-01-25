@@ -5,7 +5,6 @@ import { defineConfig } from "prisma/config";
 const dbPath = path.join(__dirname, "data", "database.db");
 
 export default defineConfig({
-  earlyAccess: true,
   schema: path.join(__dirname, "prisma", "schema.prisma"),
 
   // データソースURL（マイグレーション用）

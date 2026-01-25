@@ -1,0 +1,182 @@
+import Link from "next/link";
+import Button from "@/components/Button";
+import { prisma } from "@/lib/prisma";
+
+async function getTastings(beanId?: string) {
+  const where = beanId ? { coffeeBeanId: parseInt(beanId, 10) } : {};
+  return prisma.tastingEntry.findMany({
+    where,
+    orderBy: { brewDate: "desc" },
+    include: {
+      coffeeBean: true,
+      dripper: true,
+      filter: true,
+    },
+  });
+}
+
+async function getBeans() {
+  return prisma.coffeeBean.findMany({
+    orderBy: { name: "asc" },
+  });
+}
+
+interface Props {
+  searchParams: Promise<{ beanId?: string }>;
+}
+
+export default async function TastingsPage({ searchParams }: Props) {
+  const { beanId } = await searchParams;
+  const [tastings, beans] = await Promise.all([
+    getTastings(beanId),
+    getBeans(),
+  ]);
+
+  const selectedBean = beanId
+    ? beans.find((b) => b.id === parseInt(beanId, 10))
+    : null;
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">📝 試飲記録</h1>
+          <p className="text-gray-600">
+            {selectedBean
+              ? `「${selectedBean.name}」の試飲記録`
+              : "すべての試飲記録"}
+          </p>
+        </div>
+        <Button href="/tastings/new">+ 新規記録</Button>
+      </div>
+
+      {/* Filter */}
+      <div className="bg-white rounded-lg shadow p-4">
+        <div className="flex items-center gap-4">
+          <label
+            htmlFor="beanFilter"
+            className="text-sm font-medium text-gray-700"
+          >
+            豆で絞り込み:
+          </label>
+          <select
+            id="beanFilter"
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            defaultValue={beanId || ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              window.location.href = value
+                ? `/tastings?beanId=${value}`
+                : "/tastings";
+            }}
+          >
+            <option value="">すべて</option>
+            {beans.map((bean) => (
+              <option key={bean.id} value={bean.id}>
+                {bean.name}
+              </option>
+            ))}
+          </select>
+          {beanId && (
+            <Link
+              href="/tastings"
+              className="text-sm text-amber-600 hover:text-amber-800"
+            >
+              クリア
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* List */}
+      {tastings.length > 0 ? (
+        <div className="space-y-4">
+          {tastings.map((tasting) => (
+            <div
+              key={tasting.id}
+              className="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow"
+            >
+              <Link href={`/tastings/${tasting.id}`} className="block">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">
+                        {new Date(tasting.brewDate).toLocaleDateString("ja-JP")}
+                      </span>
+                      {tasting.overallRating && (
+                        <span className="text-amber-500">
+                          {"★".repeat(tasting.overallRating)}
+                          {"☆".repeat(5 - tasting.overallRating)}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-medium text-gray-900 mt-1">
+                      {tasting.coffeeBean.name}
+                    </h3>
+                    <div className="flex flex-wrap gap-2 mt-2 text-sm text-gray-600">
+                      {tasting.grindSize && (
+                        <span className="bg-gray-100 px-2 py-0.5 rounded">
+                          挽き目: {tasting.grindSize}
+                        </span>
+                      )}
+                      {tasting.dripper && (
+                        <span className="bg-gray-100 px-2 py-0.5 rounded">
+                          {tasting.dripper.name}
+                        </span>
+                      )}
+                      {tasting.filter && (
+                        <span className="bg-gray-100 px-2 py-0.5 rounded">
+                          {tasting.filter.name}
+                        </span>
+                      )}
+                    </div>
+                    {/* Flavor Tags */}
+                    {tasting.flavorTags && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {(JSON.parse(tasting.flavorTags) as string[]).map(
+                          (tag) => (
+                            <span
+                              key={tag}
+                              className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs"
+                            >
+                              {tag}
+                            </span>
+                          ),
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {/* Ratings Preview */}
+                  <div className="ml-4 text-right text-xs text-gray-500">
+                    {tasting.acidity && <div>酸味: {tasting.acidity}/10</div>}
+                    {tasting.bitterness && (
+                      <div>苦味: {tasting.bitterness}/10</div>
+                    )}
+                    {tasting.sweetness && (
+                      <div>甘味: {tasting.sweetness}/10</div>
+                    )}
+                  </div>
+                </div>
+                {tasting.notes && (
+                  <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+                    {tasting.notes}
+                  </p>
+                )}
+              </Link>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+          <p className="mb-4">
+            {selectedBean
+              ? `「${selectedBean.name}」の試飲記録がありません`
+              : "まだ試飲記録がありません"}
+          </p>
+          <Button href="/tastings/new">試飲記録を追加</Button>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -640,39 +640,39 @@ interface CoffeeBean {
 
 ### エンドポイント一覧
 
-| メソッド | パス                  | 説明             |
-| -------- | --------------------- | ---------------- |
-| GET      | `/api/tastings`       | 試飲記録一覧取得 |
-| POST     | `/api/tastings`       | 試飲記録作成     |
-| GET      | `/api/tastings/[id]`  | 試飲記録詳細取得 |
-| PUT      | `/api/tastings/[id]`  | 試飲記録更新     |
-| DELETE   | `/api/tastings/[id]`  | 試飲記録削除     |
+| メソッド | パス                 | 説明             |
+| -------- | -------------------- | ---------------- |
+| GET      | `/api/tastings`      | 試飲記録一覧取得 |
+| POST     | `/api/tastings`      | 試飲記録作成     |
+| GET      | `/api/tastings/[id]` | 試飲記録詳細取得 |
+| PUT      | `/api/tastings/[id]` | 試飲記録更新     |
+| DELETE   | `/api/tastings/[id]` | 試飲記録削除     |
 
 ### データモデル
 
 ```typescript
 interface TastingEntry {
-  id: number;                 // 試飲記録ID（自動採番）
-  coffeeBeanId: number;       // コーヒー豆ID（必須）
-  dripperId: number | null;   // ドリッパーID
-  filterId: number | null;    // フィルターID
-  grindSize: number | null;   // 挽き方（1.0-10.0、0.5刻み）
-  brewDate: string;           // 抽出日（必須、ISO 8601形式）
-  acidity: number | null;     // 酸味（1-10）
-  bitterness: number | null;  // 苦味（1-10）
-  sweetness: number | null;   // 甘味（1-10）
-  body: string | null;        // ボディ（LIGHT/MEDIUM/HEAVY）
-  aftertaste: number | null;  // 後味（1-10）
-  flavorTags: string | null;  // フレーバータグ（JSON配列）
+  id: number; // 試飲記録ID（自動採番）
+  coffeeBeanId: number; // コーヒー豆ID（必須）
+  dripperId: number | null; // ドリッパーID
+  filterId: number | null; // フィルターID
+  grindSize: number | null; // 挽き方（1.0-10.0、0.5刻み）
+  brewDate: string; // 抽出日（必須、ISO 8601形式）
+  acidity: number | null; // 酸味（1-10）
+  bitterness: number | null; // 苦味（1-10）
+  sweetness: number | null; // 甘味（1-10）
+  body: string | null; // ボディ（LIGHT/MEDIUM/HEAVY）
+  aftertaste: number | null; // 後味（1-10）
+  flavorTags: string | null; // フレーバータグ（JSON配列）
   overallRating: number | null; // 総合評価（1-5）
-  notes: string | null;       // テイスティングノート
-  imagePath: string | null;   // 画像パス
-  createdAt: string;          // 作成日時（ISO 8601形式）
-  updatedAt: string;          // 更新日時（ISO 8601形式）
+  notes: string | null; // テイスティングノート
+  imagePath: string | null; // 画像パス
+  createdAt: string; // 作成日時（ISO 8601形式）
+  updatedAt: string; // 更新日時（ISO 8601形式）
 }
 
 // ボディ値
-type Body = 'LIGHT' | 'MEDIUM' | 'HEAVY';
+type Body = "LIGHT" | "MEDIUM" | "HEAVY";
 ```
 
 ### GET /api/tastings
@@ -681,8 +681,8 @@ type Body = 'LIGHT' | 'MEDIUM' | 'HEAVY';
 
 **クエリパラメータ:**
 
-| パラメータ   | 説明                     |
-| ------------ | ------------------------ |
+| パラメータ   | 説明                       |
+| ------------ | -------------------------- |
 | coffeeBeanId | 指定した豆IDの記録のみ取得 |
 
 **レスポンス例:**
@@ -721,19 +721,19 @@ type Body = 'LIGHT' | 'MEDIUM' | 'HEAVY';
 
 ```json
 {
-  "coffeeBeanId": 1,              // 必須（在庫中の豆のみ）
-  "brewDate": "2026-01-25",       // 必須
-  "dripperId": 1,                 // 任意
-  "filterId": 1,                  // 任意
-  "grindSize": 5.5,               // 任意
-  "acidity": 7,                   // 任意（1-10）
-  "bitterness": 5,                // 任意（1-10）
-  "sweetness": 6,                 // 任意（1-10）
-  "body": "MEDIUM",               // 任意（LIGHT/MEDIUM/HEAVY）
-  "aftertaste": 8,                // 任意（1-10）
+  "coffeeBeanId": 1, // 必須（在庫中の豆のみ）
+  "brewDate": "2026-01-25", // 必須
+  "dripperId": 1, // 任意
+  "filterId": 1, // 任意
+  "grindSize": 5.5, // 任意
+  "acidity": 7, // 任意（1-10）
+  "bitterness": 5, // 任意（1-10）
+  "sweetness": 6, // 任意（1-10）
+  "body": "MEDIUM", // 任意（LIGHT/MEDIUM/HEAVY）
+  "aftertaste": 8, // 任意（1-10）
   "flavorTags": ["BERRY", "CITRUS"], // 任意（配列）
-  "overallRating": 4,             // 任意（1-5）
-  "notes": "テイスティングノート"   // 任意
+  "overallRating": 4, // 任意（1-5）
+  "notes": "テイスティングノート" // 任意
 }
 ```
 
@@ -786,18 +786,18 @@ type Body = 'LIGHT' | 'MEDIUM' | 'HEAVY';
 
 ```json
 {
-  "dripperId": 2,               // 任意
-  "filterId": 2,                // 任意
-  "grindSize": 6.0,             // 任意
-  "brewDate": "2026-01-26",     // 任意
-  "acidity": 8,                 // 任意（1-10）
-  "bitterness": 4,              // 任意（1-10）
-  "sweetness": 7,               // 任意（1-10）
-  "body": "HEAVY",              // 任意
-  "aftertaste": 9,              // 任意（1-10）
-  "flavorTags": ["CHOCOLATE"],  // 任意
-  "overallRating": 5,           // 任意（1-5）
-  "notes": "更新後のメモ"        // 任意
+  "dripperId": 2, // 任意
+  "filterId": 2, // 任意
+  "grindSize": 6.0, // 任意
+  "brewDate": "2026-01-26", // 任意
+  "acidity": 8, // 任意（1-10）
+  "bitterness": 4, // 任意（1-10）
+  "sweetness": 7, // 任意（1-10）
+  "body": "HEAVY", // 任意
+  "aftertaste": 9, // 任意（1-10）
+  "flavorTags": ["CHOCOLATE"], // 任意
+  "overallRating": 5, // 任意（1-5）
+  "notes": "更新後のメモ" // 任意
 }
 ```
 
