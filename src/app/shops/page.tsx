@@ -16,6 +16,14 @@ async function getShops() {
   });
 }
 
+// displayNameを生成するヘルパー関数
+function getDisplayName(brandName: string | null, name: string): string {
+  if (brandName && name) {
+    return `${brandName} ${name}`;
+  }
+  return brandName || name;
+}
+
 export default async function ShopsPage() {
   const shops = await getShops();
 
@@ -44,7 +52,7 @@ export default async function ShopsPage() {
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-900">
-                      {shop.name}
+                      {getDisplayName(shop.brandName, shop.name)}
                     </span>
                     {shop.url && (
                       <span className="text-gray-400" title="Webサイトあり">
@@ -99,7 +107,7 @@ export default async function ShopsPage() {
                         href={`/shops/${shop.id}`}
                         className="text-amber-600 hover:text-amber-800 font-medium"
                       >
-                        {shop.name}
+                        {getDisplayName(shop.brandName, shop.name)}
                       </Link>
                       {shop.url && (
                         <a

@@ -9,6 +9,8 @@ import StarRating from "@/components/StarRating";
 interface Shop {
   id: number;
   name: string;
+  brandName: string | null;
+  displayName: string;
 }
 
 const ROAST_LEVELS = [
@@ -306,7 +308,7 @@ export default function NewBeanForm() {
             <option value="">選択なし</option>
             {shops.map((shop) => (
               <option key={shop.id} value={shop.id}>
-                {shop.name}
+                {shop.displayName}
               </option>
             ))}
           </select>

@@ -19,6 +19,14 @@ async function getShop(id: number) {
   });
 }
 
+// displayNameを生成するヘルパー関数
+function getDisplayName(brandName: string | null, name: string): string {
+  if (brandName && name) {
+    return `${brandName} ${name}`;
+  }
+  return brandName || name;
+}
+
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -37,19 +45,21 @@ export default async function ShopDetailPage({ params }: Props) {
     notFound();
   }
 
+  const displayName = getDisplayName(shop.brandName, shop.name);
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">🏪 {shop.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">🏪 {displayName}</h1>
           <p className="text-gray-600">店舗詳細</p>
         </div>
         <div className="flex gap-2">
           <Button href={`/shops/${shop.id}/edit`} variant="outline">
             編集
           </Button>
-          <DeleteButton shopId={shop.id} shopName={shop.name} />
+          <DeleteButton shopId={shop.id} shopName={displayName} />
         </div>
       </div>
 
@@ -57,9 +67,15 @@ export default async function ShopDetailPage({ params }: Props) {
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">基本情報</h2>
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {shop.brandName && (
+            <div>
+              <dt className="text-sm font-medium text-gray-500">ブランド名</dt>
+              <dd className="mt-1 text-gray-900">{shop.brandName}</dd>
+            </div>
+          )}
           <div>
             <dt className="text-sm font-medium text-gray-500">店舗名</dt>
-            <dd className="mt-1 text-gray-900">{shop.name}</dd>
+            <dd className="mt-1 text-gray-900">{shop.name || "-"}</dd>
           </div>
           <div>
             <dt className="text-sm font-medium text-gray-500">住所</dt>

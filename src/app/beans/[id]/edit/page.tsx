@@ -9,6 +9,8 @@ import StarRating from "@/components/StarRating";
 interface Shop {
   id: number;
   name: string;
+  brandName: string | null;
+  displayName: string;
 }
 
 interface Bean {
@@ -385,7 +387,7 @@ export default function EditBeanPage({ params }: Props) {
               <option value="">選択なし</option>
               {shops.map((shop) => (
                 <option key={shop.id} value={shop.id}>
-                  {shop.name}
+                  {shop.displayName}
                 </option>
               ))}
             </select>

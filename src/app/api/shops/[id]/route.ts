@@ -11,6 +11,14 @@ function parseId(id: string): number | null {
   return isNaN(parsed) ? null : parsed;
 }
 
+// displayNameを生成するヘルパー関数
+function getDisplayName(brandName: string | null, name: string): string {
+  if (brandName && name) {
+    return `${brandName} ${name}`;
+  }
+  return brandName || name;
+}
+
 // GET /api/shops/[id] - 指定した店舗を取得
 export async function GET(_request: Request, context: Context) {
   try {
@@ -32,7 +40,13 @@ export async function GET(_request: Request, context: Context) {
       );
     }
 
-    return NextResponse.json(shop);
+    // displayNameを追加
+    const shopWithDisplayName = {
+      ...shop,
+      displayName: getDisplayName(shop.brandName, shop.name),
+    };
+
+    return NextResponse.json(shopWithDisplayName);
   } catch (error) {
     console.error("Failed to fetch shop:", error);
     return NextResponse.json(
@@ -54,17 +68,6 @@ export async function PUT(request: Request, context: Context) {
 
     const body = await request.json();
 
-    // バリデーション: 名前が指定されている場合は空でないこと
-    if (
-      body.name !== undefined &&
-      (typeof body.name !== "string" || body.name.trim() === "")
-    ) {
-      return NextResponse.json(
-        { error: "店舗名は空にできません" },
-        { status: 400 },
-      );
-    }
-
     // 店舗の存在確認
     const existing = await prisma.shop.findUnique({
       where: { id: shopId },
@@ -77,17 +80,43 @@ export async function PUT(request: Request, context: Context) {
       );
     }
 
+    // 更新後の値を計算
+    const newBrandName =
+      body.brandName !== undefined
+        ? body.brandName?.trim() || null
+        : existing.brandName;
+    const newName =
+      body.name !== undefined ? body.name?.trim() || "" : existing.name;
+
+    // バリデーション: 両方が空になる場合はエラー
+    if (!newBrandName && !newName) {
+      return NextResponse.json(
+        { error: "ブランド名または店舗名は必須です" },
+        { status: 400 },
+      );
+    }
+
     const shop = await prisma.shop.update({
       where: { id: shopId },
       data: {
-        name: body.name !== undefined ? body.name.trim() : undefined,
+        brandName:
+          body.brandName !== undefined
+            ? body.brandName?.trim() || null
+            : undefined,
+        name: body.name !== undefined ? body.name?.trim() || "" : undefined,
         address: body.address !== undefined ? body.address : undefined,
         url: body.url !== undefined ? body.url : undefined,
         notes: body.notes !== undefined ? body.notes : undefined,
       },
     });
 
-    return NextResponse.json(shop);
+    // displayNameを追加
+    const shopWithDisplayName = {
+      ...shop,
+      displayName: getDisplayName(shop.brandName, shop.name),
+    };
+
+    return NextResponse.json(shopWithDisplayName);
   } catch (error) {
     console.error("Failed to update shop:", error);
     return NextResponse.json(

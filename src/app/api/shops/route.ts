@@ -1,13 +1,28 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// displayNameを生成するヘルパー関数
+function getDisplayName(brandName: string | null, name: string): string {
+  if (brandName && name) {
+    return `${brandName} ${name}`;
+  }
+  return brandName || name;
+}
+
 // GET /api/shops - 全店舗を取得
 export async function GET() {
   try {
     const shops = await prisma.shop.findMany({
       orderBy: { createdAt: "asc" },
     });
-    return NextResponse.json(shops);
+
+    // displayNameを追加
+    const shopsWithDisplayName = shops.map((shop) => ({
+      ...shop,
+      displayName: getDisplayName(shop.brandName, shop.name),
+    }));
+
+    return NextResponse.json(shopsWithDisplayName);
   } catch (error) {
     console.error("Failed to fetch shops:", error);
     return NextResponse.json(
@@ -22,18 +37,21 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // バリデーション: 店舗名は必須
-    if (
-      !body.name ||
-      typeof body.name !== "string" ||
-      body.name.trim() === ""
-    ) {
-      return NextResponse.json({ error: "店舗名は必須です" }, { status: 400 });
+    const brandName = body.brandName?.trim() || null;
+    const name = body.name?.trim() || "";
+
+    // バリデーション: ブランド名と店舗名の両方が空の場合はエラー
+    if (!brandName && !name) {
+      return NextResponse.json(
+        { error: "ブランド名または店舗名は必須です" },
+        { status: 400 },
+      );
     }
 
     const shop = await prisma.shop.create({
       data: {
-        name: body.name.trim(),
+        brandName,
+        name,
         address: body.address || null,
         url: body.url || null,
         notes: body.notes || null,

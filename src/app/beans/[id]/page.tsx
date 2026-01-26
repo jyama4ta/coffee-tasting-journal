@@ -32,6 +32,14 @@ const BEAN_TYPE_LABELS: Record<string, string> = {
   BLEND: "ブレンド",
 };
 
+// displayNameを生成するヘルパー関数
+function getShopDisplayName(brandName: string | null, name: string): string {
+  if (brandName && name) {
+    return `${brandName} ${name}`;
+  }
+  return brandName || name;
+}
+
 // コーヒー豆アイコンコンポーネント
 function BeanIcon({ filled }: { filled: boolean }) {
   return (
@@ -229,7 +237,7 @@ export default async function BeanDetailPage({ params }: Props) {
                   href={`/shops/${bean.shop.id}`}
                   className="text-amber-600 hover:text-amber-800"
                 >
-                  {bean.shop.name}
+                  {getShopDisplayName(bean.shop.brandName, bean.shop.name)}
                 </Link>
               ) : (
                 "-"

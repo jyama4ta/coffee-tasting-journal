@@ -16,6 +16,17 @@ const ROAST_LEVEL_LABELS: Record<string, string> = {
   ITALIAN: "イタリアンロースト",
 };
 
+// displayNameを生成するヘルパー関数
+function getShopDisplayName(
+  brandName: string | null,
+  name: string,
+): string {
+  if (brandName && name) {
+    return `${brandName} ${name}`;
+  }
+  return brandName || name;
+}
+
 async function getBeans(status?: string) {
   const where = status ? { status: status as "IN_STOCK" | "FINISHED" } : {};
   return prisma.coffeeBean.findMany({
@@ -123,7 +134,12 @@ export default async function BeansPage({ searchParams }: Props) {
                       {ROAST_LEVEL_LABELS[bean.roastLevel] || bean.roastLevel}
                     </p>
                   )}
-                  {bean.shop && <p>購入店: {bean.shop.name}</p>}
+                  {bean.shop && (
+                    <p>
+                      購入店:{" "}
+                      {getShopDisplayName(bean.shop.brandName, bean.shop.name)}
+                    </p>
+                  )}
                 </div>
                 <div className="mt-2 flex items-center gap-2">
                   <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs font-medium">
@@ -195,7 +211,7 @@ export default async function BeansPage({ searchParams }: Props) {
                           href={`/shops/${bean.shop.id}`}
                           className="text-amber-600 hover:text-amber-800"
                         >
-                          {bean.shop.name}
+                          {getShopDisplayName(bean.shop.brandName, bean.shop.name)}
                         </Link>
                       ) : (
                         "-"
