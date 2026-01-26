@@ -27,7 +27,7 @@ export default function Navigation() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-xl">
             <span>☕</span>
-            <span className="hidden sm:inline">Coffee Tasting Journal</span>
+            <span className="text-sm sm:text-xl">Coffee Tasting Journal</span>
           </Link>
 
           {/* Desktop Navigation Links */}
