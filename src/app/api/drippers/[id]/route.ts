@@ -5,6 +5,15 @@ type Context = {
   params: Promise<{ id: string }>;
 };
 
+// 有効なサイズ値
+const VALID_SIZES = [
+  "SIZE_01",
+  "SIZE_02",
+  "SIZE_03",
+  "SIZE_04",
+  "OTHER",
+] as const;
+
 // IDをパースするヘルパー関数
 function parseId(id: string): number | null {
   const parsed = parseInt(id, 10);
@@ -65,6 +74,20 @@ export async function PUT(request: Request, context: Context) {
       );
     }
 
+    // バリデーション: サイズが指定されている場合は有効な値であること
+    if (
+      body.size !== undefined &&
+      body.size !== null &&
+      !VALID_SIZES.includes(body.size)
+    ) {
+      return NextResponse.json(
+        {
+          error: `サイズは ${VALID_SIZES.join(", ")} のいずれかを指定してください`,
+        },
+        { status: 400 },
+      );
+    }
+
     // ドリッパーの存在確認
     const existing = await prisma.dripper.findUnique({
       where: { id: dripperId },
@@ -83,6 +106,7 @@ export async function PUT(request: Request, context: Context) {
         name: body.name !== undefined ? body.name.trim() : undefined,
         manufacturer:
           body.manufacturer !== undefined ? body.manufacturer : undefined,
+        size: body.size !== undefined ? body.size : undefined,
         notes: body.notes !== undefined ? body.notes : undefined,
         url: body.url !== undefined ? body.url : undefined,
         imagePath: body.imagePath !== undefined ? body.imagePath : undefined,

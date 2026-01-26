@@ -2,6 +2,44 @@
 
 ## 完了した作業
 
+### 2026-01-26: ドリッパー・フィルターにサイズ情報を追加
+
+1. **データモデル更新**
+   - `prisma/schema.prisma`: EquipmentSize enum 追加（SIZE_01, SIZE_02, SIZE_03, SIZE_04, OTHER）
+   - Dripper / Filter モデルに size フィールド追加（任意）
+   - マイグレーション実行: `20260126132014_add_size_to_dripper_and_filter`
+
+2. **API更新（TDD）**
+   - `src/__tests__/api/drippers.test.ts`: 5テストケース追加（計20テスト）
+   - `src/__tests__/api/filters.test.ts`: 5テストケース追加（計22テスト）
+   - `src/app/api/drippers/route.ts`: size バリデーション＆保存処理追加
+   - `src/app/api/drippers/[id]/route.ts`: size 更新処理追加
+   - `src/app/api/filters/route.ts`: size バリデーション＆保存処理追加
+   - `src/app/api/filters/[id]/route.ts`: size 更新処理追加
+
+3. **UI更新**
+   - `src/app/drippers/new/page.tsx`: サイズ選択ドロップダウン追加
+   - `src/app/drippers/[id]/edit/page.tsx`: サイズ編集対応
+   - `src/app/drippers/[id]/page.tsx`: サイズ表示追加
+   - `src/app/filters/new/page.tsx`: サイズ選択ドロップダウン追加
+   - `src/app/filters/[id]/edit/page.tsx`: サイズ編集対応
+   - `src/app/filters/[id]/page.tsx`: サイズ表示追加
+
+4. **ドキュメント更新**
+   - `docs/data-model.md`: ER図、フィールド一覧、サイズ値定義を更新
+   - `docs/test-specification.md`: サイズ関連テストケースを追加
+
+5. **サイズ表示ラベル**
+   | 値 | 表示 |
+   |----------|--------------|
+   | SIZE_01 | 01（1-2杯用）|
+   | SIZE_02 | 02（1-4杯用）|
+   | SIZE_03 | 03（3-6杯用）|
+   | SIZE_04 | 04（4-8杯用）|
+   | OTHER | その他 |
+
+6. **テスト結果**: 全249テストがパス
+
 ### 2026-01-25: 豆登録時のステータス制約追加
 
 1. **データ遷移ルールの明確化**

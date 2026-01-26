@@ -1,6 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// 有効なサイズ値
+const VALID_SIZES = [
+  "SIZE_01",
+  "SIZE_02",
+  "SIZE_03",
+  "SIZE_04",
+  "OTHER",
+] as const;
+
 // GET /api/drippers - 全ドリッパーを取得
 export async function GET() {
   try {
@@ -34,10 +43,25 @@ export async function POST(request: Request) {
       );
     }
 
+    // バリデーション: サイズが指定されている場合は有効な値であること
+    if (
+      body.size !== undefined &&
+      body.size !== null &&
+      !VALID_SIZES.includes(body.size)
+    ) {
+      return NextResponse.json(
+        {
+          error: `サイズは ${VALID_SIZES.join(", ")} のいずれかを指定してください`,
+        },
+        { status: 400 },
+      );
+    }
+
     const dripper = await prisma.dripper.create({
       data: {
         name: body.name.trim(),
         manufacturer: body.manufacturer || null,
+        size: body.size || null,
         notes: body.notes || null,
         url: body.url || null,
         imagePath: body.imagePath || null,

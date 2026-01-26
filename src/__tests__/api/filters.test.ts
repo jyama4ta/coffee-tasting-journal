@@ -307,4 +307,86 @@ describe("Filter API", () => {
       expect(data.error).toBeDefined();
     });
   });
+
+  describe("サイズフィールド", () => {
+    it("サイズを指定してフィルターを作成できる", async () => {
+      const filterData = {
+        name: "HARIOペーパー V60用",
+        type: "PAPER",
+        size: "SIZE_02",
+      };
+
+      const request = createRequest("POST", filterData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.name).toBe("HARIOペーパー V60用");
+      expect(data.size).toBe("SIZE_02");
+    });
+
+    it("サイズなしでもフィルターを作成できる", async () => {
+      const filterData = {
+        name: "汎用フィルター",
+        type: "PAPER",
+      };
+
+      const request = createRequest("POST", filterData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.size).toBeNull();
+    });
+
+    it("無効なサイズ値は400エラー", async () => {
+      const filterData = {
+        name: "テストフィルター",
+        size: "INVALID_SIZE",
+      };
+
+      const request = createRequest("POST", filterData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBeDefined();
+    });
+
+    it("サイズを更新できる", async () => {
+      const filter = await prisma.filter.create({
+        data: { name: "HARIOペーパー", size: "SIZE_01" },
+      });
+
+      const request = createRequest(
+        "PUT",
+        { size: "SIZE_02" },
+        `http://localhost:3000/api/filters/${filter.id}`,
+      );
+      const response = await PUT(request, createContext(String(filter.id)));
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.size).toBe("SIZE_02");
+    });
+
+    it("全サイズ値を登録・取得できる", async () => {
+      const sizes = ["SIZE_01", "SIZE_02", "SIZE_03", "SIZE_04", "OTHER"];
+
+      for (const size of sizes) {
+        await prisma.filter.create({
+          data: { name: `フィルター_${size}`, size },
+        });
+      }
+
+      const response = await GET();
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data).toHaveLength(5);
+      sizes.forEach((size, index) => {
+        expect(data[index].size).toBe(size);
+      });
+    });
+  });
 });

@@ -30,6 +30,8 @@ erDiagram
         int id PK
         string name "ドリッパー名（必須）"
         string manufacturer "メーカー"
+        string size "サイズ（SIZE_01/02/03/04/OTHER）"
+        string url "商品ページURL"
         string notes "メモ"
         string imagePath "画像パス"
         datetime createdAt
@@ -40,6 +42,8 @@ erDiagram
         int id PK
         string name "フィルター名（必須）"
         string type "種類（ペーパー/金属/布）"
+        string size "サイズ（SIZE_01/02/03/04/OTHER）"
+        string url "商品ページURL"
         string notes "メモ"
         string imagePath "画像パス"
         datetime createdAt
@@ -114,29 +118,45 @@ erDiagram
 
 使用するドリッパーを管理します。
 
-| フィールド   | 型       | 必須 | 説明               |
-| ------------ | -------- | ---- | ------------------ |
-| id           | Int      | ○    | 主キー（自動採番） |
-| name         | String   | ○    | ドリッパー名       |
-| manufacturer | String   | -    | メーカー名         |
-| notes        | String   | -    | メモ               |
-| imagePath    | String   | -    | 画像ファイルパス   |
-| createdAt    | DateTime | ○    | 作成日時           |
-| updatedAt    | DateTime | ○    | 更新日時           |
+| フィールド   | 型       | 必須 | 説明                             |
+| ------------ | -------- | ---- | -------------------------------- |
+| id           | Int      | ○    | 主キー（自動採番）               |
+| name         | String   | ○    | ドリッパー名                     |
+| manufacturer | String   | -    | メーカー名                       |
+| size         | Enum     | -    | サイズ（SIZE_01/02/03/04/OTHER） |
+| url          | String   | -    | 商品ページURL                    |
+| notes        | String   | -    | メモ                             |
+| imagePath    | String   | -    | 画像ファイルパス                 |
+| createdAt    | DateTime | ○    | 作成日時                         |
+| updatedAt    | DateTime | ○    | 更新日時                         |
 
 ### 3. Filter（フィルターマスター）
 
 使用するフィルターを管理します。
 
-| フィールド | 型       | 必須 | 説明                      |
-| ---------- | -------- | ---- | ------------------------- |
-| id         | Int      | ○    | 主キー（自動採番）        |
-| name       | String   | ○    | フィルター名              |
-| type       | String   | -    | 種類（PAPER/METAL/CLOTH） |
-| notes      | String   | -    | メモ                      |
-| imagePath  | String   | -    | 画像ファイルパス          |
-| createdAt  | DateTime | ○    | 作成日時                  |
-| updatedAt  | DateTime | ○    | 更新日時                  |
+| フィールド | 型       | 必須 | 説明                             |
+| ---------- | -------- | ---- | -------------------------------- |
+| id         | Int      | ○    | 主キー（自動採番）               |
+| name       | String   | ○    | フィルター名                     |
+| type       | String   | -    | 種類（PAPER/METAL/CLOTH）        |
+| size       | Enum     | -    | サイズ（SIZE_01/02/03/04/OTHER） |
+| url        | String   | -    | 商品ページURL                    |
+| notes      | String   | -    | メモ                             |
+| imagePath  | String   | -    | 画像ファイルパス                 |
+| createdAt  | DateTime | ○    | 作成日時                         |
+| updatedAt  | DateTime | ○    | 更新日時                         |
+
+#### サイズ（EquipmentSize）の値
+
+ドリッパーとフィルターで共通のサイズ分類です。
+
+| 値      | 表示名        | 説明             |
+| ------- | ------------- | ---------------- |
+| SIZE_01 | 01（1-2杯用） | 小サイズ         |
+| SIZE_02 | 02（1-4杯用） | 標準サイズ       |
+| SIZE_03 | 03（3-6杯用） | 中〜大サイズ     |
+| SIZE_04 | 04（4-8杯用） | 大サイズ         |
+| OTHER   | その他        | 上記に該当しない |
 
 ### 4. CoffeeBean（コーヒー豆マスター）
 

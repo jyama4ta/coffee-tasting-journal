@@ -91,6 +91,20 @@ export default async function FilterDetailPage({ params }: Props) {
             </dd>
           </div>
           <div>
+            <dt className="text-sm font-medium text-gray-500">サイズ</dt>
+            <dd className="mt-1 text-gray-900">
+              {filter.size
+                ? {
+                    SIZE_01: "01（1-2杯用）",
+                    SIZE_02: "02（1-4杯用）",
+                    SIZE_03: "03（3-6杯用）",
+                    SIZE_04: "04（4-8杯用）",
+                    OTHER: "その他",
+                  }[filter.size] || filter.size
+                : "-"}
+            </dd>
+          </div>
+          <div>
             <dt className="text-sm font-medium text-gray-500">使用回数</dt>
             <dd className="mt-1 text-gray-900">
               {filter.tastingEntries.length} 回

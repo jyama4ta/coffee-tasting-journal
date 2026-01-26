@@ -8,6 +8,15 @@ type Context = {
 // 有効なフィルター種類
 const VALID_FILTER_TYPES = ["PAPER", "METAL", "CLOTH"] as const;
 
+// 有効なサイズ値
+const VALID_SIZES = [
+  "SIZE_01",
+  "SIZE_02",
+  "SIZE_03",
+  "SIZE_04",
+  "OTHER",
+] as const;
+
 // IDをパースするヘルパー関数
 function parseId(id: string): number | null {
   const parsed = parseInt(id, 10);
@@ -82,6 +91,20 @@ export async function PUT(request: Request, context: Context) {
       );
     }
 
+    // バリデーション: サイズが指定されている場合は有効な値であること
+    if (
+      body.size !== undefined &&
+      body.size !== null &&
+      !VALID_SIZES.includes(body.size)
+    ) {
+      return NextResponse.json(
+        {
+          error: `サイズは ${VALID_SIZES.join(", ")} のいずれかを指定してください`,
+        },
+        { status: 400 },
+      );
+    }
+
     // フィルターの存在確認
     const existing = await prisma.filter.findUnique({
       where: { id: filterId },
@@ -99,6 +122,7 @@ export async function PUT(request: Request, context: Context) {
       data: {
         name: body.name !== undefined ? body.name.trim() : undefined,
         type: body.type !== undefined ? body.type : undefined,
+        size: body.size !== undefined ? body.size : undefined,
         notes: body.notes !== undefined ? body.notes : undefined,
         url: body.url !== undefined ? body.url : undefined,
         imagePath: body.imagePath !== undefined ? body.imagePath : undefined,

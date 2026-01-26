@@ -4,6 +4,15 @@ import { prisma } from "@/lib/prisma";
 // 有効なフィルター種類
 const VALID_FILTER_TYPES = ["PAPER", "METAL", "CLOTH"] as const;
 
+// 有効なサイズ値
+const VALID_SIZES = [
+  "SIZE_01",
+  "SIZE_02",
+  "SIZE_03",
+  "SIZE_04",
+  "OTHER",
+] as const;
+
 // GET /api/filters - 全フィルターを取得
 export async function GET() {
   try {
@@ -51,10 +60,25 @@ export async function POST(request: Request) {
       );
     }
 
+    // バリデーション: サイズが指定されている場合は有効な値であること
+    if (
+      body.size !== undefined &&
+      body.size !== null &&
+      !VALID_SIZES.includes(body.size)
+    ) {
+      return NextResponse.json(
+        {
+          error: `サイズは ${VALID_SIZES.join(", ")} のいずれかを指定してください`,
+        },
+        { status: 400 },
+      );
+    }
+
     const filter = await prisma.filter.create({
       data: {
         name: body.name.trim(),
         type: body.type || null,
+        size: body.size || null,
         notes: body.notes || null,
         url: body.url || null,
         imagePath: body.imagePath || null,

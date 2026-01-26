@@ -33,14 +33,15 @@ model Shop {
 // ドリッパーマスター
 // ============================================
 model Dripper {
-  id           Int      @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   name         String // ドリッパー名（必須）
   manufacturer String? // メーカー
+  size         EquipmentSize? // サイズ（01-04/その他）
   notes        String? // メモ
   url          String? // 商品ページURL
   imagePath    String? // 画像パス
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   // リレーション
   tastingEntries TastingEntry[]
@@ -52,14 +53,15 @@ model Dripper {
 // フィルターマスター
 // ============================================
 model Filter {
-  id        Int         @id @default(autoincrement())
+  id        Int            @id @default(autoincrement())
   name      String // フィルター名（必須）
   type      FilterType? // 種類（ペーパー/金属/布）
+  size      EquipmentSize? // サイズ（01-04/その他）
   notes     String? // メモ
   url       String? // 商品ページURL
   imagePath String? // 画像パス
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 
   // リレーション
   tastingEntries TastingEntry[]
@@ -72,6 +74,15 @@ enum FilterType {
   PAPER // ペーパー
   METAL // 金属
   CLOTH // 布
+}
+
+// ドリッパー・フィルターのサイズ
+enum EquipmentSize {
+  SIZE_01 // 01サイズ（1-2杯用）
+  SIZE_02 // 02サイズ（1-4杯用）
+  SIZE_03 // 03サイズ（3-6杯用）
+  SIZE_04 // 04サイズ（4-8杯用）
+  OTHER // その他・フリーサイズ
 }
 
 // ============================================

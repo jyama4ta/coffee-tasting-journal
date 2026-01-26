@@ -12,6 +12,7 @@ interface Filter {
   notes: string | null;
   url: string | null;
   imagePath: string | null;
+  size: string | null;
 }
 
 const FILTER_TYPES = [
@@ -66,6 +67,7 @@ export default function EditFilterPage({ params }: Props) {
       type: (formData.get("type") as string) || null,
       notes: (formData.get("notes") as string) || null,
       url: (formData.get("url") as string) || null,
+      size: (formData.get("size") as string) || null,
       imagePath,
     };
 
@@ -177,6 +179,28 @@ export default function EditFilterPage({ params }: Props) {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             placeholder="https://www.hario.co.jp/filter.html"
           />
+        </div>
+
+        <div>
+          <label
+            htmlFor="size"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            サイズ
+          </label>
+          <select
+            id="size"
+            name="size"
+            defaultValue={filter.size || ""}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+          >
+            <option value="">-- 選択してください --</option>
+            <option value="SIZE_01">01（1-2杯用）</option>
+            <option value="SIZE_02">02（1-4杯用）</option>
+            <option value="SIZE_03">03（3-6杯用）</option>
+            <option value="SIZE_04">04（4-8杯用）</option>
+            <option value="OTHER">その他</option>
+          </select>
         </div>
 
         <div>

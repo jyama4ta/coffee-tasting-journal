@@ -103,6 +103,12 @@ afterEach(async () => {
 | 12  | PUT /api/drippers/[id]    | 名前を空に更新しようとすると400エラー                  | 400 + エラーメッセージ                   |
 | 13  | DELETE /api/drippers/[id] | ドリッパーを削除する                                   | 204 + DBから削除確認                     |
 | 14  | DELETE /api/drippers/[id] | 存在しないIDの場合は404エラー                          | 404 + エラーメッセージ                   |
+| 15  | POST /api/drippers        | URLを指定してドリッパーを作成できる                    | 201 + url含む                            |
+| 16  | POST /api/drippers        | サイズを指定してドリッパーを作成できる                 | 201 + size含む（SIZE_01〜04, OTHER）     |
+| 17  | POST /api/drippers        | サイズなしでも作成できる（任意フィールド）             | 201 + size=null                          |
+| 18  | POST /api/drippers        | 無効なサイズ値は400エラー                              | 400 + エラーメッセージ                   |
+| 19  | PUT /api/drippers/[id]    | サイズを更新できる                                     | 200 + 更新されたsize                     |
+| 20  | POST /api/drippers        | 全サイズ値（SIZE_01〜04, OTHER）を登録・取得できる     | 201 + 各サイズ値                         |
 
 ### テスト設計方針
 
@@ -134,10 +140,16 @@ ShopAPIテストと同様の設計方針を適用。
 | 14  | PUT /api/filters/[id]    | 名前を空に更新しようとすると400エラー                  | 400 + エラーメッセージ                      |
 | 15  | DELETE /api/filters/[id] | フィルターを削除する                                   | 204 + DBから削除確認                        |
 | 16  | DELETE /api/filters/[id] | 存在しないIDの場合は404エラー                          | 404 + エラーメッセージ                      |
+| 17  | POST /api/filters        | URLを指定してフィルターを作成できる                    | 201 + url含む                               |
+| 18  | POST /api/filters        | サイズを指定してフィルターを作成できる                 | 201 + size含む（SIZE_01〜04, OTHER）        |
+| 19  | POST /api/filters        | サイズなしでも作成できる（任意フィールド）             | 201 + size=null                             |
+| 20  | POST /api/filters        | 無効なサイズ値は400エラー                              | 400 + エラーメッセージ                      |
+| 21  | PUT /api/filters/[id]    | サイズを更新できる                                     | 200 + 更新されたsize                        |
+| 22  | POST /api/filters        | 全サイズ値（SIZE_01〜04, OTHER）を登録・取得できる     | 201 + 各サイズ値                            |
 
 ### テスト設計方針
 
-ShopAPIテストと同様の設計方針を適用。FilterType（PAPER/METAL/CLOTH）のバリデーションテストを追加。
+ShopAPIテストと同様の設計方針を適用。FilterType（PAPER/METAL/CLOTH）、EquipmentSize（SIZE_01〜04, OTHER）のバリデーションテストを追加。
 
 ---
 

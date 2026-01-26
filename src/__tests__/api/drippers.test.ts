@@ -282,4 +282,86 @@ describe("Dripper API", () => {
       expect(data.error).toBeDefined();
     });
   });
+
+  describe("サイズフィールド", () => {
+    it("サイズを指定してドリッパーを作成できる", async () => {
+      const dripperData = {
+        name: "V60",
+        manufacturer: "HARIO",
+        size: "SIZE_02",
+      };
+
+      const request = createRequest("POST", dripperData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.name).toBe("V60");
+      expect(data.size).toBe("SIZE_02");
+    });
+
+    it("サイズなしでもドリッパーを作成できる", async () => {
+      const dripperData = {
+        name: "V60",
+        manufacturer: "HARIO",
+      };
+
+      const request = createRequest("POST", dripperData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.size).toBeNull();
+    });
+
+    it("無効なサイズ値は400エラー", async () => {
+      const dripperData = {
+        name: "V60",
+        size: "INVALID_SIZE",
+      };
+
+      const request = createRequest("POST", dripperData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBeDefined();
+    });
+
+    it("サイズを更新できる", async () => {
+      const dripper = await prisma.dripper.create({
+        data: { name: "V60", size: "SIZE_01" },
+      });
+
+      const request = createRequest(
+        "PUT",
+        { size: "SIZE_02" },
+        `http://localhost:3000/api/drippers/${dripper.id}`,
+      );
+      const response = await PUT(request, createContext(String(dripper.id)));
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.size).toBe("SIZE_02");
+    });
+
+    it("全サイズ値を登録・取得できる", async () => {
+      const sizes = ["SIZE_01", "SIZE_02", "SIZE_03", "SIZE_04", "OTHER"];
+
+      for (const size of sizes) {
+        await prisma.dripper.create({
+          data: { name: `ドリッパー_${size}`, size },
+        });
+      }
+
+      const response = await GET();
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data).toHaveLength(5);
+      sizes.forEach((size, index) => {
+        expect(data[index].size).toBe(size);
+      });
+    });
+  });
 });
