@@ -122,3 +122,43 @@ Prisma Clientを使用してタイプセーフなDB操作を実現。
 3. **シンプルなUI**: 記録の入力と一覧表示に最適化
 4. **データ永続化**: Dockerボリュームまたは外部ストレージでのデータ保持
 5. **入力支援**: 産地・銘柄の入力時に過去の入力履歴からオートコンプリート表示
+
+## テスト設計の注意点
+
+### JSON文字列フィールドのエッジケース
+
+DBにJSON文字列として保存するフィールド（例: `flavorTags`）は、以下のエッジケースを必ずテストすること:
+
+```typescript
+// テストすべきケース
+- null
+- 未指定（undefined）
+- 空配列 []
+- 空文字列 ""
+- 不正なJSON文字列
+```
+
+### 安全なJSONパース関数を使用
+
+ページコンポーネントでJSONフィールドを表示する際は、直接`JSON.parse()`を呼ばず、安全なパース関数を使用すること:
+
+```typescript
+// ❌ 危険: nullや不正なJSONでクラッシュする
+{JSON.parse(data.flavorTags).map(...)}
+
+// ✅ 安全: エラー時は空配列を返す
+function parseFlavorTags(flavorTags: string | null): string[] {
+  if (!flavorTags || flavorTags === "[]") return [];
+  try {
+    const parsed = JSON.parse(flavorTags);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+```
+
+### APIテストとページテストの両方が必要
+
+- **APIテスト**: データの保存・取得が正しく動作することを確認
+- **ページコンポーネント/E2Eテスト**: 表示時にエッジケースでクラッシュしないことを確認
