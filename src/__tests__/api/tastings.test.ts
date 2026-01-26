@@ -541,4 +541,101 @@ describe("TastingEntry API", () => {
       expect(data.error).toBeDefined();
     });
   });
+
+  describe("flavorTags エッジケース", () => {
+    it("flavorTagsが空配列の場合、空のJSON配列文字列として保存される", async () => {
+      const tastingData = {
+        coffeeBeanId: testBeanId,
+        brewDate: "2026-01-25",
+        flavorTags: [],
+      };
+
+      const request = createRequest("POST", tastingData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.flavorTags).toBe("[]");
+      // パースしても空配列
+      expect(JSON.parse(data.flavorTags)).toEqual([]);
+    });
+
+    it("flavorTagsが未指定の場合、nullとして保存される", async () => {
+      const tastingData = {
+        coffeeBeanId: testBeanId,
+        brewDate: "2026-01-25",
+      };
+
+      const request = createRequest("POST", tastingData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.flavorTags).toBeNull();
+    });
+
+    it("flavorTagsがnullの場合も正常に保存される", async () => {
+      const tastingData = {
+        coffeeBeanId: testBeanId,
+        brewDate: "2026-01-25",
+        flavorTags: null,
+      };
+
+      const request = createRequest("POST", tastingData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.flavorTags).toBeNull();
+    });
+
+    it("既存の試飲記録のflavorTagsが空配列文字列でもGETで正常に取得できる", async () => {
+      // 空配列のflavorTagsを持つデータを直接作成
+      const tasting = await prisma.tastingEntry.create({
+        data: {
+          coffeeBeanId: testBeanId,
+          brewDate: new Date(),
+          flavorTags: "[]",
+        },
+      });
+
+      const request = createRequest(
+        "GET",
+        undefined,
+        `http://localhost:3000/api/tastings/${tasting.id}`,
+      );
+      const response = await GET_BY_ID(
+        request,
+        createContext(String(tasting.id)),
+      );
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.flavorTags).toBe("[]");
+    });
+
+    it("既存の試飲記録のflavorTagsがnullでもGETで正常に取得できる", async () => {
+      const tasting = await prisma.tastingEntry.create({
+        data: {
+          coffeeBeanId: testBeanId,
+          brewDate: new Date(),
+          flavorTags: null,
+        },
+      });
+
+      const request = createRequest(
+        "GET",
+        undefined,
+        `http://localhost:3000/api/tastings/${tasting.id}`,
+      );
+      const response = await GET_BY_ID(
+        request,
+        createContext(String(tasting.id)),
+      );
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.flavorTags).toBeNull();
+    });
+  });
 });

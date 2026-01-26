@@ -209,6 +209,11 @@ ShopAPIテストと同様の設計方針を適用。以下の追加テストを�
 | 22  | PUT /api/tastings/[id]    | 評価値が範囲外の場合は400エラー                        | 400 + エラーメッセージ         |
 | 23  | DELETE /api/tastings/[id] | 試飲記録を削除する                                     | 204 + DBから削除確認           |
 | 24  | DELETE /api/tastings/[id] | 存在しないIDの場合は404エラー                          | 404 + エラーメッセージ         |
+| 25  | flavorTags エッジケース   | flavorTagsが空配列の場合、空のJSON配列文字列として保存 | 201 + flavorTags="[]"          |
+| 26  | flavorTags エッジケース   | flavorTagsが未指定の場合、nullとして保存               | 201 + flavorTags=null          |
+| 27  | flavorTags エッジケース   | flavorTagsがnullの場合も正常に保存される               | 201 + flavorTags=null          |
+| 28  | flavorTags エッジケース   | 空配列文字列のflavorTagsでもGETで正常に取得できる      | 200 + flavorTags="[]"          |
+| 29  | flavorTags エッジケース   | nullのflavorTagsでもGETで正常に取得できる              | 200 + flavorTags=null          |
 
 ### テスト設計方針
 
@@ -218,6 +223,7 @@ ShopAPIテストと同様の設計方針を適用。以下の追加テストを�
 - **評価値バリデーション**: 酸味・苦味・甘味・後味は1-10、総合評価は1-5の範囲
 - **Body値バリデーション**: LIGHT/MEDIUM/HEAVYのいずれか
 - **フレーバータグ**: 配列で受け取りJSON文字列として保存
+- **フレーバータグ エッジケース**: null、空配列、空文字列のハンドリング
 - **関連エンティティ**: coffeeBean, dripper, filterのincludeテスト
 
 ---
