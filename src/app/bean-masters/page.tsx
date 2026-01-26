@@ -97,8 +97,7 @@ export default async function BeanMastersPage() {
                 {beanMasters.map((master) => (
                   <tr
                     key={master.id}
-                    className="hover:bg-gray-50 cursor-pointer"
-                    onClick={() => {}}
+                    className="hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Link
