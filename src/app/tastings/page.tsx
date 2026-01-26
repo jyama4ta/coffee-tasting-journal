@@ -83,7 +83,7 @@ export default async function TastingsPage({ searchParams }: Props) {
   const selectedBean = beanId
     ? beans.find((b) => b.id === parseInt(beanId, 10))
     : null;
-  
+
   const selectedBeanMaster = beanMasterId
     ? beanMasters.find((m) => m.id === parseInt(beanMasterId, 10))
     : null;

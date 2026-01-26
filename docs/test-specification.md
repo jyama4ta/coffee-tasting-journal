@@ -439,39 +439,39 @@ ShopAPIテストと同様の設計方針を適用。以下の追加テストを�
 
 ### テストケース一覧
 
-| #   | カテゴリ                      | テストケース                                           | 期待結果                            |
-| --- | ----------------------------- | ------------------------------------------------------ | ----------------------------------- |
-| 1   | GET /api/bean-masters         | 空の配列を返す（銘柄マスターが存在しない場合）         | 200 + `[]`                          |
-| 2   | GET /api/bean-masters         | 全ての銘柄マスターを返す                               | 200 + 銘柄マスター配列              |
-| 3   | GET /api/bean-masters         | 名前順（昇順）でソートされる                           | 200 + ABC順                         |
-| 4   | POST /api/bean-masters        | 新しい銘柄マスターを作成する                           | 201 + 作成データ                    |
-| 5   | POST /api/bean-masters        | 名前のみで作成できる（任意フィールドは省略可）         | 201 + 作成データ（任意はnull）      |
-| 6   | POST /api/bean-masters        | 名前が空の場合は400エラー                              | 400 + エラーメッセージ              |
-| 7   | POST /api/bean-masters        | 名前がない場合は400エラー                              | 400 + エラーメッセージ              |
-| 8   | POST /api/bean-masters        | 無効な焙煎度の場合は400エラー                          | 400 + エラーメッセージ              |
-| 9   | POST /api/bean-masters        | 無効な精製方法の場合は400エラー                        | 400 + エラーメッセージ              |
-| 10  | GET /api/bean-masters/[id]    | 指定したIDの銘柄マスターを返す                         | 200 + 銘柄マスターデータ            |
-| 11  | GET /api/bean-masters/[id]    | 紐づく豆の数（_count.coffeeBeans）を含む               | 200 + _count含む                    |
-| 12  | GET /api/bean-masters/[id]    | 存在しないIDの場合は404エラー                          | 404 + エラーメッセージ              |
-| 13  | GET /api/bean-masters/[id]    | 無効なIDの場合は400エラー                              | 400 + エラーメッセージ              |
-| 14  | PUT /api/bean-masters/[id]    | 銘柄マスターを更新する                                 | 200 + 更新データ                    |
-| 15  | PUT /api/bean-masters/[id]    | 存在しないIDの場合は404エラー                          | 404 + エラーメッセージ              |
-| 16  | PUT /api/bean-masters/[id]    | 名前を空に更新しようとすると400エラー                  | 400 + エラーメッセージ              |
-| 17  | DELETE /api/bean-masters/[id] | 銘柄マスターを削除する（豆が紐づいていない場合）       | 204 + DBから削除確認                |
-| 18  | DELETE /api/bean-masters/[id] | 豆が紐づいている場合は削除不可                         | 400 + エラーメッセージ              |
-| 19  | DELETE /api/bean-masters/[id] | 存在しないIDの場合は404エラー                          | 404 + エラーメッセージ              |
+| #   | カテゴリ                      | テストケース                                     | 期待結果                       |
+| --- | ----------------------------- | ------------------------------------------------ | ------------------------------ |
+| 1   | GET /api/bean-masters         | 空の配列を返す（銘柄マスターが存在しない場合）   | 200 + `[]`                     |
+| 2   | GET /api/bean-masters         | 全ての銘柄マスターを返す                         | 200 + 銘柄マスター配列         |
+| 3   | GET /api/bean-masters         | 名前順（昇順）でソートされる                     | 200 + ABC順                    |
+| 4   | POST /api/bean-masters        | 新しい銘柄マスターを作成する                     | 201 + 作成データ               |
+| 5   | POST /api/bean-masters        | 名前のみで作成できる（任意フィールドは省略可）   | 201 + 作成データ（任意はnull） |
+| 6   | POST /api/bean-masters        | 名前が空の場合は400エラー                        | 400 + エラーメッセージ         |
+| 7   | POST /api/bean-masters        | 名前がない場合は400エラー                        | 400 + エラーメッセージ         |
+| 8   | POST /api/bean-masters        | 無効な焙煎度の場合は400エラー                    | 400 + エラーメッセージ         |
+| 9   | POST /api/bean-masters        | 無効な精製方法の場合は400エラー                  | 400 + エラーメッセージ         |
+| 10  | GET /api/bean-masters/[id]    | 指定したIDの銘柄マスターを返す                   | 200 + 銘柄マスターデータ       |
+| 11  | GET /api/bean-masters/[id]    | 紐づく豆の数（\_count.coffeeBeans）を含む        | 200 + \_count含む              |
+| 12  | GET /api/bean-masters/[id]    | 存在しないIDの場合は404エラー                    | 404 + エラーメッセージ         |
+| 13  | GET /api/bean-masters/[id]    | 無効なIDの場合は400エラー                        | 400 + エラーメッセージ         |
+| 14  | PUT /api/bean-masters/[id]    | 銘柄マスターを更新する                           | 200 + 更新データ               |
+| 15  | PUT /api/bean-masters/[id]    | 存在しないIDの場合は404エラー                    | 404 + エラーメッセージ         |
+| 16  | PUT /api/bean-masters/[id]    | 名前を空に更新しようとすると400エラー            | 400 + エラーメッセージ         |
+| 17  | DELETE /api/bean-masters/[id] | 銘柄マスターを削除する（豆が紐づいていない場合） | 204 + DBから削除確認           |
+| 18  | DELETE /api/bean-masters/[id] | 豆が紐づいている場合は削除不可                   | 400 + エラーメッセージ         |
+| 19  | DELETE /api/bean-masters/[id] | 存在しないIDの場合は404エラー                    | 404 + エラーメッセージ         |
 
 ### CoffeeBean API との連携テスト
 
 **ファイル:** `src/__tests__/api/beans.test.ts`（銘柄マスター関連テストを追加）
 
-| #   | カテゴリ        | テストケース                                       | 期待結果                               |
-| --- | --------------- | -------------------------------------------------- | -------------------------------------- |
-| 29  | POST /api/beans | beanMasterIdを指定して豆を作成できる               | 201 + beanMasterId含む                 |
-| 30  | POST /api/beans | 銘柄マスターの値（name, origin等）が自動補完される | 201 + 銘柄マスターの値で補完           |
-| 31  | POST /api/beans | 存在しないbeanMasterIdの場合は400エラー            | 400 + エラーメッセージ                 |
-| 32  | GET /api/beans  | beanMasterIdでフィルタリングできる                 | 200 + フィルタリングされた配列         |
-| 33  | GET /api/beans  | レスポンスにbeanMaster情報を含む                   | 200 + beanMaster含む（include: true）  |
+| #   | カテゴリ        | テストケース                                       | 期待結果                              |
+| --- | --------------- | -------------------------------------------------- | ------------------------------------- |
+| 29  | POST /api/beans | beanMasterIdを指定して豆を作成できる               | 201 + beanMasterId含む                |
+| 30  | POST /api/beans | 銘柄マスターの値（name, origin等）が自動補完される | 201 + 銘柄マスターの値で補完          |
+| 31  | POST /api/beans | 存在しないbeanMasterIdの場合は400エラー            | 400 + エラーメッセージ                |
+| 32  | GET /api/beans  | beanMasterIdでフィルタリングできる                 | 200 + フィルタリングされた配列        |
+| 33  | GET /api/beans  | レスポンスにbeanMaster情報を含む                   | 200 + beanMaster含む（include: true） |
 
 ### テスト設計方針
 

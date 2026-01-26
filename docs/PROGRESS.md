@@ -13,7 +13,7 @@
 2. **BeanMaster API 実装（TDD）**
    - `src/__tests__/api/beanMasters.test.ts`: 19テストケース作成
    - `src/app/api/bean-masters/route.ts`: GET（一覧・名前順ソート）/ POST（作成）
-   - `src/app/api/bean-masters/[id]/route.ts`: GET（詳細・_count含む）/ PUT（更新）/ DELETE（削除）
+   - `src/app/api/bean-masters/[id]/route.ts`: GET（詳細・\_count含む）/ PUT（更新）/ DELETE（削除）
    - 削除時の参照整合性チェック（紐づく豆がある場合は削除不可）
    - 焙煎度・精製方法のバリデーション
 

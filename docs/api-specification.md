@@ -405,28 +405,28 @@ interface Filter {
 
 ### エンドポイント一覧
 
-| メソッド | パス                    | 説明           |
-| -------- | ----------------------- | -------------- |
-| GET      | `/api/bean-masters`      | 銘柄一覧取得   |
-| POST     | `/api/bean-masters`      | 銘柄作成       |
-| GET      | `/api/bean-masters/[id]` | 銘柄詳細取得   |
-| PUT      | `/api/bean-masters/[id]` | 銘柄更新       |
-| DELETE   | `/api/bean-masters/[id]` | 銘柄削除       |
+| メソッド | パス                     | 説明         |
+| -------- | ------------------------ | ------------ |
+| GET      | `/api/bean-masters`      | 銘柄一覧取得 |
+| POST     | `/api/bean-masters`      | 銘柄作成     |
+| GET      | `/api/bean-masters/[id]` | 銘柄詳細取得 |
+| PUT      | `/api/bean-masters/[id]` | 銘柄更新     |
+| DELETE   | `/api/bean-masters/[id]` | 銘柄削除     |
 
 ### データモデル
 
 ```typescript
 interface BeanMaster {
-  id: number;              // 銘柄ID（自動採番）
-  name: string;            // 銘柄名（必須）
-  origin: string | null;   // デフォルト産地
-  roastLevel: RoastLevel | null;  // デフォルト焙煎度
+  id: number; // 銘柄ID（自動採番）
+  name: string; // 銘柄名（必須）
+  origin: string | null; // デフォルト産地
+  roastLevel: RoastLevel | null; // デフォルト焙煎度
   process: Process | null; // デフォルト精製方法
-  notes: string | null;    // 銘柄メモ
-  createdAt: string;       // 作成日時（ISO 8601形式）
-  updatedAt: string;       // 更新日時（ISO 8601形式）
+  notes: string | null; // 銘柄メモ
+  createdAt: string; // 作成日時（ISO 8601形式）
+  updatedAt: string; // 更新日時（ISO 8601形式）
   _count?: {
-    coffeeBeans: number;   // 紐づく購入記録の件数（詳細取得時のみ）
+    coffeeBeans: number; // 紐づく購入記録の件数（詳細取得時のみ）
   };
 }
 ```
@@ -460,11 +460,11 @@ interface BeanMaster {
 
 ```json
 {
-  "name": "銘柄名",         // 必須
-  "origin": "産地",         // 任意
-  "roastLevel": "LIGHT",   // 任意（RoastLevel型）
-  "process": "WASHED",     // 任意（Process型）
-  "notes": "メモ"          // 任意
+  "name": "銘柄名", // 必須
+  "origin": "産地", // 任意
+  "roastLevel": "LIGHT", // 任意（RoastLevel型）
+  "process": "WASHED", // 任意（Process型）
+  "notes": "メモ" // 任意
 }
 ```
 
@@ -515,11 +515,11 @@ interface BeanMaster {
 
 ```json
 {
-  "name": "更新後の名前",     // 任意（指定時は空文字不可）
-  "origin": "更新後の産地",   // 任意
-  "roastLevel": "MEDIUM",    // 任意
-  "process": "NATURAL",      // 任意
-  "notes": "更新後のメモ"    // 任意
+  "name": "更新後の名前", // 任意（指定時は空文字不可）
+  "origin": "更新後の産地", // 任意
+  "roastLevel": "MEDIUM", // 任意
+  "process": "NATURAL", // 任意
+  "notes": "更新後のメモ" // 任意
 }
 ```
 
