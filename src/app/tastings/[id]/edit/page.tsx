@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import StarRating from "@/components/StarRating";
+import GrindSizeSlider from "@/components/GrindSizeSlider";
 
 interface Bean {
   id: number;
@@ -81,6 +82,9 @@ export default function EditTastingPage({ params }: Props) {
   const [aftertaste, setAftertaste] = useState<number | null>(null);
   const [overallRating, setOverallRating] = useState<number | null>(null);
 
+  // 挽き目のState
+  const [grindSize, setGrindSize] = useState<number | null>(null);
+
   useEffect(() => {
     async function fetchData() {
       const { id } = await params;
@@ -107,6 +111,7 @@ export default function EditTastingPage({ params }: Props) {
         setSweetness(tastingData.sweetness);
         setAftertaste(tastingData.aftertaste);
         setOverallRating(tastingData.overallRating);
+        setGrindSize(tastingData.grindSize);
 
         if (beansRes.ok) setBeans(await beansRes.json());
         if (drippersRes.ok) setDrippers(await drippersRes.json());
@@ -142,9 +147,7 @@ export default function EditTastingPage({ params }: Props) {
       filterId: formData.get("filterId")
         ? parseInt(formData.get("filterId") as string, 10)
         : null,
-      grindSize: formData.get("grindSize")
-        ? parseFloat(formData.get("grindSize") as string)
-        : null,
+      grindSize,
       brewDate: formData.get("brewDate") as string,
       acidity,
       bitterness,
@@ -295,40 +298,26 @@ export default function EditTastingPage({ params }: Props) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="grindSize"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                挽き目（1.0-10.0）
-              </label>
-              <input
-                type="number"
-                id="grindSize"
-                name="grindSize"
-                min="1"
-                max="10"
-                step="0.5"
-                defaultValue={tasting.grindSize || ""}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="brewDate"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                抽出日
-              </label>
-              <input
-                type="date"
-                id="brewDate"
-                name="brewDate"
-                defaultValue={brewDateValue}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-              />
-            </div>
+          <GrindSizeSlider
+            name="grindSize"
+            value={grindSize}
+            onChange={setGrindSize}
+          />
+
+          <div>
+            <label
+              htmlFor="brewDate"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              抽出日
+            </label>
+            <input
+              type="date"
+              id="brewDate"
+              name="brewDate"
+              defaultValue={brewDateValue}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            />
           </div>
         </div>
 
