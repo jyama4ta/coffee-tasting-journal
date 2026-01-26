@@ -9,6 +9,7 @@ interface ButtonProps {
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   className?: string;
+  title?: string;
 }
 
 const variantStyles = {
@@ -36,6 +37,7 @@ export default function Button({
   disabled = false,
   type = "button",
   className = "",
+  title,
 }: ButtonProps) {
   const baseStyles =
     "inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed";
@@ -43,7 +45,7 @@ export default function Button({
 
   if (href) {
     return (
-      <Link href={href} className={styles}>
+      <Link href={href} className={styles} title={title}>
         {children}
       </Link>
     );
@@ -55,6 +57,7 @@ export default function Button({
       onClick={onClick}
       disabled={disabled}
       className={styles}
+      title={title}
     >
       {children}
     </button>
