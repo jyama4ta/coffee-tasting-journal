@@ -85,7 +85,7 @@ export async function GET(request: Request) {
 
     const beans = await prisma.coffeeBean.findMany({
       where,
-      orderBy: { createdAt: "asc" },
+      orderBy: { purchaseDate: "asc" },
       include: {
         shop: true,
       },
