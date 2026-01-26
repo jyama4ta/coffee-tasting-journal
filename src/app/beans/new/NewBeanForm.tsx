@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/Button";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Shop {
   id: number;
@@ -42,6 +43,7 @@ export default function NewBeanForm() {
   const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [imagePath, setImagePath] = useState<string | null>(null);
 
   const defaultShopId = searchParams.get("shopId") || "";
 
@@ -84,6 +86,7 @@ export default function NewBeanForm() {
       shopId: formData.get("shopId")
         ? parseInt(formData.get("shopId") as string, 10)
         : null,
+      imagePath,
     };
 
     try {
@@ -346,6 +349,14 @@ export default function NewBeanForm() {
           placeholder="パッケージの説明、店員のおすすめ情報など"
         />
       </div>
+
+      {/* 画像 */}
+      <ImageUpload
+        category="beans"
+        currentImagePath={imagePath}
+        onImageChange={setImagePath}
+        label="豆の画像"
+      />
 
       <div className="flex gap-4">
         <Button type="submit" disabled={loading}>

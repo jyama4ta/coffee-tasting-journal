@@ -98,6 +98,18 @@ export default async function TastingDetailPage({ params }: Props) {
         )}
       </div>
 
+      {/* 画像表示 */}
+      {tasting.imagePath && (
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">抽出写真</h2>
+          <img
+            src={`/api/images/${tasting.imagePath.replace("/images/", "")}`}
+            alt="抽出風景"
+            className="max-w-full max-h-96 rounded-lg border border-gray-200 object-contain"
+          />
+        </div>
+      )}
+
       {/* Overall Rating */}
       {tasting.overallRating && (
         <div className="bg-white rounded-lg shadow p-6 text-center">

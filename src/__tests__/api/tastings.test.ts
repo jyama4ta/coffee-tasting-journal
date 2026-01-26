@@ -250,6 +250,21 @@ describe("TastingEntry API", () => {
       expect(data.filterId).toBe(testFilterId);
     });
 
+    it("画像パスを含めて作成できる", async () => {
+      const tastingData = {
+        coffeeBeanId: testBeanId,
+        brewDate: "2026-01-25",
+        imagePath: "/images/tastings/test-image.jpg",
+      };
+
+      const request = createRequest("POST", tastingData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.imagePath).toBe("/images/tastings/test-image.jpg");
+    });
+
     it("豆IDがない場合は400エラー", async () => {
       const tastingData = { brewDate: "2026-01-25" };
 
@@ -428,6 +443,30 @@ describe("TastingEntry API", () => {
       expect(data.overallRating).toBe(5);
       expect(data.notes).toBe("更新メモ");
       expect(data.acidity).toBe(4);
+    });
+
+    it("画像パスを更新できる", async () => {
+      const tasting = await prisma.tastingEntry.create({
+        data: {
+          coffeeBeanId: testBeanId,
+          brewDate: new Date(),
+        },
+      });
+
+      const updateData = {
+        imagePath: "/images/tastings/updated-image.jpg",
+      };
+
+      const request = createRequest(
+        "PUT",
+        updateData,
+        `http://localhost:3000/api/tastings/${tasting.id}`,
+      );
+      const response = await PUT(request, createContext(String(tasting.id)));
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.imagePath).toBe("/images/tastings/updated-image.jpg");
     });
 
     it("存在しないIDの場合は404エラー", async () => {

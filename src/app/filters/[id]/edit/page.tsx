@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Filter {
   id: number;
@@ -10,6 +11,7 @@ interface Filter {
   type: string | null;
   notes: string | null;
   url: string | null;
+  imagePath: string | null;
 }
 
 const FILTER_TYPES = [
@@ -29,6 +31,7 @@ export default function EditFilterPage({ params }: Props) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [imagePath, setImagePath] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchFilter() {
@@ -40,6 +43,7 @@ export default function EditFilterPage({ params }: Props) {
         }
         const data = await response.json();
         setFilter(data);
+        setImagePath(data.imagePath);
       } catch (err) {
         setError(err instanceof Error ? err.message : "エラーが発生しました");
       } finally {
@@ -62,6 +66,7 @@ export default function EditFilterPage({ params }: Props) {
       type: (formData.get("type") as string) || null,
       notes: (formData.get("notes") as string) || null,
       url: (formData.get("url") as string) || null,
+      imagePath,
     };
 
     try {
@@ -189,6 +194,13 @@ export default function EditFilterPage({ params }: Props) {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           />
         </div>
+
+        <ImageUpload
+          category="filters"
+          currentImagePath={imagePath}
+          onImageChange={setImagePath}
+          label="フィルター画像"
+        />
 
         <div className="flex gap-4">
           <Button type="submit" disabled={saving}>

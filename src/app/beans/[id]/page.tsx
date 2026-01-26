@@ -127,6 +127,18 @@ export default async function BeanDetailPage({ params }: Props) {
       {/* Bean Info */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">基本情報</h2>
+
+        {/* 画像表示 */}
+        {bean.imagePath && (
+          <div className="mb-6">
+            <img
+              src={`/api/images/${bean.imagePath.replace("/images/", "")}`}
+              alt={bean.name}
+              className="max-w-md max-h-64 rounded-lg border border-gray-200 object-contain"
+            />
+          </div>
+        )}
+
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <dt className="text-sm font-medium text-gray-500">銘柄</dt>

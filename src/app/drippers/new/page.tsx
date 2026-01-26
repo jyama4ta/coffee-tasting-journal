@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
+import ImageUpload from "@/components/ImageUpload";
 
 export default function NewDripperPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [imagePath, setImagePath] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -20,6 +22,7 @@ export default function NewDripperPage() {
       manufacturer: (formData.get("manufacturer") as string) || null,
       notes: (formData.get("notes") as string) || null,
       url: (formData.get("url") as string) || null,
+      imagePath,
     };
 
     try {
@@ -122,6 +125,13 @@ export default function NewDripperPage() {
             placeholder="特記事項など"
           />
         </div>
+
+        <ImageUpload
+          category="drippers"
+          currentImagePath={imagePath}
+          onImageChange={setImagePath}
+          label="ドリッパー画像"
+        />
 
         <div className="flex gap-4">
           <Button type="submit" disabled={loading}>

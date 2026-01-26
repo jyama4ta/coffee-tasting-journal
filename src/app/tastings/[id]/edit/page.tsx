@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import StarRating from "@/components/StarRating";
 import GrindSizeSlider from "@/components/GrindSizeSlider";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Bean {
   id: number;
@@ -36,6 +37,7 @@ interface Tasting {
   flavorTags: string[] | null;
   overallRating: number | null;
   notes: string | null;
+  imagePath: string | null;
 }
 
 const BODY_OPTIONS = [
@@ -85,6 +87,9 @@ export default function EditTastingPage({ params }: Props) {
   // 挽き目のState
   const [grindSize, setGrindSize] = useState<number | null>(null);
 
+  // 画像パスのState
+  const [imagePath, setImagePath] = useState<string | null>(null);
+
   useEffect(() => {
     async function fetchData() {
       const { id } = await params;
@@ -112,6 +117,7 @@ export default function EditTastingPage({ params }: Props) {
         setAftertaste(tastingData.aftertaste);
         setOverallRating(tastingData.overallRating);
         setGrindSize(tastingData.grindSize);
+        setImagePath(tastingData.imagePath);
 
         if (beansRes.ok) setBeans(await beansRes.json());
         if (drippersRes.ok) setDrippers(await drippersRes.json());
@@ -157,6 +163,7 @@ export default function EditTastingPage({ params }: Props) {
       flavorTags: selectedTags.length > 0 ? selectedTags : null,
       overallRating,
       notes: (formData.get("notes") as string) || null,
+      imagePath,
     };
 
     try {
@@ -428,6 +435,14 @@ export default function EditTastingPage({ params }: Props) {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           />
         </div>
+
+        {/* 画像 */}
+        <ImageUpload
+          category="tastings"
+          currentImagePath={imagePath}
+          onImageChange={setImagePath}
+          label="抽出写真"
+        />
 
         <div className="flex gap-4">
           <Button type="submit" disabled={saving}>

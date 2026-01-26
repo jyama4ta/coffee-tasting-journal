@@ -65,6 +65,18 @@ export default async function FilterDetailPage({ params }: Props) {
       {/* Filter Info */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">基本情報</h2>
+
+        {/* 画像表示 */}
+        {filter.imagePath && (
+          <div className="mb-6">
+            <img
+              src={`/api/images/${filter.imagePath.replace("/images/", "")}`}
+              alt={filter.name}
+              className="max-w-md max-h-64 rounded-lg border border-gray-200 object-contain"
+            />
+          </div>
+        )}
+
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <dt className="text-sm font-medium text-gray-500">フィルター名</dt>

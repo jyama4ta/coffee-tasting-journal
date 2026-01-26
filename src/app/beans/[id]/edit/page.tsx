@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Shop {
   id: number;
@@ -23,6 +24,7 @@ interface Bean {
   price: number | null;
   amount: number | null;
   shopId: number | null;
+  imagePath: string | null;
 }
 
 const ROAST_LEVELS = [
@@ -63,6 +65,7 @@ export default function EditBeanPage({ params }: Props) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [imagePath, setImagePath] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -79,6 +82,7 @@ export default function EditBeanPage({ params }: Props) {
 
         const beanData = await beanRes.json();
         setBean(beanData);
+        setImagePath(beanData.imagePath);
 
         if (shopsRes.ok) {
           const shopsData = await shopsRes.json();
@@ -120,6 +124,7 @@ export default function EditBeanPage({ params }: Props) {
       shopId: formData.get("shopId")
         ? parseInt(formData.get("shopId") as string, 10)
         : null,
+      imagePath,
     };
 
     try {
@@ -412,6 +417,14 @@ export default function EditBeanPage({ params }: Props) {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           />
         </div>
+
+        {/* 画像 */}
+        <ImageUpload
+          category="beans"
+          currentImagePath={imagePath}
+          onImageChange={setImagePath}
+          label="豆の画像"
+        />
 
         <div className="flex gap-4">
           <Button type="submit" disabled={saving}>

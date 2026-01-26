@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/Button";
 import StarRating from "@/components/StarRating";
 import GrindSizeSlider from "@/components/GrindSizeSlider";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Bean {
   id: number;
@@ -64,6 +65,9 @@ export default function NewTastingForm() {
   // 挽き目のState
   const [grindSize, setGrindSize] = useState<number | null>(null);
 
+  // 画像パスのState
+  const [imagePath, setImagePath] = useState<string | null>(null);
+
   const defaultBeanId = searchParams.get("beanId") || "";
 
   useEffect(() => {
@@ -113,6 +117,7 @@ export default function NewTastingForm() {
       flavorTags: selectedTags.length > 0 ? selectedTags : null,
       overallRating,
       notes: (formData.get("notes") as string) || null,
+      imagePath,
     };
 
     try {
@@ -364,6 +369,14 @@ export default function NewTastingForm() {
           placeholder="味の感想、抽出時の工夫など"
         />
       </div>
+
+      {/* 画像 */}
+      <ImageUpload
+        category="tastings"
+        currentImagePath={imagePath}
+        onImageChange={setImagePath}
+        label="抽出写真"
+      />
 
       <div className="flex gap-4">
         <Button type="submit" disabled={loading}>

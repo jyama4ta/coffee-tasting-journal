@@ -77,6 +77,7 @@ export async function POST(request: Request) {
     flavorTags,
     overallRating,
     notes,
+    imagePath,
   } = body;
 
   // 必須フィールドのバリデーション
@@ -162,6 +163,7 @@ export async function POST(request: Request) {
       flavorTags: flavorTagsJson,
       overallRating: overallRating || null,
       notes: notes || null,
+      imagePath: imagePath || null,
     },
   });
 

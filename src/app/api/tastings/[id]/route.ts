@@ -115,6 +115,7 @@ export async function PUT(request: Request, context: Context) {
     flavorTags,
     overallRating,
     notes,
+    imagePath,
   } = body;
 
   // ボディのバリデーション
@@ -171,6 +172,7 @@ export async function PUT(request: Request, context: Context) {
   }
   if (overallRating !== undefined) updateData.overallRating = overallRating;
   if (notes !== undefined) updateData.notes = notes;
+  if (imagePath !== undefined) updateData.imagePath = imagePath;
 
   const updatedTasting = await prisma.tastingEntry.update({
     where: { id: parsedId.value },
