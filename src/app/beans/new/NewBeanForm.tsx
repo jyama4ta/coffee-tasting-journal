@@ -14,10 +14,20 @@ interface Shop {
   displayName: string;
 }
 
+interface BeanMaster {
+  id: number;
+  name: string;
+  origin: string | null;
+  roastLevel: string | null;
+  process: string | null;
+}
+
 export default function NewBeanForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [shops, setShops] = useState<Shop[]>([]);
+  const [beanMasters, setBeanMasters] = useState<BeanMaster[]>([]);
+  const [selectedBeanMaster, setSelectedBeanMaster] = useState<BeanMaster | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imagePath, setImagePath] = useState<string | null>(null);
@@ -27,20 +37,47 @@ export default function NewBeanForm() {
   const [flavorScore, setFlavorScore] = useState(0);
 
   const defaultShopId = searchParams.get("shopId") || "";
+  const defaultBeanMasterId = searchParams.get("beanMasterId") || "";
 
   // 今日の日付をYYYY-MM-DD形式で取得
   const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    async function fetchShops() {
-      const response = await fetch("/api/shops");
-      if (response.ok) {
-        const data = await response.json();
+    async function fetchData() {
+      const [shopsRes, beanMastersRes] = await Promise.all([
+        fetch("/api/shops"),
+        fetch("/api/bean-masters"),
+      ]);
+      if (shopsRes.ok) {
+        const data = await shopsRes.json();
         setShops(data);
       }
+      if (beanMastersRes.ok) {
+        const data = await beanMastersRes.json();
+        setBeanMasters(data);
+        // URLパラメータで銘柄マスターが指定されている場合
+        if (defaultBeanMasterId) {
+          const master = data.find(
+            (m: BeanMaster) => m.id === parseInt(defaultBeanMasterId, 10)
+          );
+          if (master) {
+            setSelectedBeanMaster(master);
+          }
+        }
+      }
     }
-    fetchShops();
-  }, []);
+    fetchData();
+  }, [defaultBeanMasterId]);
+
+  const handleBeanMasterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const masterId = parseInt(e.target.value, 10);
+    if (isNaN(masterId)) {
+      setSelectedBeanMaster(null);
+    } else {
+      const master = beanMasters.find((m) => m.id === masterId);
+      setSelectedBeanMaster(master || null);
+    }
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -67,6 +104,7 @@ export default function NewBeanForm() {
       shopId: formData.get("shopId")
         ? parseInt(formData.get("shopId") as string, 10)
         : null,
+      beanMasterId: selectedBeanMaster?.id || null,
       imagePath,
       acidityScore,
       bitternessScore,
@@ -110,18 +148,47 @@ export default function NewBeanForm() {
           基本情報
         </h2>
 
+        {/* 銘柄マスター選択 */}
+        <div>
+          <label
+            htmlFor="beanMasterId"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            銘柄マスターから選択
+          </label>
+          <select
+            id="beanMasterId"
+            name="beanMasterId"
+            value={selectedBeanMaster?.id || ""}
+            onChange={handleBeanMasterChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+          >
+            <option value="">-- 新規銘柄を直接入力 --</option>
+            {beanMasters.map((master) => (
+              <option key={master.id} value={master.id}>
+                {master.name}{master.origin ? ` (${master.origin})` : ""}
+              </option>
+            ))}
+          </select>
+          <p className="text-xs text-gray-500 mt-1">
+            登録済みの銘柄を選択すると、名前・産地などが自動入力されます
+          </p>
+        </div>
+
         <div>
           <label
             htmlFor="name"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            銘柄 <span className="text-red-500">*</span>
+            銘柄 {!selectedBeanMaster && <span className="text-red-500">*</span>}
           </label>
           <input
             type="text"
             id="name"
             name="name"
-            required
+            required={!selectedBeanMaster}
+            defaultValue={selectedBeanMaster?.name || ""}
+            key={selectedBeanMaster?.id || "new"}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             placeholder="例: エチオピア イルガチェフェ"
           />
@@ -139,6 +206,8 @@ export default function NewBeanForm() {
               type="text"
               id="origin"
               name="origin"
+              defaultValue={selectedBeanMaster?.origin || ""}
+              key={`origin-${selectedBeanMaster?.id || "new"}`}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               placeholder="例: エチオピア"
             />
@@ -175,6 +244,8 @@ export default function NewBeanForm() {
             <select
               id="roastLevel"
               name="roastLevel"
+              defaultValue={selectedBeanMaster?.roastLevel || ""}
+              key={`roast-${selectedBeanMaster?.id || "new"}`}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             >
               {ROAST_LEVELS.map((level) => (
@@ -194,6 +265,8 @@ export default function NewBeanForm() {
             <select
               id="process"
               name="process"
+              defaultValue={selectedBeanMaster?.process || ""}
+              key={`process-${selectedBeanMaster?.id || "new"}`}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             >
               {PROCESSES.map((p) => (

@@ -18,13 +18,29 @@ function parseFlavorTags(flavorTags: string | null): string[] {
   }
 }
 
-async function getTastings(beanId?: string) {
-  const where = beanId ? { coffeeBeanId: parseInt(beanId, 10) } : {};
+async function getTastings(beanId?: string, beanMasterId?: string) {
+  // フィルタリング条件を構築
+  let where = {};
+  if (beanId) {
+    where = { coffeeBeanId: parseInt(beanId, 10) };
+  } else if (beanMasterId) {
+    // 銘柄マスターでフィルタ: 該当する銘柄マスターに紐づく全ての豆の試飲記録を取得
+    where = {
+      coffeeBean: {
+        beanMasterId: parseInt(beanMasterId, 10),
+      },
+    };
+  }
+
   return prisma.tastingEntry.findMany({
     where,
     orderBy: { brewDate: "desc" },
     include: {
-      coffeeBean: true,
+      coffeeBean: {
+        include: {
+          beanMaster: true,
+        },
+      },
       dripper: true,
       filter: true,
     },
@@ -34,23 +50,54 @@ async function getTastings(beanId?: string) {
 async function getBeans() {
   return prisma.coffeeBean.findMany({
     orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+      beanMasterId: true,
+    },
+  });
+}
+
+async function getBeanMasters() {
+  return prisma.beanMaster.findMany({
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+    },
   });
 }
 
 interface Props {
-  searchParams: Promise<{ beanId?: string }>;
+  searchParams: Promise<{ beanId?: string; beanMasterId?: string }>;
 }
 
 export default async function TastingsPage({ searchParams }: Props) {
-  const { beanId } = await searchParams;
-  const [tastings, beans] = await Promise.all([
-    getTastings(beanId),
+  const { beanId, beanMasterId } = await searchParams;
+  const [tastings, beans, beanMasters] = await Promise.all([
+    getTastings(beanId, beanMasterId),
     getBeans(),
+    getBeanMasters(),
   ]);
 
   const selectedBean = beanId
     ? beans.find((b) => b.id === parseInt(beanId, 10))
     : null;
+  
+  const selectedBeanMaster = beanMasterId
+    ? beanMasters.find((m) => m.id === parseInt(beanMasterId, 10))
+    : null;
+
+  // フィルタ状態に応じた説明文
+  const getFilterDescription = () => {
+    if (selectedBean) {
+      return `「${selectedBean.name}」の試飲記録`;
+    }
+    if (selectedBeanMaster) {
+      return `銘柄「${selectedBeanMaster.name}」の試飲記録`;
+    }
+    return "すべての試飲記録";
+  };
 
   return (
     <div className="space-y-6">
@@ -58,17 +105,18 @@ export default async function TastingsPage({ searchParams }: Props) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">📝 試飲記録</h1>
-          <p className="text-gray-600">
-            {selectedBean
-              ? `「${selectedBean.name}」の試飲記録`
-              : "すべての試飲記録"}
-          </p>
+          <p className="text-gray-600">{getFilterDescription()}</p>
         </div>
         <Button href="/tastings/new">+ 新規記録</Button>
       </div>
 
       {/* Filter */}
-      <BeanFilter beans={beans} selectedBeanId={beanId} />
+      <BeanFilter
+        beans={beans}
+        beanMasters={beanMasters}
+        selectedBeanId={beanId}
+        selectedBeanMasterId={beanMasterId}
+      />
 
       {/* List */}
       {tastings.length > 0 ? (
@@ -151,7 +199,9 @@ export default async function TastingsPage({ searchParams }: Props) {
           <p className="mb-4">
             {selectedBean
               ? `「${selectedBean.name}」の試飲記録がありません`
-              : "まだ試飲記録がありません"}
+              : selectedBeanMaster
+                ? `銘柄「${selectedBeanMaster.name}」の試飲記録がありません`
+                : "まだ試飲記録がありません"}
           </p>
           <Button href="/tastings/new">試飲記録を追加</Button>
         </div>

@@ -88,6 +88,7 @@ export async function GET(request: Request) {
       orderBy: { purchaseDate: "asc" },
       include: {
         shop: true,
+        beanMaster: true,
       },
     });
     return NextResponse.json(beans);
@@ -105,14 +106,13 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // バリデーション: 豆名は必須
-    if (
-      !body.name ||
-      typeof body.name !== "string" ||
-      body.name.trim() === ""
-    ) {
+    // バリデーション: 豆名または銘柄マスターIDのいずれかは必須
+    const hasName = body.name && typeof body.name === "string" && body.name.trim() !== "";
+    const hasBeanMasterId = body.beanMasterId !== undefined && body.beanMasterId !== null;
+    
+    if (!hasName && !hasBeanMasterId) {
       return NextResponse.json(
-        { error: "豆の銘柄名は必須です" },
+        { error: "豆の銘柄名または銘柄マスターの指定が必要です" },
         { status: 400 },
       );
     }
@@ -172,6 +172,20 @@ export async function POST(request: Request) {
       }
     }
 
+    // バリデーション: 銘柄マスターIDが指定されている場合は存在確認
+    let beanMaster = null;
+    if (body.beanMasterId !== undefined && body.beanMasterId !== null) {
+      beanMaster = await prisma.beanMaster.findUnique({
+        where: { id: body.beanMasterId },
+      });
+      if (!beanMaster) {
+        return NextResponse.json(
+          { error: "指定された銘柄マスターが見つかりません" },
+          { status: 400 },
+        );
+      }
+    }
+
     // バリデーション: スコアフィールド（0-5）
     const scores: Record<(typeof SCORE_FIELDS)[number], number> = {
       acidityScore: 0,
@@ -201,10 +215,11 @@ export async function POST(request: Request) {
 
     const bean = await prisma.coffeeBean.create({
       data: {
-        name: body.name.trim(),
-        origin: body.origin || null,
-        roastLevel: body.roastLevel || null,
-        process: body.process || null,
+        // 銘柄マスターが指定されている場合は、そこから名前と産地を引き継ぐ
+        name: body.name?.trim() || beanMaster?.name || "",
+        origin: body.origin || beanMaster?.origin || null,
+        roastLevel: body.roastLevel || beanMaster?.roastLevel || null,
+        process: body.process || beanMaster?.process || null,
         isDecaf: body.isDecaf ?? false,
         beanType: body.beanType || null,
         notes: body.notes || null,
@@ -213,6 +228,7 @@ export async function POST(request: Request) {
         price: body.price || null,
         amount: body.amount || null,
         shopId: body.shopId || null,
+        beanMasterId: body.beanMasterId || null,
         imagePath: body.imagePath || null,
         acidityScore: scores.acidityScore,
         bitternessScore: scores.bitternessScore,

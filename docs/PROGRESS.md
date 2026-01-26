@@ -2,6 +2,48 @@
 
 ## 完了した作業
 
+### 2026-01-26: 銘柄マスター（BeanMaster）機能実装
+
+1. **データモデル追加**
+   - `prisma/schema.prisma`: BeanMaster モデル追加
+     - フィールド: id, name, origin, roastLevel, process, notes, createdAt, updatedAt
+   - CoffeeBean モデルに beanMasterId（外部キー）追加
+   - マイグレーション実行: `20260126154139_add_bean_master`
+
+2. **BeanMaster API 実装（TDD）**
+   - `src/__tests__/api/beanMasters.test.ts`: 19テストケース作成
+   - `src/app/api/bean-masters/route.ts`: GET（一覧・名前順ソート）/ POST（作成）
+   - `src/app/api/bean-masters/[id]/route.ts`: GET（詳細・_count含む）/ PUT（更新）/ DELETE（削除）
+   - 削除時の参照整合性チェック（紐づく豆がある場合は削除不可）
+   - 焙煎度・精製方法のバリデーション
+
+3. **BeanMaster UI 実装**
+   - `src/app/bean-masters/page.tsx`: 銘柄マスター一覧ページ
+   - `src/app/bean-masters/new/page.tsx`: 新規銘柄マスター作成ページ
+   - `src/app/bean-masters/[id]/page.tsx`: 銘柄マスター詳細ページ（購入履歴表示）
+   - `src/app/bean-masters/[id]/edit/page.tsx`: 銘柄マスター編集ページ
+   - `src/app/bean-masters/[id]/DeleteButton.tsx`: 削除ボタン（クライアントコンポーネント）
+
+4. **CoffeeBean API / UI の銘柄マスター連携**
+   - `src/app/api/beans/route.ts`: beanMasterId 対応、自動補完機能
+   - `src/app/beans/new/NewBeanForm.tsx`: 銘柄マスター選択ドロップダウン追加
+   - 銘柄マスター選択時に name/origin/roastLevel/process が自動補完される
+   - URL パラメータ（?beanMasterId=X）からの自動選択対応
+
+5. **試飲記録フィルタリングの拡張**
+   - `src/components/BeanFilter.tsx`: beanMasterId フィルタリング追加
+   - `src/app/tastings/page.tsx`: beanMasterId クエリパラメータ対応
+   - 銘柄マスター単位で試飲記録を絞り込み可能
+
+6. **ナビゲーション更新**
+   - `src/components/Navigation.tsx`: 「銘柄」リンク追加
+
+7. **ドキュメント更新**
+   - `docs/api-specification.md`: BeanMaster API セクション追加、CoffeeBean API に beanMasterId 追加
+   - `docs/test-specification.md`: BeanMaster API テストケース追加
+
+8. **テスト結果**: 全271テストがパス
+
 ### 2026-01-26: ドリッパー・フィルターにサイズ情報を追加
 
 1. **データモデル更新**

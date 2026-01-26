@@ -86,14 +86,33 @@ enum EquipmentSize {
 }
 
 // ============================================
-// コーヒー豆マスター
+// 銘柄マスター（同じ銘柄の購入記録を名寄せ）
+// ============================================
+model BeanMaster {
+  id         Int         @id @default(autoincrement())
+  name       String // 銘柄名（必須）
+  origin     String? // デフォルト産地
+  roastLevel RoastLevel? // デフォルト焙煎度
+  process    Process? // デフォルト精製方法
+  notes      String? // 銘柄メモ
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  // リレーション
+  coffeeBeans CoffeeBean[]
+
+  @@map("bean_masters")
+}
+
+// ============================================
+// コーヒー豆（購入記録）
 // ============================================
 model CoffeeBean {
   id              Int         @id @default(autoincrement())
-  name            String // 銘柄（必須）
-  origin          String? // 産地
-  roastLevel      RoastLevel? // 焙煎度（8段階）
-  process         Process? // 精製方法
+  name            String // 銘柄（※将来的に削除予定、銘柄マスターから取得）
+  origin          String? // 産地（※将来的に削除予定、銘柄マスターから取得）
+  roastLevel      RoastLevel? // 焙煎度（8段階）- 購入時の実際の値
+  process         Process? // 精製方法 - 購入時の実際の値
   isDecaf         Boolean     @default(false) // デカフェフラグ
   beanType        BeanType? // ブレンド/シングルオリジン
   acidityScore    Int         @default(0) // 酸味（0-5）
@@ -115,12 +134,16 @@ model CoffeeBean {
   shopId Int?
   shop   Shop? @relation(fields: [shopId], references: [id], onDelete: SetNull)
 
+  beanMasterId Int?
+  beanMaster   BeanMaster? @relation(fields: [beanMasterId], references: [id], onDelete: SetNull)
+
   // リレーション
   tastingEntries TastingEntry[]
 
   // インデックス
   @@index([status])
   @@index([shopId])
+  @@index([beanMasterId])
   @@index([origin])
   @@index([roastLevel])
   @@map("coffee_beans")

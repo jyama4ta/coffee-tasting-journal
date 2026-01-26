@@ -38,6 +38,7 @@ describe("CoffeeBean API", () => {
   beforeEach(async () => {
     await prisma.tastingEntry.deleteMany();
     await prisma.coffeeBean.deleteMany();
+    await prisma.beanMaster.deleteMany();
     await prisma.shop.deleteMany();
   });
 
@@ -45,6 +46,7 @@ describe("CoffeeBean API", () => {
   afterEach(async () => {
     await prisma.tastingEntry.deleteMany();
     await prisma.coffeeBean.deleteMany();
+    await prisma.beanMaster.deleteMany();
     await prisma.shop.deleteMany();
   });
 
@@ -333,6 +335,66 @@ describe("CoffeeBean API", () => {
 
       expect(response.status).toBe(201);
       expect(data.status).toBe("IN_STOCK");
+    });
+
+    it("銘柄マスターを指定して作成できる", async () => {
+      const beanMaster = await prisma.beanMaster.create({
+        data: {
+          name: "エチオピア イルガチェフェ",
+          origin: "エチオピア",
+          roastLevel: "LIGHT",
+          process: "WASHED",
+        },
+      });
+
+      const request = createRequest("POST", {
+        beanMasterId: beanMaster.id,
+        price: 1500,
+        amount: 200,
+      });
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.beanMasterId).toBe(beanMaster.id);
+      // 銘柄マスターから名前と産地を引き継ぐ
+      expect(data.name).toBe("エチオピア イルガチェフェ");
+      expect(data.origin).toBe("エチオピア");
+      expect(data.roastLevel).toBe("LIGHT");
+      expect(data.process).toBe("WASHED");
+    });
+
+    it("銘柄マスター指定時でも名前を上書きできる", async () => {
+      const beanMaster = await prisma.beanMaster.create({
+        data: {
+          name: "エチオピア イルガチェフェ",
+          origin: "エチオピア",
+        },
+      });
+
+      const request = createRequest("POST", {
+        beanMasterId: beanMaster.id,
+        name: "イルガチェフェ G1",
+        origin: "エチオピア シダモ",
+      });
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.beanMasterId).toBe(beanMaster.id);
+      expect(data.name).toBe("イルガチェフェ G1");
+      expect(data.origin).toBe("エチオピア シダモ");
+    });
+
+    it("存在しない銘柄マスターIDの場合は400エラー", async () => {
+      const request = createRequest("POST", {
+        beanMasterId: 99999,
+      });
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain("銘柄マスター");
     });
   });
 

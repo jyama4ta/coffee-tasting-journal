@@ -399,9 +399,159 @@ interface Filter {
 
 ---
 
-## CoffeeBean API（コーヒー豆マスター）
+## BeanMaster API（銘柄マスター）
 
-コーヒー豆を管理するAPI。
+銘柄マスターを管理するAPI。同じ銘柄の購入記録を名寄せして管理します。
+
+### エンドポイント一覧
+
+| メソッド | パス                    | 説明           |
+| -------- | ----------------------- | -------------- |
+| GET      | `/api/bean-masters`      | 銘柄一覧取得   |
+| POST     | `/api/bean-masters`      | 銘柄作成       |
+| GET      | `/api/bean-masters/[id]` | 銘柄詳細取得   |
+| PUT      | `/api/bean-masters/[id]` | 銘柄更新       |
+| DELETE   | `/api/bean-masters/[id]` | 銘柄削除       |
+
+### データモデル
+
+```typescript
+interface BeanMaster {
+  id: number;              // 銘柄ID（自動採番）
+  name: string;            // 銘柄名（必須）
+  origin: string | null;   // デフォルト産地
+  roastLevel: RoastLevel | null;  // デフォルト焙煎度
+  process: Process | null; // デフォルト精製方法
+  notes: string | null;    // 銘柄メモ
+  createdAt: string;       // 作成日時（ISO 8601形式）
+  updatedAt: string;       // 更新日時（ISO 8601形式）
+  _count?: {
+    coffeeBeans: number;   // 紐づく購入記録の件数（詳細取得時のみ）
+  };
+}
+```
+
+### GET /api/bean-masters
+
+全ての銘柄マスターを取得します。名前順でソートされます。
+
+**レスポンス例:**
+
+```json
+[
+  {
+    "id": 1,
+    "name": "エチオピア イルガチェフェ",
+    "origin": "エチオピア",
+    "roastLevel": "LIGHT",
+    "process": "WASHED",
+    "notes": "フルーティーな香り",
+    "createdAt": "2026-01-26T10:00:00.000Z",
+    "updatedAt": "2026-01-26T10:00:00.000Z"
+  }
+]
+```
+
+### POST /api/bean-masters
+
+新しい銘柄マスターを作成します。
+
+**リクエストボディ:**
+
+```json
+{
+  "name": "銘柄名",         // 必須
+  "origin": "産地",         // 任意
+  "roastLevel": "LIGHT",   // 任意（RoastLevel型）
+  "process": "WASHED",     // 任意（Process型）
+  "notes": "メモ"          // 任意
+}
+```
+
+**バリデーション:**
+
+- `name`: 必須、空文字不可
+- `roastLevel`: 指定する場合は有効なRoastLevel値であること
+- `process`: 指定する場合は有効なProcess値であること
+
+**レスポンス:** 201 Created + 作成された銘柄データ
+
+### GET /api/bean-masters/[id]
+
+指定したIDの銘柄マスターを取得します。紐づく購入記録の件数も含まれます。
+
+**パラメータ:**
+
+- `id`: 銘柄ID（数値）
+
+**レスポンス例:**
+
+```json
+{
+  "id": 1,
+  "name": "エチオピア イルガチェフェ",
+  "origin": "エチオピア",
+  "roastLevel": "LIGHT",
+  "process": "WASHED",
+  "notes": "フルーティーな香り",
+  "createdAt": "2026-01-26T10:00:00.000Z",
+  "updatedAt": "2026-01-26T10:00:00.000Z",
+  "_count": {
+    "coffeeBeans": 3
+  }
+}
+```
+
+**エラー:**
+
+- 400: IDが数値でない場合
+- 404: 銘柄が存在しない場合
+
+### PUT /api/bean-masters/[id]
+
+銘柄マスター情報を更新します。
+
+**リクエストボディ:**
+
+```json
+{
+  "name": "更新後の名前",     // 任意（指定時は空文字不可）
+  "origin": "更新後の産地",   // 任意
+  "roastLevel": "MEDIUM",    // 任意
+  "process": "NATURAL",      // 任意
+  "notes": "更新後のメモ"    // 任意
+}
+```
+
+**バリデーション:**
+
+- `name`: 指定する場合は空文字不可
+- `roastLevel`: 指定する場合は有効なRoastLevel値であること
+- `process`: 指定する場合は有効なProcess値であること
+
+**エラー:**
+
+- 400: IDが数値でない、または名前が空の場合
+- 404: 銘柄が存在しない場合
+
+### DELETE /api/bean-masters/[id]
+
+銘柄マスターを削除します。
+
+**レスポンス:** 204 No Content
+
+**エラー:**
+
+- 400: IDが数値でない場合、または購入記録が存在する場合
+- 404: 銘柄が存在しない場合
+
+**注意:** 購入記録（CoffeeBean）が紐づいている銘柄マスターは削除できません。先に購入記録を削除するか、銘柄マスターの紐づけを解除してください。
+
+---
+
+## CoffeeBean API（コーヒー豆購入記録）
+
+コーヒー豆の購入記録を管理するAPI。
 
 ### エンドポイント一覧
 
@@ -451,8 +601,10 @@ interface CoffeeBean {
   finishedDate: string | null; // 飲み切り日（ISO 8601形式）
   imagePath: string | null; // 画像パス
   shopId: number | null; // 店舗ID（外部キー）
+  beanMasterId: number | null; // 銘柄マスターID（外部キー）
   createdAt: string; // 作成日時（ISO 8601形式）
   updatedAt: string; // 更新日時（ISO 8601形式）
+  beanMaster?: BeanMaster; // 関連する銘柄マスター（一覧・詳細取得時に含まれる）
 }
 ```
 
@@ -532,16 +684,18 @@ interface CoffeeBean {
   "purchaseDate": "2026-01-20", // 任意
   "price": 1500, // 任意
   "amount": 200, // 任意
-  "shopId": 1 // 任意（店舗ID）
+  "shopId": 1, // 任意（店舗ID）
+  "beanMasterId": 1 // 任意（銘柄マスターID。指定時はname/origin/roastLevel/processが自動補完される）
 }
 ```
 
 **バリデーション:**
 
-- `name`: 必須、空文字不可
+- `name`: 必須（beanMasterIdが指定された場合は銘柄マスターの値で自動補完）
 - `roastLevel`: 有効な焙煎度のいずれか
 - `process`: 有効な精製方法のいずれか
 - `shopId`: 指定する場合は存在する店舗ID
+- `beanMasterId`: 指定する場合は存在する銘柄マスターID
 - `status`: **新規登録時は「飲み切り（FINISHED）」での登録不可**（購入→在庫中→飲み切りのフローのみ）
 
 **レスポンス:** 201 Created + 作成された豆データ（ステータスは常に`IN_STOCK`）
