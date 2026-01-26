@@ -27,8 +27,16 @@ describe("StarRating", () => {
       expect(stars[4]).toHaveAttribute("aria-checked", "false");
     });
 
-    it("valueが0またはnullの場合、全ての星がハイライトされない", () => {
+    it("valueがnullの場合、全ての星がハイライトされない", () => {
       render(<StarRating name="rating" label="評価" value={null} />);
+      const stars = screen.getAllByRole("radio");
+      stars.forEach((star) => {
+        expect(star).toHaveAttribute("aria-checked", "false");
+      });
+    });
+
+    it("valueが0の場合、全ての星がハイライトされない", () => {
+      render(<StarRating name="rating" label="評価" value={0} />);
       const stars = screen.getAllByRole("radio");
       stars.forEach((star) => {
         expect(star).toHaveAttribute("aria-checked", "false");
@@ -84,6 +92,24 @@ describe("StarRating", () => {
       expect(handleChange).toHaveBeenCalledWith(null);
     });
 
+    it("minValue=0のとき、同じ星を再度クリックすると0にリセットされる", async () => {
+      const handleChange = vi.fn();
+      render(
+        <StarRating
+          name="rating"
+          label="評価"
+          value={3}
+          onChange={handleChange}
+          minValue={0}
+        />,
+      );
+
+      const star3 = screen.getByLabelText("3");
+      await userEvent.click(star3);
+
+      expect(handleChange).toHaveBeenCalledWith(0);
+    });
+
     it("ホバー時に星がハイライトされる", async () => {
       render(<StarRating name="rating" label="評価" />);
 
@@ -123,6 +149,14 @@ describe("StarRating", () => {
       );
       expect(hiddenInput).toHaveValue("");
     });
+
+    it("valueが0の場合、隠しinputは0", () => {
+      render(<StarRating name="rating" label="評価" value={0} />);
+      const hiddenInput = document.querySelector(
+        'input[name="rating"][type="hidden"]',
+      );
+      expect(hiddenInput).toHaveValue("0");
+    });
   });
 
   describe("アクセシビリティ", () => {
@@ -160,6 +194,25 @@ describe("StarRating", () => {
       await userEvent.keyboard("{ArrowLeft}");
 
       expect(handleChange).toHaveBeenCalledWith(2);
+    });
+
+    it("minValue=0のとき、ArrowLeftで0に移動できる", async () => {
+      const handleChange = vi.fn();
+      render(
+        <StarRating
+          name="rating"
+          label="評価"
+          value={1}
+          onChange={handleChange}
+          minValue={0}
+        />,
+      );
+
+      const star1 = screen.getByLabelText("1");
+      star1.focus();
+      await userEvent.keyboard("{ArrowLeft}");
+
+      expect(handleChange).toHaveBeenCalledWith(0);
     });
 
     it("適切なrole属性が設定されている", () => {

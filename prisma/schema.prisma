@@ -77,23 +77,27 @@ enum FilterType {
 // コーヒー豆マスター
 // ============================================
 model CoffeeBean {
-  id           Int         @id @default(autoincrement())
-  name         String // 銘柄（必須）
-  origin       String? // 産地
-  roastLevel   RoastLevel? // 焙煎度（8段階）
-  process      Process? // 精製方法
-  isDecaf      Boolean     @default(false) // デカフェフラグ
-  beanType     BeanType? // ブレンド/シングルオリジン
-  notes        String? // メモ（パッケージ説明など）
-  url          String? // 商品ページURL
-  purchaseDate DateTime? // 購入日
-  price        Int? // 価格（円）
-  amount       Int? // 購入量（g）
-  status       BeanStatus  @default(IN_STOCK) // ステータス
-  finishedDate DateTime? // 飲み切り日
-  imagePath    String? // 画像パス
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  id              Int         @id @default(autoincrement())
+  name            String // 銘柄（必須）
+  origin          String? // 産地
+  roastLevel      RoastLevel? // 焙煎度（8段階）
+  process         Process? // 精製方法
+  isDecaf         Boolean     @default(false) // デカフェフラグ
+  beanType        BeanType? // ブレンド/シングルオリジン
+  acidityScore    Int         @default(0) // 酸味（0-5）
+  bitternessScore Int         @default(0) // 苦味（0-5）
+  bodyScore       Int         @default(0) // コク（0-5）
+  flavorScore     Int         @default(0) // 風味（0-5）
+  notes           String? // メモ（パッケージ説明など）
+  url             String? // 商品ページURL
+  purchaseDate    DateTime? // 購入日
+  price           Int? // 価格（円）
+  amount          Int? // 購入量（g）
+  status          BeanStatus  @default(IN_STOCK) // ステータス
+  finishedDate    DateTime? // 飲み切り日
+  imagePath       String? // 画像パス
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
   // 外部キー
   shopId Int?

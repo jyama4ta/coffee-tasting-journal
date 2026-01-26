@@ -28,6 +28,46 @@ const VALID_BEAN_TYPES = ["SINGLE_ORIGIN", "BLEND"] as const;
 // 有効なステータス
 const VALID_STATUSES = ["IN_STOCK", "FINISHED"] as const;
 
+// スコアフィールド
+const SCORE_FIELDS = [
+  "acidityScore",
+  "bitternessScore",
+  "bodyScore",
+  "flavorScore",
+] as const;
+
+const SCORE_LABELS: Record<(typeof SCORE_FIELDS)[number], string> = {
+  acidityScore: "酸味",
+  bitternessScore: "苦味",
+  bodyScore: "コク",
+  flavorScore: "風味",
+};
+
+// スコアバリデーション：0-5の整数のみ許可
+function validateScore(
+  value: unknown,
+  field: (typeof SCORE_FIELDS)[number],
+): { ok: true; value: number } | { ok: false; message: string } {
+  // 未指定の場合は0
+  if (value === undefined || value === null || value === "") {
+    return { ok: true, value: 0 };
+  }
+
+  if (
+    typeof value !== "number" ||
+    !Number.isInteger(value) ||
+    value < 0 ||
+    value > 5
+  ) {
+    return {
+      ok: false,
+      message: `${SCORE_LABELS[field]}は0〜5の整数で指定してください`,
+    };
+  }
+
+  return { ok: true, value };
+}
+
 // GET /api/beans - 全豆を取得
 export async function GET(request: Request) {
   try {
@@ -132,6 +172,21 @@ export async function POST(request: Request) {
       }
     }
 
+    // バリデーション: スコアフィールド（0-5）
+    const scores: Record<(typeof SCORE_FIELDS)[number], number> = {
+      acidityScore: 0,
+      bitternessScore: 0,
+      bodyScore: 0,
+      flavorScore: 0,
+    };
+    for (const field of SCORE_FIELDS) {
+      const result = validateScore(body[field], field);
+      if (!result.ok) {
+        return NextResponse.json({ error: result.message }, { status: 400 });
+      }
+      scores[field] = result.value;
+    }
+
     // バリデーション: 新規登録時は飲み切りステータスでの登録不可
     // （豆は購入時に在庫中で登録し、後から飲み切りに変更するフローのみ）
     if (body.status === "FINISHED") {
@@ -159,6 +214,10 @@ export async function POST(request: Request) {
         amount: body.amount || null,
         shopId: body.shopId || null,
         imagePath: body.imagePath || null,
+        acidityScore: scores.acidityScore,
+        bitternessScore: scores.bitternessScore,
+        bodyScore: scores.bodyScore,
+        flavorScore: scores.flavorScore,
       },
     });
 

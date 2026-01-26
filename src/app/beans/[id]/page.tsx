@@ -32,6 +32,55 @@ const BEAN_TYPE_LABELS: Record<string, string> = {
   BLEND: "ブレンド",
 };
 
+// コーヒー豆アイコンコンポーネント
+function BeanIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg
+      className="w-5 h-5"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="6"
+        ry="9"
+        fill={filled ? "#92400e" : "none"}
+        stroke={filled ? "#78350f" : "#d1d5db"}
+        strokeWidth="1.5"
+      />
+      <path
+        d="M12 4c0 4-2.5 6-2.5 8s2.5 4 2.5 8"
+        fill="none"
+        stroke={filled ? "#78350f" : "#d1d5db"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+// 評価スコアを豆アイコンで表示するコンポーネント
+function BeanScoreDisplay({ label, score }: { label: string; score: number }) {
+  const safeScore = Math.max(0, Math.min(score ?? 0, 5));
+
+  return (
+    <div className="flex items-center justify-between py-1">
+      <span className="text-sm font-medium text-gray-700">{label}</span>
+      <div
+        className="flex items-center gap-0.5"
+        aria-label={`${label}: ${safeScore}/5`}
+      >
+        {[1, 2, 3, 4, 5].map((value) => (
+          <BeanIcon key={value} filled={value <= safeScore} />
+        ))}
+        <span className="text-xs text-gray-500 ml-2">{safeScore}/5</span>
+      </div>
+    </div>
+  );
+}
+
 async function getBean(id: number) {
   return prisma.coffeeBean.findUnique({
     where: { id },
@@ -226,6 +275,17 @@ export default async function BeanDetailPage({ params }: Props) {
             </dd>
           </div>
         </dl>
+
+        {/* 味わい評価セクション */}
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <h3 className="text-sm font-medium text-gray-500 mb-3">味わい評価</h3>
+          <div className="space-y-1 max-w-md">
+            <BeanScoreDisplay label="酸味" score={bean.acidityScore} />
+            <BeanScoreDisplay label="苦味" score={bean.bitternessScore} />
+            <BeanScoreDisplay label="コク" score={bean.bodyScore} />
+            <BeanScoreDisplay label="風味" score={bean.flavorScore} />
+          </div>
+        </div>
       </div>
 
       {/* Related Tastings */}

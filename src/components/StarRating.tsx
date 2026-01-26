@@ -8,6 +8,7 @@ interface StarRatingProps {
   value?: number | null;
   onChange?: (value: number | null) => void;
   icon?: "star" | "bean";
+  minValue?: 0 | 1;
 }
 
 function StarIcon({
@@ -48,16 +49,28 @@ function BeanIcon({
     <svg
       data-testid="bean-icon"
       className={className}
-      fill={filled ? "currentColor" : "none"}
-      stroke="currentColor"
-      strokeWidth="1.5"
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      {/* コーヒー豆のシンプルなアイコン */}
-      <ellipse cx="12" cy="12" rx="6" ry="9" />
-      <path d="M12 3c0 9-3 9-3 9s3 0 3 9" strokeLinecap="round" />
+      {/* コーヒー豆の外形 */}
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="6"
+        ry="9"
+        fill={filled ? "#92400e" : "none"}
+        stroke={filled ? "#78350f" : "#d1d5db"}
+        strokeWidth="1.5"
+      />
+      {/* コーヒー豆の中央線（溝） */}
+      <path
+        d="M12 4c0 4-2.5 6-2.5 8s2.5 4 2.5 8"
+        fill="none"
+        stroke={filled ? "#78350f" : "#d1d5db"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
     </svg>
   );
 }
@@ -68,28 +81,32 @@ export default function StarRating({
   value = null,
   onChange,
   icon = "star",
+  minValue = 1,
 }: StarRatingProps) {
   const [hoverValue, setHoverValue] = useState(0);
+
+  // valueの表示用値（nullまたは0の場合で0として扱う）
+  const displayValue = value ?? 0;
 
   const handleClick = useCallback(
     (rating: number) => {
       if (onChange) {
-        // 同じ値をクリックしたらクリア
+        // 同じ値をクリックしたらクリア（minValueに応じて0か null）
         if (value === rating) {
-          onChange(null);
+          onChange(minValue === 0 ? 0 : null);
         } else {
           onChange(rating);
         }
       }
     },
-    [value, onChange],
+    [value, onChange, minValue],
   );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (!onChange) return;
 
-      const currentValue = value || 0;
+      const currentValue = value ?? 0;
 
       if (e.key === "ArrowRight" || e.key === "ArrowUp") {
         e.preventDefault();
@@ -97,15 +114,21 @@ export default function StarRating({
         onChange(newValue);
       } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
         e.preventDefault();
-        const newValue = Math.max(currentValue - 1, 1);
-        if (currentValue === 1) {
-          onChange(null);
-        } else {
+        if (minValue === 0) {
+          const newValue = Math.max(currentValue - 1, 0);
           onChange(newValue);
+        } else {
+          // minValue === 1
+          if (currentValue === 1) {
+            onChange(null);
+          } else {
+            const newValue = Math.max(currentValue - 1, 1);
+            onChange(newValue);
+          }
         }
       }
     },
-    [value, onChange],
+    [value, onChange, minValue],
   );
 
   const IconComponent = icon === "bean" ? BeanIcon : StarIcon;
@@ -125,16 +148,16 @@ export default function StarRating({
       >
         {[1, 2, 3, 4, 5].map((rating) => {
           const isHighlighted =
-            hoverValue > 0 ? rating <= hoverValue : rating <= (value || 0);
+            hoverValue > 0 ? rating <= hoverValue : rating <= displayValue;
 
           return (
             <button
               key={rating}
               type="button"
               role="radio"
-              aria-checked={rating <= (value || 0)}
+              aria-checked={rating <= displayValue}
               aria-label={String(rating)}
-              tabIndex={rating === (value || 1) ? 0 : -1}
+              tabIndex={rating === (displayValue || 1) ? 0 : -1}
               className={`w-8 h-8 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-1 rounded ${
                 isHighlighted ? "text-amber-500" : "text-gray-300"
               } hover:text-amber-400`}
@@ -147,7 +170,11 @@ export default function StarRating({
           );
         })}
       </div>
-      <input type="hidden" name={name} value={value?.toString() || ""} />
+      <input
+        type="hidden"
+        name={name}
+        value={value === null ? "" : String(value)}
+      />
     </div>
   );
 }

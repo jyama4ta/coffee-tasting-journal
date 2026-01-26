@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/Button";
 import ImageUpload from "@/components/ImageUpload";
+import StarRating from "@/components/StarRating";
 
 interface Shop {
   id: number;
@@ -44,6 +45,10 @@ export default function NewBeanForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imagePath, setImagePath] = useState<string | null>(null);
+  const [acidityScore, setAcidityScore] = useState(0);
+  const [bitternessScore, setBitternessScore] = useState(0);
+  const [bodyScore, setBodyScore] = useState(0);
+  const [flavorScore, setFlavorScore] = useState(0);
 
   const defaultShopId = searchParams.get("shopId") || "";
 
@@ -87,6 +92,10 @@ export default function NewBeanForm() {
         ? parseInt(formData.get("shopId") as string, 10)
         : null,
       imagePath,
+      acidityScore,
+      bitternessScore,
+      bodyScore,
+      flavorScore,
     };
 
     try {
@@ -230,6 +239,48 @@ export default function NewBeanForm() {
           <label htmlFor="isDecaf" className="ml-2 text-sm text-gray-700">
             デカフェ
           </label>
+        </div>
+      </div>
+
+      {/* 味わい評価 */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900 border-b pb-2">
+          味わい評価
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <StarRating
+            name="acidityScore"
+            label="酸味"
+            icon="bean"
+            minValue={0}
+            value={acidityScore}
+            onChange={(val) => setAcidityScore(val ?? 0)}
+          />
+          <StarRating
+            name="bitternessScore"
+            label="苦味"
+            icon="bean"
+            minValue={0}
+            value={bitternessScore}
+            onChange={(val) => setBitternessScore(val ?? 0)}
+          />
+          <StarRating
+            name="bodyScore"
+            label="コク"
+            icon="bean"
+            minValue={0}
+            value={bodyScore}
+            onChange={(val) => setBodyScore(val ?? 0)}
+          />
+          <StarRating
+            name="flavorScore"
+            label="風味"
+            icon="bean"
+            minValue={0}
+            value={flavorScore}
+            onChange={(val) => setFlavorScore(val ?? 0)}
+          />
         </div>
       </div>
 

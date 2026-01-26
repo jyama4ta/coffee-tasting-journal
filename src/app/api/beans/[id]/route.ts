@@ -32,6 +32,42 @@ const VALID_BEAN_TYPES = ["SINGLE_ORIGIN", "BLEND"] as const;
 // 有効なステータス
 const VALID_STATUSES = ["IN_STOCK", "FINISHED"] as const;
 
+// 評価スコアのフィールド名
+const SCORE_FIELDS = [
+  "acidityScore",
+  "bitternessScore",
+  "bodyScore",
+  "flavorScore",
+] as const;
+
+// 評価スコアのラベル
+const SCORE_LABELS: Record<string, string> = {
+  acidityScore: "酸味",
+  bitternessScore: "苦味",
+  bodyScore: "コク",
+  flavorScore: "風味",
+};
+
+// 評価スコアのバリデーション
+function validateScore(
+  field: string,
+  value: unknown,
+): { valid: true } | { valid: false; error: string } {
+  const label = SCORE_LABELS[field] || field;
+  if (value !== undefined && value !== null) {
+    if (typeof value !== "number" || !Number.isInteger(value)) {
+      return { valid: false, error: `${label}の評価は整数で指定してください` };
+    }
+    if (value < 0 || value > 5) {
+      return {
+        valid: false,
+        error: `${label}の評価は0〜5の範囲で指定してください`,
+      };
+    }
+  }
+  return { valid: true };
+}
+
 // IDをパースするヘルパー関数
 function parseId(id: string): number | null {
   const parsed = parseInt(id, 10);
@@ -140,6 +176,22 @@ export async function PUT(request: Request, context: Context) {
       );
     }
 
+    // バリデーション: 評価スコアの検証
+    for (const field of SCORE_FIELDS) {
+      const result = validateScore(field, body[field]);
+      if (!result.valid) {
+        return NextResponse.json({ error: result.error }, { status: 400 });
+      }
+    }
+
+    // スコアデータの構築
+    const scores: Record<string, number> = {};
+    for (const field of SCORE_FIELDS) {
+      if (body[field] !== undefined) {
+        scores[field] = body[field] ?? 0;
+      }
+    }
+
     // 豆の存在確認
     const existing = await prisma.coffeeBean.findUnique({
       where: { id: beanId },
@@ -173,6 +225,7 @@ export async function PUT(request: Request, context: Context) {
         amount: body.amount !== undefined ? body.amount : undefined,
         shopId: body.shopId !== undefined ? body.shopId : undefined,
         imagePath: body.imagePath !== undefined ? body.imagePath : undefined,
+        ...scores,
       },
     });
 

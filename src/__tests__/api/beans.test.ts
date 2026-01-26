@@ -177,6 +177,68 @@ describe("CoffeeBean API", () => {
       expect(data.url).toBe("https://example.com/coffee");
     });
 
+    it("酸味・苦味・コク・風味の評価を保存できる", async () => {
+      const beanData = {
+        name: "フレーバーテスト",
+        acidityScore: 5,
+        bitternessScore: 4,
+        bodyScore: 3,
+        flavorScore: 2,
+      };
+
+      const request = createRequest("POST", beanData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.acidityScore).toBe(5);
+      expect(data.bitternessScore).toBe(4);
+      expect(data.bodyScore).toBe(3);
+      expect(data.flavorScore).toBe(2);
+    });
+
+    it("評価未指定の場合は0で保存される", async () => {
+      const beanData = { name: "スコア未指定" };
+
+      const request = createRequest("POST", beanData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.acidityScore).toBe(0);
+      expect(data.bitternessScore).toBe(0);
+      expect(data.bodyScore).toBe(0);
+      expect(data.flavorScore).toBe(0);
+    });
+
+    it("評価が範囲外（6以上）の場合は400エラー", async () => {
+      const beanData = {
+        name: "範囲外",
+        acidityScore: 6,
+      };
+
+      const request = createRequest("POST", beanData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBeDefined();
+    });
+
+    it("評価が範囲外（負数）の場合は400エラー", async () => {
+      const beanData = {
+        name: "範囲外",
+        bitternessScore: -1,
+      };
+
+      const request = createRequest("POST", beanData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(data.error).toBeDefined();
+    });
+
     it("店舗を紐づけて作成できる", async () => {
       // 店舗を作成
       const shop = await prisma.shop.create({
