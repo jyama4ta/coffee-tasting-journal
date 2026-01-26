@@ -7,6 +7,17 @@ import { formatDateTimeShort } from "@/lib/dateUtils";
 // 常に最新のデータを取得する（キャッシュ無効化）
 export const dynamic = "force-dynamic";
 
+// 安全にflavorTagsをパースする関数
+function parseFlavorTags(flavorTags: string | null): string[] {
+  if (!flavorTags || flavorTags === "[]") return [];
+  try {
+    const parsed = JSON.parse(flavorTags);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 async function getTastings(beanId?: string) {
   const where = beanId ? { coffeeBeanId: parseInt(beanId, 10) } : {};
   return prisma.tastingEntry.findMany({
@@ -102,18 +113,16 @@ export default async function TastingsPage({ searchParams }: Props) {
                       )}
                     </div>
                     {/* Flavor Tags */}
-                    {tasting.flavorTags && (
+                    {parseFlavorTags(tasting.flavorTags).length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
-                        {(JSON.parse(tasting.flavorTags) as string[]).map(
-                          (tag) => (
-                            <span
-                              key={tag}
-                              className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs"
-                            >
-                              {tag}
-                            </span>
-                          ),
-                        )}
+                        {parseFlavorTags(tasting.flavorTags).map((tag) => (
+                          <span
+                            key={tag}
+                            className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs"
+                          >
+                            {tag}
+                          </span>
+                        ))}
                       </div>
                     )}
                   </div>

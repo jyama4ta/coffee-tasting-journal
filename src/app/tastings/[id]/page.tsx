@@ -62,7 +62,14 @@ export default async function TastingDetailPage({ params }: Props) {
 
   // flavorTagsはJSON文字列として保存されているのでパース
   const flavorTags: string[] = tasting.flavorTags
-    ? JSON.parse(tasting.flavorTags)
+    ? (() => {
+        try {
+          const parsed = JSON.parse(tasting.flavorTags);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      })()
     : [];
 
   return (
