@@ -4,13 +4,13 @@
 
 ## 技術スタック
 
-| カテゴリ | 技術 |
-|---------|------|
+| カテゴリ       | 技術                              |
+| -------------- | --------------------------------- |
 | フレームワーク | Next.js (App Router) - TypeScript |
-| データベース | SQLite + Prisma ORM |
-| UI | React + Tailwind CSS |
-| テスト | Vitest + @testing-library/react |
-| コンテナ | Docker + docker-compose |
+| データベース   | SQLite + Prisma ORM               |
+| UI             | React + Tailwind CSS              |
+| テスト         | Vitest + @testing-library/react   |
+| コンテナ       | Docker + docker-compose           |
 
 ## アーキテクチャ
 

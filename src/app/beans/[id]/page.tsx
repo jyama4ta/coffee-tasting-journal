@@ -66,7 +66,7 @@ export default async function BeanDetailPage({ params }: Props) {
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold text-gray-900">🫘 {bean.name}</h1>
@@ -78,7 +78,10 @@ export default async function BeanDetailPage({ params }: Props) {
           </div>
           <p className="text-gray-600">豆詳細</p>
         </div>
-        <div className="flex gap-2">
+        <div
+          className="flex flex-col sm:flex-row gap-2"
+          data-testid="action-buttons"
+        >
           <StatusButton beanId={bean.id} currentStatus={bean.status} />
           <Button href={`/beans/${bean.id}/edit`} variant="outline">
             編集

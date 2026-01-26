@@ -85,98 +85,152 @@ export default async function BeansPage({ searchParams }: Props) {
 
       {/* List */}
       {beans.length > 0 ? (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  銘柄
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  産地
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  焙煎度
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  購入店
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  試飲数
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  状態
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  操作
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {beans.map((bean) => (
-                <tr key={bean.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Link
-                      href={`/beans/${bean.id}`}
-                      className="text-amber-600 hover:text-amber-800 font-medium"
-                    >
+        <>
+          {/* Mobile: Card Layout */}
+          <div className="md:hidden space-y-4" data-testid="beans-cards">
+            {beans.map((bean) => (
+              <Link
+                key={bean.id}
+                href={`/beans/${bean.id}`}
+                className="block bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-gray-900">
                       {bean.name}
-                    </Link>
+                    </span>
                     {bean.isDecaf && (
-                      <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded">
+                      <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded">
                         デカフェ
                       </span>
                     )}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {bean.origin || "-"}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {bean.roastLevel
-                      ? ROAST_LEVEL_LABELS[bean.roastLevel] || bean.roastLevel
-                      : "-"}
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    {bean.shop ? (
-                      <Link
-                        href={`/shops/${bean.shop.id}`}
-                        className="text-amber-600 hover:text-amber-800"
-                      >
-                        {bean.shop.name}
-                      </Link>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs font-medium">
-                      {bean._count.tastingEntries} 回
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        bean.status === "IN_STOCK"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {bean.status === "IN_STOCK" ? "在庫中" : "飲み切り"}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                    <Link
-                      href={`/beans/${bean.id}/edit`}
-                      className="text-amber-600 hover:text-amber-900"
-                    >
-                      編集
-                    </Link>
-                  </td>
+                  </div>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      bean.status === "IN_STOCK"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {bean.status === "IN_STOCK" ? "在庫中" : "飲み切り"}
+                  </span>
+                </div>
+                <div className="text-sm text-gray-500 space-y-1">
+                  {bean.origin && <p>産地: {bean.origin}</p>}
+                  {bean.roastLevel && (
+                    <p>
+                      焙煎:{" "}
+                      {ROAST_LEVEL_LABELS[bean.roastLevel] || bean.roastLevel}
+                    </p>
+                  )}
+                  {bean.shop && <p>購入店: {bean.shop.name}</p>}
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs font-medium">
+                    試飲 {bean._count.tastingEntries} 回
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Desktop: Table Layout */}
+          <div
+            className="hidden md:block bg-white rounded-lg shadow overflow-hidden"
+            data-testid="beans-table"
+          >
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    銘柄
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    産地
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    焙煎度
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    購入店
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    試飲数
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    状態
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    操作
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {beans.map((bean) => (
+                  <tr key={bean.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Link
+                        href={`/beans/${bean.id}`}
+                        className="text-amber-600 hover:text-amber-800 font-medium"
+                      >
+                        {bean.name}
+                      </Link>
+                      {bean.isDecaf && (
+                        <span className="ml-2 text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded">
+                          デカフェ
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {bean.origin || "-"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {bean.roastLevel
+                        ? ROAST_LEVEL_LABELS[bean.roastLevel] || bean.roastLevel
+                        : "-"}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      {bean.shop ? (
+                        <Link
+                          href={`/shops/${bean.shop.id}`}
+                          className="text-amber-600 hover:text-amber-800"
+                        >
+                          {bean.shop.name}
+                        </Link>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded-full text-xs font-medium">
+                        {bean._count.tastingEntries} 回
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          bean.status === "IN_STOCK"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-100 text-gray-600"
+                        }`}
+                      >
+                        {bean.status === "IN_STOCK" ? "在庫中" : "飲み切り"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                      <Link
+                        href={`/beans/${bean.id}/edit`}
+                        className="text-amber-600 hover:text-amber-900"
+                      >
+                        編集
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       ) : (
         <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
           <p className="mb-4">
