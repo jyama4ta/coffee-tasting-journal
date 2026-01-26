@@ -11,6 +11,7 @@ import { toDatetimeLocal } from "@/lib/dateUtils";
 interface Bean {
   id: number;
   name: string;
+  purchaseDate: string | null;
 }
 
 interface Dripper {
@@ -253,11 +254,17 @@ export default function EditTastingPage({ params }: Props) {
               defaultValue={tasting.coffeeBeanId}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             >
-              {beans.map((bean) => (
-                <option key={bean.id} value={bean.id}>
-                  {bean.name}
-                </option>
-              ))}
+              {beans.map((bean) => {
+                const datePrefix = bean.purchaseDate
+                  ? `(${new Date(bean.purchaseDate).toLocaleDateString("ja-JP", { month: "2-digit", day: "2-digit" })}) `
+                  : "";
+                return (
+                  <option key={bean.id} value={bean.id}>
+                    {datePrefix}
+                    {bean.name}
+                  </option>
+                );
+              })}
             </select>
           </div>
 

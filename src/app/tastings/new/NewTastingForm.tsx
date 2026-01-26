@@ -12,6 +12,7 @@ interface Bean {
   id: number;
   name: string;
   status: string;
+  purchaseDate: string | null;
 }
 
 interface Dripper {
@@ -180,11 +181,17 @@ export default function NewTastingForm() {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           >
             <option value="">選択してください</option>
-            {beans.map((bean) => (
-              <option key={bean.id} value={bean.id}>
-                {bean.name}
-              </option>
-            ))}
+            {beans.map((bean) => {
+              const datePrefix = bean.purchaseDate
+                ? `(${new Date(bean.purchaseDate).toLocaleDateString("ja-JP", { month: "2-digit", day: "2-digit" })}) `
+                : "";
+              return (
+                <option key={bean.id} value={bean.id}>
+                  {datePrefix}
+                  {bean.name}
+                </option>
+              );
+            })}
           </select>
           {beans.length === 0 && (
             <p className="mt-1 text-sm text-gray-500">
