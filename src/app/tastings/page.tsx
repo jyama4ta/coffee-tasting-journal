@@ -2,6 +2,7 @@ import Link from "next/link";
 import Button from "@/components/Button";
 import BeanFilter from "@/components/BeanFilter";
 import { prisma } from "@/lib/prisma";
+import { formatDateTimeShort } from "@/lib/dateUtils";
 
 // 常に最新のデータを取得する（キャッシュ無効化）
 export const dynamic = "force-dynamic";
@@ -71,7 +72,7 @@ export default async function TastingsPage({ searchParams }: Props) {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-500">
-                        {new Date(tasting.brewDate).toLocaleDateString("ja-JP")}
+                        {formatDateTimeShort(tasting.brewDate)}
                       </span>
                       {tasting.overallRating && (
                         <span className="text-amber-500">

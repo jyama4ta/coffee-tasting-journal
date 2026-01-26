@@ -6,6 +6,7 @@ import Button from "@/components/Button";
 import StarRating from "@/components/StarRating";
 import GrindSizeSlider from "@/components/GrindSizeSlider";
 import ImageUpload from "@/components/ImageUpload";
+import { getNowForDatetimeLocal } from "@/lib/dateUtils";
 
 interface Bean {
   id: number;
@@ -97,6 +98,7 @@ export default function NewTastingForm() {
     setError("");
 
     const formData = new FormData(e.currentTarget);
+    const brewDateValue = formData.get("brewDate") as string;
     const data = {
       coffeeBeanId: parseInt(formData.get("coffeeBeanId") as string, 10),
       dripperId: formData.get("dripperId")
@@ -106,9 +108,7 @@ export default function NewTastingForm() {
         ? parseInt(formData.get("filterId") as string, 10)
         : null,
       grindSize,
-      brewDate:
-        (formData.get("brewDate") as string) ||
-        new Date().toISOString().split("T")[0],
+      brewDate: brewDateValue || getNowForDatetimeLocal(),
       acidity,
       bitterness,
       sweetness,
@@ -251,13 +251,13 @@ export default function NewTastingForm() {
             htmlFor="brewDate"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            抽出日
+            抽出日時
           </label>
           <input
-            type="date"
+            type="datetime-local"
             id="brewDate"
             name="brewDate"
-            defaultValue={new Date().toISOString().split("T")[0]}
+            defaultValue={getNowForDatetimeLocal()}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           />
         </div>

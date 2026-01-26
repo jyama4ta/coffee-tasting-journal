@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Button from "@/components/Button";
 import DeleteButton from "./DeleteButton";
 import { prisma } from "@/lib/prisma";
+import { formatDateTime } from "@/lib/dateUtils";
 
 // 常に最新のデータを取得する（キャッシュ無効化）
 export const dynamic = "force-dynamic";
@@ -71,7 +72,7 @@ export default async function TastingDetailPage({ params }: Props) {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">📝 試飲記録</h1>
           <p className="text-gray-600">
-            {new Date(tasting.brewDate).toLocaleDateString("ja-JP")}の記録
+            {formatDateTime(tasting.brewDate)}の記録
           </p>
         </div>
         <div className="flex gap-2">
@@ -127,9 +128,9 @@ export default async function TastingDetailPage({ params }: Props) {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">抽出情報</h2>
           <dl className="space-y-3">
             <div className="flex justify-between">
-              <dt className="text-gray-500">抽出日</dt>
+              <dt className="text-gray-500">抽出日時</dt>
               <dd className="text-gray-900">
-                {new Date(tasting.brewDate).toLocaleDateString("ja-JP")}
+                {formatDateTime(tasting.brewDate)}
               </dd>
             </div>
             <div className="flex justify-between">

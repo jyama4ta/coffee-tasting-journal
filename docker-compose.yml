@@ -12,6 +12,8 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/data/database.db
+      # タイムゾーン設定（日本時間）
+      - TZ=Asia/Tokyo
     restart: unless-stopped
 
 volumes:

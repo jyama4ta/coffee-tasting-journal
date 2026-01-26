@@ -6,6 +6,7 @@ import Button from "@/components/Button";
 import StarRating from "@/components/StarRating";
 import GrindSizeSlider from "@/components/GrindSizeSlider";
 import ImageUpload from "@/components/ImageUpload";
+import { toDatetimeLocal } from "@/lib/dateUtils";
 
 interface Bean {
   id: number;
@@ -206,7 +207,7 @@ export default function EditTastingPage({ params }: Props) {
     );
   }
 
-  const brewDateValue = new Date(tasting.brewDate).toISOString().split("T")[0];
+  const brewDateValue = toDatetimeLocal(tasting.brewDate);
 
   const groupedTags = FLAVOR_TAGS.reduce(
     (acc, tag) => {
@@ -316,10 +317,10 @@ export default function EditTastingPage({ params }: Props) {
               htmlFor="brewDate"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              抽出日
+              抽出日時
             </label>
             <input
-              type="date"
+              type="datetime-local"
               id="brewDate"
               name="brewDate"
               defaultValue={brewDateValue}

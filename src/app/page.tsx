@@ -3,6 +3,7 @@ import StatsSection from "@/components/StatsSection";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { formatDateTimeShort } from "@/lib/dateUtils";
 
 // 常に最新のデータを取得する（キャッシュ無効化）
 export const dynamic = "force-dynamic";
@@ -91,7 +92,7 @@ export default async function Home() {
                   {stats.recentTastings.map((tasting) => (
                     <tr key={tasting.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {new Date(tasting.brewDate).toLocaleDateString("ja-JP")}
+                        {formatDateTimeShort(tasting.brewDate)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {tasting.coffeeBean.name}
@@ -135,7 +136,7 @@ export default async function Home() {
                     ) : null}
                   </div>
                   <div className="text-sm text-gray-500">
-                    {new Date(tasting.brewDate).toLocaleDateString("ja-JP")}
+                    {formatDateTimeShort(tasting.brewDate)}
                   </div>
                   {tasting.notes && (
                     <p className="text-sm text-gray-600 mt-2 line-clamp-2">
