@@ -4,13 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import ImageUpload from "@/components/ImageUpload";
-
-const FILTER_TYPES = [
-  { value: "", label: "選択なし" },
-  { value: "PAPER", label: "ペーパー" },
-  { value: "METAL", label: "金属" },
-  { value: "CLOTH", label: "布" },
-];
+import { FILTER_TYPES, EQUIPMENT_SIZES } from "@/lib/constants";
 
 export default function NewFilterPage() {
   const router = useRouter();
@@ -134,12 +128,11 @@ export default function NewFilterPage() {
             name="size"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           >
-            <option value="">-- 選択してください --</option>
-            <option value="SIZE_01">01（1-2杯用）</option>
-            <option value="SIZE_02">02（1-4杯用）</option>
-            <option value="SIZE_03">03（3-6杯用）</option>
-            <option value="SIZE_04">04（4-8杯用）</option>
-            <option value="OTHER">その他</option>
+            {EQUIPMENT_SIZES.map((size) => (
+              <option key={size.value} value={size.value}>
+                {size.label}
+              </option>
+            ))}
           </select>
         </div>
 

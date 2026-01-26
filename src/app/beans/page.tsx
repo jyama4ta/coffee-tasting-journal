@@ -1,20 +1,10 @@
 import Link from "next/link";
 import Button from "@/components/Button";
 import { prisma } from "@/lib/prisma";
+import { ROAST_LEVEL_SHORT_LABELS } from "@/lib/constants";
 
 // 常に最新のデータを取得する（キャッシュ無効化）
 export const dynamic = "force-dynamic";
-
-const ROAST_LEVEL_LABELS: Record<string, string> = {
-  LIGHT: "ライトロースト",
-  CINNAMON: "シナモンロースト",
-  MEDIUM: "ミディアムロースト",
-  HIGH: "ハイロースト・ダークロースト",
-  CITY: "シティロースト",
-  FULL_CITY: "フルシティロースト",
-  FRENCH: "フレンチロースト",
-  ITALIAN: "イタリアンロースト",
-};
 
 // displayNameを生成するヘルパー関数
 function getShopDisplayName(name: string, branchName: string | null): string {
@@ -128,7 +118,7 @@ export default async function BeansPage({ searchParams }: Props) {
                   {bean.roastLevel && (
                     <p>
                       焙煎:{" "}
-                      {ROAST_LEVEL_LABELS[bean.roastLevel] || bean.roastLevel}
+                      {ROAST_LEVEL_SHORT_LABELS[bean.roastLevel] || bean.roastLevel}
                     </p>
                   )}
                   {bean.shop && (
@@ -199,7 +189,7 @@ export default async function BeansPage({ searchParams }: Props) {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {bean.roastLevel
-                        ? ROAST_LEVEL_LABELS[bean.roastLevel] || bean.roastLevel
+                        ? ROAST_LEVEL_SHORT_LABELS[bean.roastLevel] || bean.roastLevel
                         : "-"}
                     </td>
                     <td className="px-6 py-4 text-sm">

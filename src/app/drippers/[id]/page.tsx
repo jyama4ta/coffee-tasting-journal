@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Button from "@/components/Button";
 import DeleteButton from "./DeleteButton";
 import { prisma } from "@/lib/prisma";
+import { EQUIPMENT_SIZE_LABELS } from "@/lib/constants";
 
 // 常に最新のデータを取得する（キャッシュ無効化）
 export const dynamic = "force-dynamic";
@@ -88,13 +89,7 @@ export default async function DripperDetailPage({ params }: Props) {
             <dt className="text-sm font-medium text-gray-500">サイズ</dt>
             <dd className="mt-1 text-gray-900">
               {dripper.size
-                ? {
-                    SIZE_01: "01（1-2杯用）",
-                    SIZE_02: "02（1-4杯用）",
-                    SIZE_03: "03（3-6杯用）",
-                    SIZE_04: "04（4-8杯用）",
-                    OTHER: "その他",
-                  }[dripper.size] || dripper.size
+                ? EQUIPMENT_SIZE_LABELS[dripper.size] || dripper.size
                 : "-"}
             </dd>
           </div>

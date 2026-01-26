@@ -4,33 +4,14 @@ import Button from "@/components/Button";
 import DeleteButton from "./DeleteButton";
 import StatusButton from "./StatusButton";
 import { prisma } from "@/lib/prisma";
+import {
+  ROAST_LEVEL_LABELS,
+  PROCESS_LABELS,
+  BEAN_TYPE_LABELS,
+} from "@/lib/constants";
 
 // 常に最新のデータを取得する（キャッシュ無効化）
 export const dynamic = "force-dynamic";
-
-const ROAST_LEVEL_LABELS: Record<string, string> = {
-  LIGHT: "ライトロースト（浅煎り）",
-  CINNAMON: "シナモンロースト（浅煎り）",
-  MEDIUM: "ミディアムロースト（中浅煎り）",
-  HIGH: "ハイロースト・ダークロースト（中煎り）",
-  CITY: "シティロースト（中煎り）",
-  FULL_CITY: "フルシティロースト（中深煎り）",
-  FRENCH: "フレンチロースト（深煎り）",
-  ITALIAN: "イタリアンロースト（深煎り）",
-};
-
-const PROCESS_LABELS: Record<string, string> = {
-  WASHED: "ウォッシュド",
-  NATURAL: "ナチュラル",
-  HONEY: "ハニー",
-  PULPED_NATURAL: "パルプドナチュラル",
-  SEMI_WASHED: "セミウォッシュド",
-};
-
-const BEAN_TYPE_LABELS: Record<string, string> = {
-  SINGLE_ORIGIN: "シングルオリジン",
-  BLEND: "ブレンド",
-};
 
 // displayNameを生成するヘルパー関数
 function getShopDisplayName(name: string, branchName: string | null): string {

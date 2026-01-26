@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import ImageUpload from "@/components/ImageUpload";
 import StarRating from "@/components/StarRating";
+import { ROAST_LEVELS, PROCESSES, BEAN_TYPES } from "@/lib/constants";
 
 interface Shop {
   id: number;
@@ -33,33 +34,6 @@ interface Bean {
   shopId: number | null;
   imagePath: string | null;
 }
-
-const ROAST_LEVELS = [
-  { value: "", label: "選択なし" },
-  { value: "LIGHT", label: "ライトロースト（浅煎り）" },
-  { value: "CINNAMON", label: "シナモンロースト（浅煎り）" },
-  { value: "MEDIUM", label: "ミディアムロースト（中浅煎り）" },
-  { value: "HIGH", label: "ハイロースト・ダークロースト（中煎り）" },
-  { value: "CITY", label: "シティロースト（中煎り）" },
-  { value: "FULL_CITY", label: "フルシティロースト（中深煎り）" },
-  { value: "FRENCH", label: "フレンチロースト（深煎り）" },
-  { value: "ITALIAN", label: "イタリアンロースト（深煎り）" },
-];
-
-const PROCESSES = [
-  { value: "", label: "選択なし" },
-  { value: "WASHED", label: "ウォッシュド" },
-  { value: "NATURAL", label: "ナチュラル" },
-  { value: "HONEY", label: "ハニー" },
-  { value: "PULPED_NATURAL", label: "パルプドナチュラル" },
-  { value: "SEMI_WASHED", label: "セミウォッシュド" },
-];
-
-const BEAN_TYPES = [
-  { value: "", label: "選択なし" },
-  { value: "SINGLE_ORIGIN", label: "シングルオリジン" },
-  { value: "BLEND", label: "ブレンド" },
-];
 
 interface Props {
   params: Promise<{ id: string }>;
