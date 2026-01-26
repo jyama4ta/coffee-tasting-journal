@@ -39,7 +39,7 @@ const ROAST_LEVELS = [
   { value: "LIGHT", label: "ライトロースト（浅煎り）" },
   { value: "CINNAMON", label: "シナモンロースト（浅煎り）" },
   { value: "MEDIUM", label: "ミディアムロースト（中浅煎り）" },
-  { value: "HIGH", label: "ハイロースト（中煎り）" },
+  { value: "HIGH", label: "ハイロースト・ダークロースト（中煎り）" },
   { value: "CITY", label: "シティロースト（中煎り）" },
   { value: "FULL_CITY", label: "フルシティロースト（中深煎り）" },
   { value: "FRENCH", label: "フレンチロースト（深煎り）" },

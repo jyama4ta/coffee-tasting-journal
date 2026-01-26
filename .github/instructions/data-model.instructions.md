@@ -41,7 +41,7 @@
   - ライトロースト (Light Roast) → 浅煎り
   - シナモンロースト (Cinnamon Roast) → 浅煎り
   - ミディアムロースト (Medium Roast) → 中浅煎り
-  - ハイロースト (High Roast) → 中煎り
+  - ハイロースト・ダークロースト (High Roast / Dark Roast) → 中煎り
   - シティロースト (City Roast) → 中煎り
   - フルシティロースト (Full City Roast) → 中深煎り
   - フレンチロースト (French Roast) → 深煎り

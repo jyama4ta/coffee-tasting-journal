@@ -12,7 +12,7 @@ const ROAST_LEVEL_LABELS: Record<string, string> = {
   LIGHT: "ライトロースト（浅煎り）",
   CINNAMON: "シナモンロースト（浅煎り）",
   MEDIUM: "ミディアムロースト（中浅煎り）",
-  HIGH: "ハイロースト（中煎り）",
+  HIGH: "ハイロースト・ダークロースト（中煎り）",
   CITY: "シティロースト（中煎り）",
   FULL_CITY: "フルシティロースト（中深煎り）",
   FRENCH: "フレンチロースト（深煎り）",
