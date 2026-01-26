@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 interface GrindSizeSliderProps {
   name: string;
@@ -15,22 +15,26 @@ export default function GrindSizeSlider({
   onChange,
   label = "挽き目",
 }: GrindSizeSliderProps) {
-  const [internalValue, setInternalValue] = useState<number | null>(
-    value ?? null,
+  // 制御・非制御の両方に対応
+  const isControlled = value !== undefined;
+  const [uncontrolledValue, setUncontrolledValue] = useState<number | null>(
+    null,
   );
 
-  useEffect(() => {
-    setInternalValue(value ?? null);
-  }, [value]);
+  const currentValue = isControlled ? (value ?? null) : uncontrolledValue;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseFloat(e.target.value);
-    setInternalValue(newValue);
+    if (!isControlled) {
+      setUncontrolledValue(newValue);
+    }
     onChange?.(newValue);
   };
 
   const handleClear = () => {
-    setInternalValue(null);
+    if (!isControlled) {
+      setUncontrolledValue(null);
+    }
     onChange?.(null);
   };
 
@@ -52,10 +56,10 @@ export default function GrindSizeSlider({
           {label}
         </label>
         <div className="flex items-center gap-2">
-          {internalValue !== null && (
+          {currentValue !== null && (
             <>
               <span className="text-lg font-semibold text-amber-700">
-                {internalValue.toFixed(1)}
+                {currentValue.toFixed(1)}
               </span>
               <button
                 type="button"
@@ -66,14 +70,14 @@ export default function GrindSizeSlider({
               </button>
             </>
           )}
-          {internalValue === null && (
+          {currentValue === null && (
             <span className="text-sm text-gray-400">未設定</span>
           )}
         </div>
       </div>
 
       {/* Hidden input for form submission */}
-      <input type="hidden" name={name} value={internalValue ?? ""} />
+      <input type="hidden" name={name} value={currentValue ?? ""} />
 
       <div className="relative pt-1 pb-6">
         {/* スライダー */}
@@ -82,9 +86,9 @@ export default function GrindSizeSlider({
           min="1"
           max="10"
           step="0.5"
-          value={internalValue ?? 5}
+          value={currentValue ?? 5}
           onChange={handleChange}
-          className="w-full h-2 bg-gradient-to-r from-amber-200 to-amber-600 rounded-lg appearance-none cursor-pointer
+          className="w-full h-2 bg-linear-to-r from-amber-200 to-amber-600 rounded-lg appearance-none cursor-pointer
             [&::-webkit-slider-thumb]:appearance-none
             [&::-webkit-slider-thumb]:w-5
             [&::-webkit-slider-thumb]:h-5
