@@ -16,8 +16,8 @@ erDiagram
 
     Shop {
         int id PK
-        string brandName "ブランド名"
         string name "店舗名"
+        string branchName "支店名"
         string displayName "表示名（計算フィールド）"
         string address "住所"
         string url "Webサイト"
@@ -93,21 +93,21 @@ erDiagram
 
 購入店の情報を管理します。
 
-| フィールド  | 型       | 必須 | 説明                                                    |
-| ----------- | -------- | ---- | ------------------------------------------------------- |
-| id          | Int      | ○    | 主キー（自動採番）                                      |
-| brandName   | String   | -    | ブランド名（例: やなか珈琲）                            |
-| name        | String   | △    | 店舗名（例: 谷中店）※brandNameと両方空は不可           |
-| displayName | -        | -    | 計算フィールド: "brandName name" または単独の名前      |
-| address     | String   | -    | 住所                                                    |
-| url         | String   | -    | WebサイトURL                                            |
-| notes       | String   | -    | メモ（営業時間など）                                    |
-| createdAt   | DateTime | ○    | 作成日時                                                |
-| updatedAt   | DateTime | ○    | 更新日時                                                |
+| フィールド  | 型       | 必須 | 説明                                             |
+| ----------- | -------- | ---- | ------------------------------------------------ |
+| id          | Int      | ○    | 主キー（自動採番）                               |
+| name        | String   | ○    | 店舗名（例: やなか珈琲）                         |
+| branchName  | String   | -    | 支店名（例: 谷中店）                             |
+| displayName | -        | -    | 計算フィールド: "name branchName" またはnameのみ |
+| address     | String   | -    | 住所                                             |
+| url         | String   | -    | WebサイトURL                                     |
+| notes       | String   | -    | メモ（営業時間など）                             |
+| createdAt   | DateTime | ○    | 作成日時                                         |
+| updatedAt   | DateTime | ○    | 更新日時                                         |
 
 **displayNameの生成ルール:**
-- brandNameとnameの両方がある場合: `"{brandName} {name}"` （例: "やなか珈琲 谷中店"）
-- brandNameのみの場合: `"{brandName}"` （例: "スターバックス"）
+
+- nameとbranchNameの両方がある場合: `"{name} {branchName}"` （例: "やなか珈琲 谷中店"）
 - nameのみの場合: `"{name}"` （例: "地元の珈琲屋"）
 
 ### 2. Dripper（ドリッパーマスター）

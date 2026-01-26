@@ -263,11 +263,11 @@ describe("Shop API", () => {
     });
   });
 
-  describe("ブランド名と店舗名", () => {
-    it("ブランド名と店舗名を分けて登録できる", async () => {
+  describe("店舗名と支店名", () => {
+    it("店舗名と支店名を分けて登録できる", async () => {
       const shopData = {
-        brandName: "やなか珈琲",
-        name: "谷中店",
+        name: "やなか珈琲",
+        branchName: "谷中店",
         address: "東京都台東区",
       };
 
@@ -276,26 +276,11 @@ describe("Shop API", () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.brandName).toBe("やなか珈琲");
-      expect(data.name).toBe("谷中店");
+      expect(data.name).toBe("やなか珈琲");
+      expect(data.branchName).toBe("谷中店");
     });
 
-    it("ブランド名のみでも登録できる（店舗名なし）", async () => {
-      const shopData = {
-        brandName: "スターバックス",
-        name: "",
-      };
-
-      const request = createRequest("POST", shopData);
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(201);
-      expect(data.brandName).toBe("スターバックス");
-      expect(data.name).toBe("");
-    });
-
-    it("店舗名のみでも登録できる（従来互換）", async () => {
+    it("店舗名のみでも登録できる（支店名なし）", async () => {
       const shopData = {
         name: "地元の珈琲屋",
       };
@@ -305,14 +290,14 @@ describe("Shop API", () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.brandName).toBeNull();
       expect(data.name).toBe("地元の珈琲屋");
+      expect(data.branchName).toBeNull();
     });
 
-    it("ブランド名も店舗名も空の場合は400エラー", async () => {
+    it("店舗名が空の場合は400エラー", async () => {
       const shopData = {
-        brandName: "",
         name: "",
+        branchName: "谷中店",
       };
 
       const request = createRequest("POST", shopData);
@@ -323,11 +308,11 @@ describe("Shop API", () => {
       expect(data.error).toBeDefined();
     });
 
-    it("displayNameにブランド名と店舗名が結合して含まれる", async () => {
+    it("displayNameに店舗名と支店名が結合して含まれる", async () => {
       const shop = await prisma.shop.create({
         data: {
-          brandName: "やなか珈琲",
-          name: "谷中店",
+          name: "やなか珈琲",
+          branchName: "谷中店",
         },
       });
 
@@ -362,31 +347,11 @@ describe("Shop API", () => {
       expect(data.displayName).toBe("地元の珈琲屋");
     });
 
-    it("ブランド名のみの場合displayNameはブランド名のみ", async () => {
-      const shop = await prisma.shop.create({
-        data: {
-          brandName: "スターバックス",
-          name: "",
-        },
-      });
-
-      const request = createRequest(
-        "GET",
-        undefined,
-        `http://localhost:3000/api/shops/${shop.id}`,
-      );
-      const response = await GET_BY_ID(request, createContext(String(shop.id)));
-      const data = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(data.displayName).toBe("スターバックス");
-    });
-
     it("一覧取得時もdisplayNameが含まれる", async () => {
       await prisma.shop.createMany({
         data: [
-          { brandName: "やなか珈琲", name: "谷中店" },
-          { brandName: "やなか珈琲", name: "千駄木店" },
+          { name: "やなか珈琲", branchName: "谷中店" },
+          { name: "やなか珈琲", branchName: "千駄木店" },
           { name: "地元の珈琲屋" },
         ],
       });

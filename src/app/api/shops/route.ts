@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 // displayNameを生成するヘルパー関数
-function getDisplayName(brandName: string | null, name: string): string {
-  if (brandName && name) {
-    return `${brandName} ${name}`;
+function getDisplayName(name: string, branchName: string | null): string {
+  if (branchName) {
+    return `${name} ${branchName}`;
   }
-  return brandName || name;
+  return name;
 }
 
 // GET /api/shops - 全店舗を取得
@@ -19,7 +19,7 @@ export async function GET() {
     // displayNameを追加
     const shopsWithDisplayName = shops.map((shop) => ({
       ...shop,
-      displayName: getDisplayName(shop.brandName, shop.name),
+      displayName: getDisplayName(shop.name, shop.branchName),
     }));
 
     return NextResponse.json(shopsWithDisplayName);
@@ -37,21 +37,18 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const brandName = body.brandName?.trim() || null;
     const name = body.name?.trim() || "";
+    const branchName = body.branchName?.trim() || null;
 
-    // バリデーション: ブランド名と店舗名の両方が空の場合はエラー
-    if (!brandName && !name) {
-      return NextResponse.json(
-        { error: "ブランド名または店舗名は必須です" },
-        { status: 400 },
-      );
+    // バリデーション: 店舗名は必須
+    if (!name) {
+      return NextResponse.json({ error: "店舗名は必須です" }, { status: 400 });
     }
 
     const shop = await prisma.shop.create({
       data: {
-        brandName,
         name,
+        branchName,
         address: body.address || null,
         url: body.url || null,
         notes: body.notes || null,

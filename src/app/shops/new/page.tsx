@@ -16,8 +16,8 @@ export default function NewShopPage() {
 
     const formData = new FormData(e.currentTarget);
     const data = {
-      brandName: (formData.get("brandName") as string) || null,
       name: (formData.get("name") as string) || "",
+      branchName: (formData.get("branchName") as string) || null,
       address: (formData.get("address") as string) || null,
       url: (formData.get("url") as string) || null,
       notes: (formData.get("notes") as string) || null,
@@ -61,39 +61,40 @@ export default function NewShopPage() {
 
         <div>
           <label
-            htmlFor="brandName"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            ブランド名
-          </label>
-          <input
-            type="text"
-            id="brandName"
-            name="brandName"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            placeholder="例: やなか珈琲"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            チェーン店の場合はブランド名を入力してください
-          </p>
-        </div>
-
-        <div>
-          <label
             htmlFor="name"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            店舗名
+            店舗名 <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             id="name"
             name="name"
+            required
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            placeholder="例: やなか珈琲"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            お店の名前を入力してください
+          </p>
+        </div>
+
+        <div>
+          <label
+            htmlFor="branchName"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            支店名
+          </label>
+          <input
+            type="text"
+            id="branchName"
+            name="branchName"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             placeholder="例: 谷中店"
           />
           <p className="text-xs text-gray-500 mt-1">
-            ブランド名か店舗名のどちらか一方は必須です
+            チェーン店など支店がある場合に入力してください
           </p>
         </div>
 

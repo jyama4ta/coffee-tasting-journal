@@ -20,11 +20,11 @@ async function getShop(id: number) {
 }
 
 // displayNameを生成するヘルパー関数
-function getDisplayName(brandName: string | null, name: string): string {
-  if (brandName && name) {
-    return `${brandName} ${name}`;
+function getDisplayName(name: string, branchName: string | null): string {
+  if (branchName) {
+    return `${name} ${branchName}`;
   }
-  return brandName || name;
+  return name;
 }
 
 interface Props {
@@ -45,7 +45,7 @@ export default async function ShopDetailPage({ params }: Props) {
     notFound();
   }
 
-  const displayName = getDisplayName(shop.brandName, shop.name);
+  const displayName = getDisplayName(shop.name, shop.branchName);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -67,16 +67,16 @@ export default async function ShopDetailPage({ params }: Props) {
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">基本情報</h2>
         <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {shop.brandName && (
-            <div>
-              <dt className="text-sm font-medium text-gray-500">ブランド名</dt>
-              <dd className="mt-1 text-gray-900">{shop.brandName}</dd>
-            </div>
-          )}
           <div>
             <dt className="text-sm font-medium text-gray-500">店舗名</dt>
-            <dd className="mt-1 text-gray-900">{shop.name || "-"}</dd>
+            <dd className="mt-1 text-gray-900">{shop.name}</dd>
           </div>
+          {shop.branchName && (
+            <div>
+              <dt className="text-sm font-medium text-gray-500">支店名</dt>
+              <dd className="mt-1 text-gray-900">{shop.branchName}</dd>
+            </div>
+          )}
           <div>
             <dt className="text-sm font-medium text-gray-500">住所</dt>
             <dd className="mt-1 text-gray-900">{shop.address || "-"}</dd>

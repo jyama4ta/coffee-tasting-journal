@@ -17,14 +17,11 @@ const ROAST_LEVEL_LABELS: Record<string, string> = {
 };
 
 // displayNameを生成するヘルパー関数
-function getShopDisplayName(
-  brandName: string | null,
-  name: string,
-): string {
-  if (brandName && name) {
-    return `${brandName} ${name}`;
+function getShopDisplayName(name: string, branchName: string | null): string {
+  if (branchName) {
+    return `${name} ${branchName}`;
   }
-  return brandName || name;
+  return name;
 }
 
 async function getBeans(status?: string) {
@@ -137,7 +134,7 @@ export default async function BeansPage({ searchParams }: Props) {
                   {bean.shop && (
                     <p>
                       購入店:{" "}
-                      {getShopDisplayName(bean.shop.brandName, bean.shop.name)}
+                      {getShopDisplayName(bean.shop.name, bean.shop.branchName)}
                     </p>
                   )}
                 </div>
@@ -211,7 +208,10 @@ export default async function BeansPage({ searchParams }: Props) {
                           href={`/shops/${bean.shop.id}`}
                           className="text-amber-600 hover:text-amber-800"
                         >
-                          {getShopDisplayName(bean.shop.brandName, bean.shop.name)}
+                          {getShopDisplayName(
+                            bean.shop.name,
+                            bean.shop.branchName,
+                          )}
                         </Link>
                       ) : (
                         "-"

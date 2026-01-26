@@ -12,11 +12,11 @@ function parseId(id: string): number | null {
 }
 
 // displayNameを生成するヘルパー関数
-function getDisplayName(brandName: string | null, name: string): string {
-  if (brandName && name) {
-    return `${brandName} ${name}`;
+function getDisplayName(name: string, branchName: string | null): string {
+  if (branchName) {
+    return `${name} ${branchName}`;
   }
-  return brandName || name;
+  return name;
 }
 
 // GET /api/shops/[id] - 指定した店舗を取得
@@ -43,7 +43,7 @@ export async function GET(_request: Request, context: Context) {
     // displayNameを追加
     const shopWithDisplayName = {
       ...shop,
-      displayName: getDisplayName(shop.brandName, shop.name),
+      displayName: getDisplayName(shop.name, shop.branchName),
     };
 
     return NextResponse.json(shopWithDisplayName);
@@ -81,29 +81,22 @@ export async function PUT(request: Request, context: Context) {
     }
 
     // 更新後の値を計算
-    const newBrandName =
-      body.brandName !== undefined
-        ? body.brandName?.trim() || null
-        : existing.brandName;
     const newName =
       body.name !== undefined ? body.name?.trim() || "" : existing.name;
 
-    // バリデーション: 両方が空になる場合はエラー
-    if (!newBrandName && !newName) {
-      return NextResponse.json(
-        { error: "ブランド名または店舗名は必須です" },
-        { status: 400 },
-      );
+    // バリデーション: 店舗名は必須
+    if (!newName) {
+      return NextResponse.json({ error: "店舗名は必須です" }, { status: 400 });
     }
 
     const shop = await prisma.shop.update({
       where: { id: shopId },
       data: {
-        brandName:
-          body.brandName !== undefined
-            ? body.brandName?.trim() || null
-            : undefined,
         name: body.name !== undefined ? body.name?.trim() || "" : undefined,
+        branchName:
+          body.branchName !== undefined
+            ? body.branchName?.trim() || null
+            : undefined,
         address: body.address !== undefined ? body.address : undefined,
         url: body.url !== undefined ? body.url : undefined,
         notes: body.notes !== undefined ? body.notes : undefined,
@@ -113,7 +106,7 @@ export async function PUT(request: Request, context: Context) {
     // displayNameを追加
     const shopWithDisplayName = {
       ...shop,
-      displayName: getDisplayName(shop.brandName, shop.name),
+      displayName: getDisplayName(shop.name, shop.branchName),
     };
 
     return NextResponse.json(shopWithDisplayName);
