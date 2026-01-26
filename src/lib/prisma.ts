@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import path from "node:path";
+import fs from "node:fs";
 
 // データベースファイルのパスを取得
 const getDbUrl = () => {
@@ -20,8 +21,19 @@ const getDbUrl = () => {
   return path.join(process.cwd(), "data", "database.db");
 };
 
+// データベースディレクトリを作成（存在しない場合）
+const ensureDbDirectory = (dbPath: string) => {
+  const dir = path.dirname(dbPath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+};
+
+const dbUrl = getDbUrl();
+ensureDbDirectory(dbUrl);
+
 // Prismaアダプターを作成（url プロパティを持つオブジェクトを渡す）
-const adapter = new PrismaBetterSqlite3({ url: getDbUrl() });
+const adapter = new PrismaBetterSqlite3({ url: dbUrl });
 
 // グローバルでPrismaClientインスタンスを保持（開発時のホットリロード対策）
 const globalForPrisma = globalThis as unknown as {
