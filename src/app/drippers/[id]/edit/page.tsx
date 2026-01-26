@@ -12,6 +12,7 @@ interface Dripper {
   notes: string | null;
   url: string | null;
   imagePath: string | null;
+  size: string | null;
 }
 
 interface Props {
