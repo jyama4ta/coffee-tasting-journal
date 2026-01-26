@@ -153,6 +153,7 @@ export async function POST(request: Request) {
         isDecaf: body.isDecaf ?? false,
         beanType: body.beanType || null,
         notes: body.notes || null,
+        url: body.url || null,
         purchaseDate: body.purchaseDate ? new Date(body.purchaseDate) : null,
         price: body.price || null,
         amount: body.amount || null,

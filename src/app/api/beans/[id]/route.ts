@@ -162,6 +162,7 @@ export async function PUT(request: Request, context: Context) {
         isDecaf: body.isDecaf !== undefined ? body.isDecaf : undefined,
         beanType: body.beanType !== undefined ? body.beanType : undefined,
         notes: body.notes !== undefined ? body.notes : undefined,
+        url: body.url !== undefined ? body.url : undefined,
         purchaseDate:
           body.purchaseDate !== undefined
             ? body.purchaseDate

@@ -100,6 +100,7 @@ export async function PUT(request: Request, context: Context) {
         name: body.name !== undefined ? body.name.trim() : undefined,
         type: body.type !== undefined ? body.type : undefined,
         notes: body.notes !== undefined ? body.notes : undefined,
+        url: body.url !== undefined ? body.url : undefined,
         imagePath: body.imagePath !== undefined ? body.imagePath : undefined,
       },
     });

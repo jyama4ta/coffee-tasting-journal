@@ -9,6 +9,7 @@ interface Dripper {
   name: string;
   manufacturer: string | null;
   notes: string | null;
+  url: string | null;
 }
 
 interface Props {
@@ -53,6 +54,7 @@ export default function EditDripperPage({ params }: Props) {
       name: formData.get("name") as string,
       manufacturer: (formData.get("manufacturer") as string) || null,
       notes: (formData.get("notes") as string) || null,
+      url: (formData.get("url") as string) || null,
     };
 
     try {
@@ -140,6 +142,23 @@ export default function EditDripperPage({ params }: Props) {
             name="manufacturer"
             defaultValue={dripper.manufacturer || ""}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="url"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            商品ページURL
+          </label>
+          <input
+            type="url"
+            id="url"
+            name="url"
+            defaultValue={dripper.url || ""}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            placeholder="https://www.hario.co.jp/sp_v60.html"
           />
         </div>
 

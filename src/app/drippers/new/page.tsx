@@ -19,6 +19,7 @@ export default function NewDripperPage() {
       name: formData.get("name") as string,
       manufacturer: (formData.get("manufacturer") as string) || null,
       notes: (formData.get("notes") as string) || null,
+      url: (formData.get("url") as string) || null,
     };
 
     try {
@@ -87,6 +88,22 @@ export default function NewDripperPage() {
             name="manufacturer"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             placeholder="例: HARIO"
+          />
+        </div>
+
+        <div>
+          <label
+            htmlFor="url"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            商品ページURL
+          </label>
+          <input
+            type="url"
+            id="url"
+            name="url"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            placeholder="https://www.hario.co.jp/sp_v60.html"
           />
         </div>
 

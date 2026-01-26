@@ -84,6 +84,23 @@ export default async function DripperDetailPage({ params }: Props) {
               {new Date(dripper.createdAt).toLocaleDateString("ja-JP")}
             </dd>
           </div>
+          <div>
+            <dt className="text-sm font-medium text-gray-500">商品ページURL</dt>
+            <dd className="mt-1">
+              {dripper.url ? (
+                <a
+                  href={dripper.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-amber-600 hover:text-amber-800 flex items-center gap-1"
+                >
+                  🔗 {dripper.url}
+                </a>
+              ) : (
+                <span className="text-gray-900">-</span>
+              )}
+            </dd>
+          </div>
           <div className="md:col-span-2">
             <dt className="text-sm font-medium text-gray-500">メモ</dt>
             <dd className="mt-1 text-gray-900 whitespace-pre-wrap">

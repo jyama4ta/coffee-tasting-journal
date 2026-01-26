@@ -56,6 +56,7 @@ export async function POST(request: Request) {
         name: body.name.trim(),
         type: body.type || null,
         notes: body.notes || null,
+        url: body.url || null,
         imagePath: body.imagePath || null,
       },
     });

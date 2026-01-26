@@ -157,7 +157,24 @@ describe("CoffeeBean API", () => {
       expect(data.name).toBe("シンプルブレンド");
       expect(data.origin).toBeNull();
       expect(data.roastLevel).toBeNull();
+      expect(data.url).toBeNull();
       expect(data.status).toBe("IN_STOCK");
+    });
+
+    it("URLを含めて作成できる", async () => {
+      const beanData = {
+        name: "スペシャリティコーヒー",
+        origin: "エチオピア",
+        url: "https://example.com/coffee",
+      };
+
+      const request = createRequest("POST", beanData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.name).toBe("スペシャリティコーヒー");
+      expect(data.url).toBe("https://example.com/coffee");
     });
 
     it("店舗を紐づけて作成できる", async () => {

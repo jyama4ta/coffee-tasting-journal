@@ -18,6 +18,7 @@ interface Bean {
   isDecaf: boolean;
   beanType: string | null;
   notes: string | null;
+  url: string | null;
   purchaseDate: string | null;
   price: number | null;
   amount: number | null;
@@ -108,6 +109,7 @@ export default function EditBeanPage({ params }: Props) {
       isDecaf: formData.get("isDecaf") === "on",
       beanType: (formData.get("beanType") as string) || null,
       notes: (formData.get("notes") as string) || null,
+      url: (formData.get("url") as string) || null,
       purchaseDate: (formData.get("purchaseDate") as string) || null,
       price: formData.get("price")
         ? parseInt(formData.get("price") as string, 10)
@@ -374,6 +376,24 @@ export default function EditBeanPage({ params }: Props) {
               />
             </div>
           </div>
+        </div>
+
+        {/* URL */}
+        <div>
+          <label
+            htmlFor="url"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            商品ページURL
+          </label>
+          <input
+            type="url"
+            id="url"
+            name="url"
+            defaultValue={bean.url || ""}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            placeholder="https://example.com/coffee"
+          />
         </div>
 
         {/* メモ */}

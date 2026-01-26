@@ -84,6 +84,7 @@ export async function PUT(request: Request, context: Context) {
         manufacturer:
           body.manufacturer !== undefined ? body.manufacturer : undefined,
         notes: body.notes !== undefined ? body.notes : undefined,
+        url: body.url !== undefined ? body.url : undefined,
         imagePath: body.imagePath !== undefined ? body.imagePath : undefined,
       },
     });

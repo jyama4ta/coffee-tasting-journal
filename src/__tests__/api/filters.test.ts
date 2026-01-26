@@ -97,7 +97,24 @@ describe("Filter API", () => {
 
       expect(response.status).toBe(201);
       expect(data.name).toBe("シンプルフィルター");
+      expect(data.url).toBeNull();
       expect(data.type).toBeNull();
+    });
+
+    it("URLを含めて作成できる", async () => {
+      const filterData = {
+        name: "HARIOペーパー",
+        type: "PAPER",
+        url: "https://www.hario.co.jp/filter.html",
+      };
+
+      const request = createRequest("POST", filterData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.name).toBe("HARIOペーパー");
+      expect(data.url).toBe("https://www.hario.co.jp/filter.html");
       expect(data.notes).toBeNull();
       expect(data.imagePath).toBeNull();
     });

@@ -39,6 +39,7 @@ export async function POST(request: Request) {
         name: body.name.trim(),
         manufacturer: body.manufacturer || null,
         notes: body.notes || null,
+        url: body.url || null,
         imagePath: body.imagePath || null,
       },
     });

@@ -36,6 +36,7 @@ model Dripper {
   name         String // ドリッパー名（必須）
   manufacturer String? // メーカー
   notes        String? // メモ
+  url          String? // 商品ページURL
   imagePath    String? // 画像パス
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -54,6 +55,7 @@ model Filter {
   name      String // フィルター名（必須）
   type      FilterType? // 種類（ペーパー/金属/布）
   notes     String? // メモ
+  url       String? // 商品ページURL
   imagePath String? // 画像パス
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
@@ -83,6 +85,7 @@ model CoffeeBean {
   isDecaf      Boolean     @default(false) // デカフェフラグ
   beanType     BeanType? // ブレンド/シングルオリジン
   notes        String? // メモ（パッケージ説明など）
+  url          String? // 商品ページURL
   purchaseDate DateTime? // 購入日
   price        Int? // 価格（円）
   amount       Int? // 購入量（g）

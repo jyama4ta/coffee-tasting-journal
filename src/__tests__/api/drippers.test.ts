@@ -97,7 +97,24 @@ describe("Dripper API", () => {
       expect(data.name).toBe("シンプルドリッパー");
       expect(data.manufacturer).toBeNull();
       expect(data.notes).toBeNull();
+      expect(data.url).toBeNull();
       expect(data.imagePath).toBeNull();
+    });
+
+    it("URLを含めて作成できる", async () => {
+      const dripperData = {
+        name: "V60",
+        manufacturer: "HARIO",
+        url: "https://www.hario.co.jp/sp_v60.html",
+      };
+
+      const request = createRequest("POST", dripperData);
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(201);
+      expect(data.name).toBe("V60");
+      expect(data.url).toBe("https://www.hario.co.jp/sp_v60.html");
     });
 
     it("ドリッパー名が空の場合は400エラー", async () => {
