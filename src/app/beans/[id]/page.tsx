@@ -276,9 +276,11 @@ export default async function BeanDetailPage({ params }: Props) {
           </div>
         </dl>
 
-        {/* 味わい評価セクション */}
+        {/* 味わいの特徴セクション */}
         <div className="mt-6 pt-6 border-t border-gray-200">
-          <h3 className="text-sm font-medium text-gray-500 mb-3">味わい評価</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-3">
+            味わいの特徴
+          </h3>
           <div className="space-y-1 max-w-md">
             <BeanScoreDisplay label="酸味" score={bean.acidityScore} />
             <BeanScoreDisplay label="苦味" score={bean.bitternessScore} />

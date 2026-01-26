@@ -242,10 +242,10 @@ export default function NewBeanForm() {
         </div>
       </div>
 
-      {/* 味わい評価 */}
+      {/* 味わいの特徴 */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-gray-900 border-b pb-2">
-          味わい評価
+          味わいの特徴
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
