@@ -164,7 +164,7 @@ export default async function TastingDetailPage({ params }: Props) {
             </div>
             <div className="flex justify-between">
               <dt className="text-gray-500">挽き目</dt>
-              <dd className="text-gray-900">{tasting.grindSize || "-"}</dd>
+              <dd className="text-gray-900">{tasting.grindSize ? tasting.grindSize.toFixed(1) : "-"}</dd>
             </div>
           </dl>
         </div>

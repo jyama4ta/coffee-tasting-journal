@@ -257,7 +257,7 @@ export default async function BeanDetailPage({ params }: Props) {
                     </span>
                     {tasting.grindSize && (
                       <span className="ml-2 text-sm text-gray-500">
-                        挽き目: {tasting.grindSize}
+                        挽き目: {tasting.grindSize.toFixed(1)}
                       </span>
                     )}
                   </div>

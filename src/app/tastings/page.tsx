@@ -86,7 +86,7 @@ export default async function TastingsPage({ searchParams }: Props) {
                     <div className="flex flex-wrap gap-2 mt-2 text-sm text-gray-600">
                       {tasting.grindSize && (
                         <span className="bg-gray-100 px-2 py-0.5 rounded">
-                          挽き目: {tasting.grindSize}
+                          挽き目: {tasting.grindSize.toFixed(1)}
                         </span>
                       )}
                       {tasting.dripper && (
