@@ -159,6 +159,8 @@ model TastingEntry {
   overallRating Int? // 総合評価（1-5）
   notes         String? // テイスティングノート
   imagePath     String? // 画像パス
+  brewedBy      String? // 淹れた人
+  recordedBy    String? // 入力した人
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

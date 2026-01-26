@@ -78,6 +78,8 @@ export async function POST(request: Request) {
     overallRating,
     notes,
     imagePath,
+    brewedBy,
+    recordedBy,
   } = body;
 
   // 必須フィールドのバリデーション
@@ -164,6 +166,8 @@ export async function POST(request: Request) {
       overallRating: overallRating || null,
       notes: notes || null,
       imagePath: imagePath || null,
+      brewedBy: brewedBy || null,
+      recordedBy: recordedBy || null,
     },
   });
 

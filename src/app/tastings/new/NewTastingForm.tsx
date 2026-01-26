@@ -119,6 +119,8 @@ export default function NewTastingForm() {
       overallRating,
       notes: (formData.get("notes") as string) || null,
       imagePath,
+      brewedBy: (formData.get("brewedBy") as string) || null,
+      recordedBy: (formData.get("recordedBy") as string) || null,
     };
 
     try {
@@ -375,6 +377,40 @@ export default function NewTastingForm() {
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           placeholder="味の感想、抽出時の工夫など"
         />
+      </div>
+
+      {/* 淹れた人・入力した人 */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label
+            htmlFor="brewedBy"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            淹れた人
+          </label>
+          <input
+            type="text"
+            id="brewedBy"
+            name="brewedBy"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            placeholder="名前を入力"
+          />
+        </div>
+        <div>
+          <label
+            htmlFor="recordedBy"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            入力した人
+          </label>
+          <input
+            type="text"
+            id="recordedBy"
+            name="recordedBy"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            placeholder="名前を入力"
+          />
+        </div>
       </div>
 
       {/* 画像 */}

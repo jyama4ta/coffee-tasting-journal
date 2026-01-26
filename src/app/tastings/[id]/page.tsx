@@ -169,6 +169,14 @@ export default async function TastingDetailPage({ params }: Props) {
                 {tasting.grindSize ? tasting.grindSize.toFixed(1) : "-"}
               </dd>
             </div>
+            <div className="flex justify-between">
+              <dt className="text-gray-500">淹れた人</dt>
+              <dd className="text-gray-900">{tasting.brewedBy || "-"}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-gray-500">入力した人</dt>
+              <dd className="text-gray-900">{tasting.recordedBy || "-"}</dd>
+            </div>
           </dl>
         </div>
 
