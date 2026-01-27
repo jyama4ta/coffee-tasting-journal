@@ -338,17 +338,20 @@ describe("CoffeeBean API", () => {
     });
 
     it("銘柄マスターを指定して作成できる", async () => {
+      const origin = await prisma.originMaster.create({
+        data: { name: "エチオピア" },
+      });
       const beanMaster = await prisma.beanMaster.create({
         data: {
           name: "エチオピア イルガチェフェ",
-          origin: "エチオピア",
-          roastLevel: "LIGHT",
-          process: "WASHED",
+          originId: origin.id,
         },
       });
 
       const request = createRequest("POST", {
         beanMasterId: beanMaster.id,
+        roastLevel: "LIGHT",
+        process: "WASHED",
         price: 1500,
         amount: 200,
       });
@@ -357,18 +360,14 @@ describe("CoffeeBean API", () => {
 
       expect(response.status).toBe(201);
       expect(data.beanMasterId).toBe(beanMaster.id);
-      // 銘柄マスターから名前と産地を引き継ぐ
+      // 銘柄マスターから名前を引き継ぐ
       expect(data.name).toBe("エチオピア イルガチェフェ");
-      expect(data.origin).toBe("エチオピア");
-      expect(data.roastLevel).toBe("LIGHT");
-      expect(data.process).toBe("WASHED");
     });
 
     it("銘柄マスター指定時でも名前を上書きできる", async () => {
       const beanMaster = await prisma.beanMaster.create({
         data: {
           name: "エチオピア イルガチェフェ",
-          origin: "エチオピア",
         },
       });
 

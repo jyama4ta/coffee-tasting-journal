@@ -1,11 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ROAST_LEVELS, PROCESSES } from "@/lib/constants";
-
-// 有効な焙煎度の値
-const validRoastLevels = ROAST_LEVELS.map((r) => r.value);
-// 有効な精製方法の値
-const validProcesses = PROCESSES.map((p) => p.value);
 
 type RouteParams = {
   params: Promise<{ id: string }>;
@@ -21,15 +15,13 @@ export async function GET(request: Request, { params }: RouteParams) {
     const parsedId = parseInt(id, 10);
 
     if (isNaN(parsedId)) {
-      return NextResponse.json(
-        { error: "無効なIDです" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "無効なIDです" }, { status: 400 });
     }
 
     const beanMaster = await prisma.beanMaster.findUnique({
       where: { id: parsedId },
       include: {
+        origin: true,
         _count: {
           select: { coffeeBeans: true },
         },
@@ -63,36 +55,14 @@ export async function PUT(request: Request, { params }: RouteParams) {
     const parsedId = parseInt(id, 10);
 
     if (isNaN(parsedId)) {
-      return NextResponse.json(
-        { error: "無効なIDです" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "無効なIDです" }, { status: 400 });
     }
 
     const body = await request.json();
 
     // バリデーション: 銘柄名は必須
     if (body.name !== undefined && body.name.trim() === "") {
-      return NextResponse.json(
-        { error: "銘柄名は必須です" },
-        { status: 400 },
-      );
-    }
-
-    // バリデーション: 焙煎度が指定されている場合は有効な値かチェック
-    if (body.roastLevel && !validRoastLevels.includes(body.roastLevel)) {
-      return NextResponse.json(
-        { error: "無効な焙煎度です" },
-        { status: 400 },
-      );
-    }
-
-    // バリデーション: 精製方法が指定されている場合は有効な値かチェック
-    if (body.process && !validProcesses.includes(body.process)) {
-      return NextResponse.json(
-        { error: "無効な精製方法です" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "銘柄名は必須です" }, { status: 400 });
     }
 
     // 銘柄の存在確認
@@ -111,10 +81,15 @@ export async function PUT(request: Request, { params }: RouteParams) {
       where: { id: parsedId },
       data: {
         name: body.name?.trim() ?? existing.name,
-        origin: body.origin !== undefined ? body.origin?.trim() || null : existing.origin,
-        roastLevel: body.roastLevel !== undefined ? body.roastLevel || null : existing.roastLevel,
-        process: body.process !== undefined ? body.process || null : existing.process,
-        notes: body.notes !== undefined ? body.notes?.trim() || null : existing.notes,
+        originId:
+          body.originId !== undefined ? body.originId : existing.originId,
+        notes:
+          body.notes !== undefined
+            ? body.notes?.trim() || null
+            : existing.notes,
+      },
+      include: {
+        origin: true,
       },
     });
 
@@ -138,10 +113,7 @@ export async function DELETE(request: Request, { params }: RouteParams) {
     const parsedId = parseInt(id, 10);
 
     if (isNaN(parsedId)) {
-      return NextResponse.json(
-        { error: "無効なIDです" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "無効なIDです" }, { status: 400 });
     }
 
     // 銘柄の存在確認

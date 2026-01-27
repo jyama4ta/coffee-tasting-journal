@@ -1,11 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ROAST_LEVELS, PROCESSES } from "@/lib/constants";
-
-// 有効な焙煎度の値
-const validRoastLevels = ROAST_LEVELS.map((r) => r.value);
-// 有効な精製方法の値
-const validProcesses = PROCESSES.map((p) => p.value);
 
 /**
  * GET /api/bean-masters
@@ -15,6 +9,9 @@ export async function GET() {
   try {
     const beanMasters = await prisma.beanMaster.findMany({
       orderBy: { name: "asc" },
+      include: {
+        origin: true,
+      },
     });
 
     return NextResponse.json(beanMasters);
@@ -37,35 +34,30 @@ export async function POST(request: Request) {
 
     // バリデーション: 銘柄名は必須
     if (!body.name || body.name.trim() === "") {
-      return NextResponse.json(
-        { error: "銘柄名は必須です" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "銘柄名は必須です" }, { status: 400 });
     }
 
-    // バリデーション: 焙煎度が指定されている場合は有効な値かチェック
-    if (body.roastLevel && !validRoastLevels.includes(body.roastLevel)) {
-      return NextResponse.json(
-        { error: "無効な焙煎度です" },
-        { status: 400 },
-      );
-    }
-
-    // バリデーション: 精製方法が指定されている場合は有効な値かチェック
-    if (body.process && !validProcesses.includes(body.process)) {
-      return NextResponse.json(
-        { error: "無効な精製方法です" },
-        { status: 400 },
-      );
+    // バリデーション: 産地IDが指定されている場合は存在確認
+    if (body.originId) {
+      const originExists = await prisma.originMaster.findUnique({
+        where: { id: body.originId },
+      });
+      if (!originExists) {
+        return NextResponse.json(
+          { error: "指定された産地が存在しません" },
+          { status: 400 },
+        );
+      }
     }
 
     const beanMaster = await prisma.beanMaster.create({
       data: {
         name: body.name.trim(),
-        origin: body.origin?.trim() || null,
-        roastLevel: body.roastLevel || null,
-        process: body.process || null,
+        originId: body.originId || null,
         notes: body.notes?.trim() || null,
+      },
+      include: {
+        origin: true,
       },
     });
 

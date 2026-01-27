@@ -12,6 +12,7 @@ const navItems = [
   { href: "/shops", label: "店舗", icon: "🏪" },
   { href: "/drippers", label: "ドリッパー", icon: "🫖" },
   { href: "/filters", label: "フィルター", icon: "📄" },
+  { href: "/admin", label: "管理", icon: "⚙️" },
 ];
 
 export default function Navigation() {

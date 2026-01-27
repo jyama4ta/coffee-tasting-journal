@@ -1,14 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Button from "@/components/Button";
-import { ROAST_LEVELS, PROCESSES } from "@/lib/constants";
+
+type Origin = {
+  id: number;
+  name: string;
+};
 
 export default function NewBeanMasterPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [origins, setOrigins] = useState<Origin[]>([]);
+
+  useEffect(() => {
+    fetch("/api/origins")
+      .then((res) => res.json())
+      .then((data) => setOrigins(data))
+      .catch(() => setOrigins([]));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,12 +29,11 @@ export default function NewBeanMasterPage() {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
+    const originIdStr = formData.get("originId") as string;
     const data = {
       name: formData.get("name") as string,
-      origin: formData.get("origin") as string || null,
-      roastLevel: formData.get("roastLevel") as string || null,
-      process: formData.get("process") as string || null,
-      notes: formData.get("notes") as string || null,
+      originId: originIdStr ? parseInt(originIdStr, 10) : null,
+      notes: (formData.get("notes") as string) || null,
     };
 
     try {
@@ -36,7 +48,7 @@ export default function NewBeanMasterPage() {
         throw new Error(errorData.error || "登録に失敗しました");
       }
 
-      router.push("/bean-masters");
+      router.push("/admin/bean-masters");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "登録に失敗しました");
@@ -47,8 +59,23 @@ export default function NewBeanMasterPage() {
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumb */}
+      <nav className="flex items-center space-x-2 text-sm text-gray-600">
+        <Link href="/admin" className="hover:text-gray-900">
+          管理画面
+        </Link>
+        <span>/</span>
+        <Link href="/admin/bean-masters" className="hover:text-gray-900">
+          銘柄マスター一覧
+        </Link>
+        <span>/</span>
+        <span className="text-gray-900">新規登録</span>
+      </nav>
+
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">☕ 銘柄マスター新規登録</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          ☕ 銘柄マスター新規登録
+        </h1>
         <p className="text-gray-600">新しい銘柄を登録します</p>
       </div>
 
@@ -79,60 +106,33 @@ export default function NewBeanMasterPage() {
 
           <div>
             <label
-              htmlFor="origin"
+              htmlFor="originId"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               産地
             </label>
-            <input
-              type="text"
-              id="origin"
-              name="origin"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-              placeholder="例: エチオピア"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="roastLevel"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              デフォルト焙煎度
-            </label>
             <select
-              id="roastLevel"
-              name="roastLevel"
+              id="originId"
+              name="originId"
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
             >
               <option value="">選択してください</option>
-              {ROAST_LEVELS.map((level) => (
-                <option key={level.value} value={level.value}>
-                  {level.label}
+              {origins.map((origin) => (
+                <option key={origin.id} value={origin.id}>
+                  {origin.name}
                 </option>
               ))}
             </select>
-          </div>
-
-          <div>
-            <label
-              htmlFor="process"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              デフォルト精製方法
-            </label>
-            <select
-              id="process"
-              name="process"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-            >
-              <option value="">選択してください</option>
-              {PROCESSES.map((proc) => (
-                <option key={proc.value} value={proc.value}>
-                  {proc.label}
-                </option>
-              ))}
-            </select>
+            <p className="mt-1 text-sm text-gray-500">
+              産地が見つからない場合は
+              <Link
+                href="/admin/origins/new"
+                className="text-amber-600 hover:text-amber-700"
+              >
+                産地マスターから追加
+              </Link>
+              してください
+            </p>
           </div>
 
           <div>

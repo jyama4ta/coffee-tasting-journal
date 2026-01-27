@@ -10,9 +10,28 @@ Coffee Tasting Journalのデータモデル設計書です。
 ```mermaid
 erDiagram
     Shop ||--o{ CoffeeBean : "販売"
+    OriginMaster ||--o{ BeanMaster : "産地"
+    BeanMaster ||--o{ CoffeeBean : "銘柄"
     CoffeeBean ||--o{ TastingEntry : "試飲"
     Dripper ||--o{ TastingEntry : "使用"
     Filter ||--o{ TastingEntry : "使用"
+
+    OriginMaster {
+        int id PK
+        string name "国名（必須、ユニーク）"
+        string notes "メモ"
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    BeanMaster {
+        int id PK
+        string name "銘柄名（必須）"
+        int originId FK "産地マスター"
+        string notes "メモ"
+        datetime createdAt
+        datetime updatedAt
+    }
 
     Shop {
         int id PK

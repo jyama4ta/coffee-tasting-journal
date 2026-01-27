@@ -3,10 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Button from "@/components/Button";
 import DeleteButton from "./DeleteButton";
-import {
-  ROAST_LEVEL_LABELS,
-  PROCESS_LABELS,
-} from "@/lib/constants";
+import { ROAST_LEVEL_LABELS } from "@/lib/constants";
 import { formatDate } from "@/lib/dateUtils";
 
 type PageProps = {
@@ -17,6 +14,7 @@ async function getBeanMaster(id: number) {
   return await prisma.beanMaster.findUnique({
     where: { id },
     include: {
+      origin: true,
       coffeeBeans: {
         include: {
           shop: true,
@@ -47,14 +45,32 @@ export default async function BeanMasterDetailPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumb */}
+      <nav className="flex items-center space-x-2 text-sm text-gray-600">
+        <Link href="/admin" className="hover:text-gray-900">
+          管理画面
+        </Link>
+        <span>/</span>
+        <Link href="/admin/bean-masters" className="hover:text-gray-900">
+          銘柄マスター一覧
+        </Link>
+        <span>/</span>
+        <span className="text-gray-900">{beanMaster.name}</span>
+      </nav>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">☕ {beanMaster.name}</h1>
+          <h1 className="text-2xl font-bold text-gray-900">
+            ☕ {beanMaster.name}
+          </h1>
           <p className="text-gray-600">銘柄マスター詳細</p>
         </div>
         <div className="flex gap-2">
-          <Button href={`/bean-masters/${beanMaster.id}/edit`} variant="secondary">
+          <Button
+            href={`/admin/bean-masters/${beanMaster.id}/edit`}
+            variant="secondary"
+          >
             編集
           </Button>
           <DeleteButton id={beanMaster.id} disabled={!canDelete} />
@@ -71,22 +87,17 @@ export default async function BeanMasterDetailPage({ params }: PageProps) {
           </div>
           <div>
             <dt className="text-sm font-medium text-gray-500">産地</dt>
-            <dd className="mt-1 text-gray-900">{beanMaster.origin || "-"}</dd>
-          </div>
-          <div>
-            <dt className="text-sm font-medium text-gray-500">デフォルト焙煎度</dt>
             <dd className="mt-1 text-gray-900">
-              {beanMaster.roastLevel
-                ? ROAST_LEVEL_LABELS[beanMaster.roastLevel]
-                : "-"}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-sm font-medium text-gray-500">デフォルト精製方法</dt>
-            <dd className="mt-1 text-gray-900">
-              {beanMaster.process
-                ? PROCESS_LABELS[beanMaster.process]
-                : "-"}
+              {beanMaster.origin ? (
+                <Link
+                  href={`/admin/origins/${beanMaster.origin.id}`}
+                  className="text-amber-600 hover:text-amber-700"
+                >
+                  {beanMaster.origin.name}
+                </Link>
+              ) : (
+                "-"
+              )}
             </dd>
           </div>
           {beanMaster.notes && (
@@ -178,7 +189,7 @@ export default async function BeanMasterDetailPage({ params }: PageProps) {
 
       {/* Navigation */}
       <div className="flex gap-4">
-        <Button href="/bean-masters" variant="secondary">
+        <Button href="/admin/bean-masters" variant="secondary">
           ← 銘柄一覧に戻る
         </Button>
       </div>

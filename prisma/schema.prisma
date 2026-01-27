@@ -86,21 +86,40 @@ enum EquipmentSize {
 }
 
 // ============================================
+// 産地マスター（国を管理）
+// ============================================
+model OriginMaster {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique // 国名（必須、ユニーク）例: エチオピア、コロンビア
+  notes     String? // メモ
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // リレーション
+  beanMasters BeanMaster[]
+
+  @@map("origin_masters")
+}
+
+// ============================================
 // 銘柄マスター（同じ銘柄の購入記録を名寄せ）
 // ============================================
 model BeanMaster {
-  id         Int         @id @default(autoincrement())
-  name       String // 銘柄名（必須）
-  origin     String? // デフォルト産地
-  roastLevel RoastLevel? // デフォルト焙煎度
-  process    Process? // デフォルト精製方法
-  notes      String? // 銘柄メモ
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String // 銘柄名（必須）
+  notes     String? // 銘柄メモ
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 外部キー
+  originId Int?
+  origin   OriginMaster? @relation(fields: [originId], references: [id], onDelete: SetNull)
 
   // リレーション
   coffeeBeans CoffeeBean[]
 
+  // インデックス
+  @@index([originId])
   @@map("bean_masters")
 }
 

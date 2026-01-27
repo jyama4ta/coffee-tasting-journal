@@ -215,11 +215,11 @@ export async function POST(request: Request) {
 
     const bean = await prisma.coffeeBean.create({
       data: {
-        // 銘柄マスターが指定されている場合は、そこから名前と産地を引き継ぐ
+        // 銘柄マスターが指定されている場合は、そこから名前を引き継ぐ
         name: body.name?.trim() || beanMaster?.name || "",
-        origin: body.origin || beanMaster?.origin || null,
-        roastLevel: body.roastLevel || beanMaster?.roastLevel || null,
-        process: body.process || beanMaster?.process || null,
+        origin: body.origin || null,
+        roastLevel: body.roastLevel || null,
+        process: body.process || null,
         isDecaf: body.isDecaf ?? false,
         beanType: body.beanType || null,
         notes: body.notes || null,

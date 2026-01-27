@@ -34,12 +34,14 @@ describe("BeanMaster API", () => {
     await prisma.tastingEntry.deleteMany();
     await prisma.coffeeBean.deleteMany();
     await prisma.beanMaster.deleteMany();
+    await prisma.originMaster.deleteMany();
   });
 
   afterEach(async () => {
     await prisma.tastingEntry.deleteMany();
     await prisma.coffeeBean.deleteMany();
     await prisma.beanMaster.deleteMany();
+    await prisma.originMaster.deleteMany();
   });
 
   describe("GET /api/bean-masters", () => {
@@ -52,10 +54,17 @@ describe("BeanMaster API", () => {
     });
 
     it("全ての銘柄を返す", async () => {
+      const ethiopia = await prisma.originMaster.create({
+        data: { name: "エチオピア" },
+      });
+      const colombia = await prisma.originMaster.create({
+        data: { name: "コロンビア" },
+      });
+
       await prisma.beanMaster.createMany({
         data: [
-          { name: "エチオピア イルガチェフェ", origin: "エチオピア" },
-          { name: "コロンビア スプレモ", origin: "コロンビア" },
+          { name: "エチオピア イルガチェフェ", originId: ethiopia.id },
+          { name: "コロンビア スプレモ", originId: colombia.id },
         ],
       });
 
@@ -80,16 +89,34 @@ describe("BeanMaster API", () => {
       expect(data[0].name).toBe("エチオピア イルガチェフェ");
       expect(data[1].name).toBe("コロンビア スプレモ");
     });
+
+    it("産地マスター情報を含む", async () => {
+      const ethiopia = await prisma.originMaster.create({
+        data: { name: "エチオピア" },
+      });
+
+      await prisma.beanMaster.create({
+        data: { name: "エチオピア イルガチェフェ", originId: ethiopia.id },
+      });
+
+      const response = await GET(createRequest("GET"));
+      const data = await response.json();
+
+      expect(data[0].origin).toBeDefined();
+      expect(data[0].origin.name).toBe("エチオピア");
+    });
   });
 
   describe("POST /api/bean-masters", () => {
     it("新しい銘柄を作成する", async () => {
+      const ethiopia = await prisma.originMaster.create({
+        data: { name: "エチオピア" },
+      });
+
       const response = await POST(
         createRequest("POST", {
           name: "エチオピア イルガチェフェ",
-          origin: "エチオピア",
-          roastLevel: "LIGHT",
-          process: "WASHED",
+          originId: ethiopia.id,
           notes: "フルーティーな香り",
         }),
       );
@@ -97,9 +124,7 @@ describe("BeanMaster API", () => {
 
       expect(response.status).toBe(201);
       expect(data.name).toBe("エチオピア イルガチェフェ");
-      expect(data.origin).toBe("エチオピア");
-      expect(data.roastLevel).toBe("LIGHT");
-      expect(data.process).toBe("WASHED");
+      expect(data.originId).toBe(ethiopia.id);
       expect(data.notes).toBe("フルーティーな香り");
       expect(data.id).toBeDefined();
     });
@@ -114,9 +139,7 @@ describe("BeanMaster API", () => {
 
       expect(response.status).toBe(201);
       expect(data.name).toBe("ブラジル サントス");
-      expect(data.origin).toBeNull();
-      expect(data.roastLevel).toBeNull();
-      expect(data.process).toBeNull();
+      expect(data.originId).toBeNull();
     });
 
     it("銘柄名が空の場合は400エラー", async () => {
@@ -134,7 +157,7 @@ describe("BeanMaster API", () => {
     it("銘柄名がない場合は400エラー", async () => {
       const response = await POST(
         createRequest("POST", {
-          origin: "エチオピア",
+          originId: 1,
         }),
       );
       const data = await response.json();
@@ -143,24 +166,11 @@ describe("BeanMaster API", () => {
       expect(data.error).toBeDefined();
     });
 
-    it("無効な焙煎度は400エラー", async () => {
+    it("存在しない産地IDは400エラー", async () => {
       const response = await POST(
         createRequest("POST", {
           name: "テスト銘柄",
-          roastLevel: "INVALID",
-        }),
-      );
-      const data = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(data.error).toBeDefined();
-    });
-
-    it("無効な精製方法は400エラー", async () => {
-      const response = await POST(
-        createRequest("POST", {
-          name: "テスト銘柄",
-          process: "INVALID",
+          originId: 99999,
         }),
       );
       const data = await response.json();
@@ -172,8 +182,11 @@ describe("BeanMaster API", () => {
 
   describe("GET /api/bean-masters/[id]", () => {
     it("指定したIDの銘柄を返す", async () => {
+      const ethiopia = await prisma.originMaster.create({
+        data: { name: "エチオピア" },
+      });
       const created = await prisma.beanMaster.create({
-        data: { name: "エチオピア イルガチェフェ", origin: "エチオピア" },
+        data: { name: "エチオピア イルガチェフェ", originId: ethiopia.id },
       });
 
       const response = await GET_BY_ID(createRequest("GET"), {
@@ -184,6 +197,7 @@ describe("BeanMaster API", () => {
       expect(response.status).toBe(200);
       expect(data.id).toBe(created.id);
       expect(data.name).toBe("エチオピア イルガチェフェ");
+      expect(data.origin.name).toBe("エチオピア");
     });
 
     it("存在しないIDの場合は404エラー", async () => {
@@ -229,14 +243,20 @@ describe("BeanMaster API", () => {
 
   describe("PUT /api/bean-masters/[id]", () => {
     it("銘柄を更新する", async () => {
+      const ethiopia = await prisma.originMaster.create({
+        data: { name: "エチオピア" },
+      });
+      const colombia = await prisma.originMaster.create({
+        data: { name: "コロンビア" },
+      });
       const created = await prisma.beanMaster.create({
-        data: { name: "旧名前", origin: "旧産地" },
+        data: { name: "旧名前", originId: ethiopia.id },
       });
 
       const response = await PUT(
         createRequest("PUT", {
           name: "新名前",
-          origin: "新産地",
+          originId: colombia.id,
         }),
         { params: Promise.resolve({ id: created.id.toString() }) },
       );
@@ -244,7 +264,7 @@ describe("BeanMaster API", () => {
 
       expect(response.status).toBe(200);
       expect(data.name).toBe("新名前");
-      expect(data.origin).toBe("新産地");
+      expect(data.originId).toBe(colombia.id);
     });
 
     it("存在しないIDの場合は404エラー", async () => {
@@ -269,6 +289,27 @@ describe("BeanMaster API", () => {
 
       expect(response.status).toBe(400);
       expect(data.error).toBeDefined();
+    });
+
+    it("産地をクリアできる", async () => {
+      const ethiopia = await prisma.originMaster.create({
+        data: { name: "エチオピア" },
+      });
+      const created = await prisma.beanMaster.create({
+        data: { name: "テスト銘柄", originId: ethiopia.id },
+      });
+
+      const response = await PUT(
+        createRequest("PUT", {
+          name: "テスト銘柄",
+          originId: null,
+        }),
+        { params: Promise.resolve({ id: created.id.toString() }) },
+      );
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.originId).toBeNull();
     });
   });
 

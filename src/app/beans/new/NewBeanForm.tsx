@@ -14,12 +14,15 @@ interface Shop {
   displayName: string;
 }
 
+interface OriginMaster {
+  id: number;
+  name: string;
+}
+
 interface BeanMaster {
   id: number;
   name: string;
-  origin: string | null;
-  roastLevel: string | null;
-  process: string | null;
+  origin: OriginMaster | null;
 }
 
 export default function NewBeanForm() {
@@ -166,7 +169,7 @@ export default function NewBeanForm() {
             <option value="">-- 新規銘柄を直接入力 --</option>
             {beanMasters.map((master) => (
               <option key={master.id} value={master.id}>
-                {master.name}{master.origin ? ` (${master.origin})` : ""}
+                {master.name}{master.origin ? ` (${master.origin.name})` : ""}
               </option>
             ))}
           </select>
@@ -206,7 +209,7 @@ export default function NewBeanForm() {
               type="text"
               id="origin"
               name="origin"
-              defaultValue={selectedBeanMaster?.origin || ""}
+              defaultValue={selectedBeanMaster?.origin?.name || ""}
               key={`origin-${selectedBeanMaster?.id || "new"}`}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               placeholder="例: エチオピア"
@@ -244,8 +247,6 @@ export default function NewBeanForm() {
             <select
               id="roastLevel"
               name="roastLevel"
-              defaultValue={selectedBeanMaster?.roastLevel || ""}
-              key={`roast-${selectedBeanMaster?.id || "new"}`}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             >
               {ROAST_LEVELS.map((level) => (
@@ -265,8 +266,6 @@ export default function NewBeanForm() {
             <select
               id="process"
               name="process"
-              defaultValue={selectedBeanMaster?.process || ""}
-              key={`process-${selectedBeanMaster?.id || "new"}`}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             >
               {PROCESSES.map((p) => (

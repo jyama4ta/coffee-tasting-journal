@@ -2,15 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Button from "@/components/Button";
-import { ROAST_LEVELS, PROCESSES } from "@/lib/constants";
+
+type Origin = {
+  id: number;
+  name: string;
+};
 
 type BeanMaster = {
   id: number;
   name: string;
-  origin: string | null;
-  roastLevel: string | null;
-  process: string | null;
+  originId: number | null;
+  origin: Origin | null;
   notes: string | null;
 };
 
@@ -21,27 +25,33 @@ type PageProps = {
 export default function EditBeanMasterPage({ params }: PageProps) {
   const router = useRouter();
   const [beanMaster, setBeanMaster] = useState<BeanMaster | null>(null);
+  const [origins, setOrigins] = useState<Origin[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBeanMaster = async () => {
+    const fetchData = async () => {
       const { id } = await params;
       try {
-        const response = await fetch(`/api/bean-masters/${id}`);
-        if (!response.ok) {
+        const [beanRes, originsRes] = await Promise.all([
+          fetch(`/api/bean-masters/${id}`),
+          fetch("/api/origins"),
+        ]);
+        if (!beanRes.ok) {
           throw new Error("銘柄が見つかりません");
         }
-        const data = await response.json();
-        setBeanMaster(data);
+        const beanData = await beanRes.json();
+        const originsData = await originsRes.json();
+        setBeanMaster(beanData);
+        setOrigins(originsData);
       } catch (err) {
         setError(err instanceof Error ? err.message : "読み込みに失敗しました");
       } finally {
         setIsLoading(false);
       }
     };
-    fetchBeanMaster();
+    fetchData();
   }, [params]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -52,12 +62,11 @@ export default function EditBeanMasterPage({ params }: PageProps) {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
+    const originIdStr = formData.get("originId") as string;
     const data = {
       name: formData.get("name") as string,
-      origin: formData.get("origin") as string || null,
-      roastLevel: formData.get("roastLevel") as string || null,
-      process: formData.get("process") as string || null,
-      notes: formData.get("notes") as string || null,
+      originId: originIdStr ? parseInt(originIdStr, 10) : null,
+      notes: (formData.get("notes") as string) || null,
     };
 
     try {
@@ -72,7 +81,7 @@ export default function EditBeanMasterPage({ params }: PageProps) {
         throw new Error(errorData.error || "更新に失敗しました");
       }
 
-      router.push(`/bean-masters/${beanMaster.id}`);
+      router.push(`/admin/bean-masters/${beanMaster.id}`);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "更新に失敗しました");
@@ -99,8 +108,30 @@ export default function EditBeanMasterPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumb */}
+      <nav className="flex items-center space-x-2 text-sm text-gray-600">
+        <Link href="/admin" className="hover:text-gray-900">
+          管理画面
+        </Link>
+        <span>/</span>
+        <Link href="/admin/bean-masters" className="hover:text-gray-900">
+          銘柄マスター一覧
+        </Link>
+        <span>/</span>
+        <Link
+          href={`/admin/bean-masters/${beanMaster.id}`}
+          className="hover:text-gray-900"
+        >
+          {beanMaster.name}
+        </Link>
+        <span>/</span>
+        <span className="text-gray-900">編集</span>
+      </nav>
+
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">☕ 銘柄マスター編集</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          ☕ 銘柄マスター編集
+        </h1>
         <p className="text-gray-600">{beanMaster.name}の情報を編集します</p>
       </div>
 
@@ -131,62 +162,34 @@ export default function EditBeanMasterPage({ params }: PageProps) {
 
           <div>
             <label
-              htmlFor="origin"
+              htmlFor="originId"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
               産地
             </label>
-            <input
-              type="text"
-              id="origin"
-              name="origin"
-              defaultValue={beanMaster.origin || ""}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="roastLevel"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              デフォルト焙煎度
-            </label>
             <select
-              id="roastLevel"
-              name="roastLevel"
-              defaultValue={beanMaster.roastLevel || ""}
+              id="originId"
+              name="originId"
+              defaultValue={beanMaster.originId?.toString() || ""}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
             >
               <option value="">選択してください</option>
-              {ROAST_LEVELS.map((level) => (
-                <option key={level.value} value={level.value}>
-                  {level.label}
+              {origins.map((origin) => (
+                <option key={origin.id} value={origin.id}>
+                  {origin.name}
                 </option>
               ))}
             </select>
-          </div>
-
-          <div>
-            <label
-              htmlFor="process"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              デフォルト精製方法
-            </label>
-            <select
-              id="process"
-              name="process"
-              defaultValue={beanMaster.process || ""}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-            >
-              <option value="">選択してください</option>
-              {PROCESSES.map((proc) => (
-                <option key={proc.value} value={proc.value}>
-                  {proc.label}
-                </option>
-              ))}
-            </select>
+            <p className="mt-1 text-sm text-gray-500">
+              産地が見つからない場合は
+              <Link
+                href="/admin/origins/new"
+                className="text-amber-600 hover:text-amber-700"
+              >
+                産地マスターから追加
+              </Link>
+              してください
+            </p>
           </div>
 
           <div>

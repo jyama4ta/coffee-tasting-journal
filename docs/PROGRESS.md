@@ -2,6 +2,75 @@
 
 ## 完了した作業
 
+### 2026-01-27: 銘柄マスター（BeanMaster）スキーマ変更
+
+1. **スキーマ変更（TDD）**
+   - `origin` フィールドを `originId`（OriginMasterへのFK）に変更
+   - `roastLevel` フィールドを削除（購入記録側で管理）
+   - `process` フィールドを削除（購入記録側で管理）
+   - マイグレーション実行: `20260127012056_remove_roastlevel_process_from_beanmaster`
+
+2. **テスト更新**
+   - `src/__tests__/api/beanMasters.test.ts`: 20テストケースを新スキーマ対応に修正
+   - `src/__tests__/api/origins.test.ts`: fetch方式からハンドラー直接呼び出しに変更
+   - `src/__tests__/api/beans.test.ts`: BeanMasterのorigin参照を修正
+
+3. **API更新**
+   - `src/app/api/bean-masters/route.ts`: originId対応、roastLevel/process削除
+   - `src/app/api/bean-masters/[id]/route.ts`: 同上
+   - `src/app/api/beans/route.ts`: BeanMasterからの自動補完をnameのみに変更
+
+4. **UI更新**
+   - `src/app/admin/bean-masters/page.tsx`: 一覧から焙煎度・精製方法列を削除
+   - `src/app/admin/bean-masters/[id]/page.tsx`: 産地を外部キーリンクとして表示
+   - `src/app/admin/bean-masters/new/page.tsx`: 産地をドロップダウン選択に変更
+   - `src/app/admin/bean-masters/[id]/edit/page.tsx`: 同上
+   - 旧 `/src/app/bean-masters` ディレクトリを削除（adminに統合済み）
+
+5. **テスト結果**: 全285ユニットテストがパス
+
+### 2026-01-27: 産地マスター（OriginMaster）UI実装
+
+1. **産地マスター管理画面**
+   - `src/app/admin/origins/page.tsx`: 産地一覧ページ（モバイル/デスクトップ対応）
+   - `src/app/admin/origins/new/page.tsx`: 新規産地登録ページ
+   - `src/app/admin/origins/[id]/page.tsx`: 産地詳細ページ
+   - `src/app/admin/origins/[id]/edit/page.tsx`: 産地編集ページ
+   - `src/app/admin/origins/[id]/DeleteButton.tsx`: 削除ボタンコンポーネント
+
+2. **E2Eテスト追加**
+   - `tests/admin-origins.spec.ts`: 13テストケース作成
+   - 一覧表示、新規登録、詳細表示、編集、削除の動作確認
+   - 重複名チェック、必須入力バリデーションの動作確認
+
+3. **既存管理画面の修正**
+   - `src/app/admin/shops/[id]/DeleteButton.tsx`: 欠落していたファイルを追加
+   - `src/app/admin/drippers/[id]/DeleteButton.tsx`: 欠落していたファイルを追加
+   - `src/app/admin/filters/[id]/DeleteButton.tsx`: 欠落していたファイルを追加
+   - `src/app/admin/bean-masters/[id]/DeleteButton.tsx`: 欠落していたファイルを追加
+
+4. **テスト結果**: 全284ユニットテスト + 26 E2Eテストがパス
+
+### 2026-01-27: 産地マスター（OriginMaster）API実装
+
+1. **データモデル追加**
+   - `prisma/schema.prisma`: OriginMaster モデル追加
+     - フィールド: id, name（必須・ユニーク）, notes, createdAt, updatedAt
+     - シンプルに「国」を管理するマスター
+   - マイグレーション実行: `20260127003318_add_origin_master`
+
+2. **Origin API 実装（TDD）**
+   - `src/__tests__/api/origins.test.ts`: 13テストケース作成
+   - `src/app/api/origins/route.ts`: GET（一覧・名前順ソート）/ POST（作成）
+   - `src/app/api/origins/[id]/route.ts`: GET（詳細）/ PUT（更新）/ DELETE（削除）
+   - ユニーク制約（同名の産地の重複登録を防止）
+
+3. **ドキュメント更新**
+   - `docs/api-specification.md`: Origin API セクション追加
+   - `docs/test-specification.md`: Origin API テストケース追加
+
+4. **テスト結果**: 全284テスト（+13）がパス
+
 ### 2026-01-26: 銘柄マスター（BeanMaster）機能実装
 
 1. **データモデル追加**
