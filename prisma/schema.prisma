@@ -232,11 +232,40 @@ model TastingEntry {
   filterId Int?
   filter   Filter? @relation(fields: [filterId], references: [id], onDelete: SetNull)
 
+  // リレーション
+  tastingNotes TastingNote[]
+
   // インデックス
   @@index([coffeeBeanId])
   @@index([brewDate])
   @@index([overallRating])
   @@map("tasting_entries")
+}
+
+// ============================================
+// テイスティングノート（1つの試飲記録に対して複数人が記録可能）
+// ============================================
+model TastingNote {
+  id            Int      @id @default(autoincrement())
+  recordedBy    String? // 記録者名
+  acidity       Int? // 酸味（1-5）
+  bitterness    Int? // 苦味（1-5）
+  sweetness     Int? // 甘味（1-5）
+  body          Body? // ボディ
+  aftertaste    Int? // 後味（1-5）
+  flavorTags    String? // フレーバータグ（JSON配列として保存）
+  overallRating Int? // 総合評価（1-5）
+  notes         String? // テイスティングノート
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // 外部キー
+  tastingEntryId Int
+  tastingEntry   TastingEntry @relation(fields: [tastingEntryId], references: [id], onDelete: Cascade)
+
+  // インデックス
+  @@index([tastingEntryId])
+  @@map("tasting_notes")
 }
 
 // ボディ

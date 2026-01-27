@@ -1109,3 +1109,136 @@ interface Origin {
 
 - 400: IDが数値でない場合
 - 404: 試飲記録が存在しない場合
+
+---
+
+## TastingNote API（テイスティングノート）
+
+1つの試飲記録に対して、複数人がテイスティングノートを追加できるAPI。
+
+### エンドポイント一覧
+
+| メソッド | パス                      | 説明                     |
+| -------- | ------------------------- | ------------------------ |
+| GET      | `/api/tasting-notes`      | テイスティングノート一覧 |
+| POST     | `/api/tasting-notes`      | テイスティングノート作成 |
+| GET      | `/api/tasting-notes/[id]` | テイスティングノート取得 |
+| PUT      | `/api/tasting-notes/[id]` | テイスティングノート更新 |
+| DELETE   | `/api/tasting-notes/[id]` | テイスティングノート削除 |
+
+### データモデル
+
+```typescript
+interface TastingNote {
+  id: number; // ID（自動採番）
+  tastingEntryId: number; // 試飲記録ID（必須）
+  recordedBy: string | null; // 記録者名
+  acidity: number | null; // 酸味（1-5）
+  bitterness: number | null; // 苦味（1-5）
+  sweetness: number | null; // 甘味（1-5）
+  body: string | null; // ボディ（LIGHT/MEDIUM/HEAVY）
+  aftertaste: number | null; // 後味（1-5）
+  flavorTags: string | null; // フレーバータグ（JSON配列）
+  overallRating: number | null; // 総合評価（1-5）
+  notes: string | null; // テイスティングノート
+  createdAt: string; // 作成日時
+  updatedAt: string; // 更新日時
+}
+```
+
+### GET /api/tasting-notes
+
+テイスティングノート一覧を取得します。
+
+**クエリパラメータ:**
+
+| パラメータ     | 型     | 必須 | 説明                 |
+| -------------- | ------ | ---- | -------------------- |
+| tastingEntryId | number | No   | 試飲記録IDでフィルタ |
+
+**レスポンス例:**
+
+```json
+[
+  {
+    "id": 1,
+    "tastingEntryId": 1,
+    "recordedBy": "田中",
+    "acidity": 4,
+    "bitterness": 3,
+    "sweetness": 4,
+    "body": "MEDIUM",
+    "aftertaste": 4,
+    "flavorTags": "[\"BERRY\", \"CHOCOLATE\"]",
+    "overallRating": 4,
+    "notes": "フルーティーで飲みやすい",
+    "createdAt": "2026-01-27T10:00:00.000Z",
+    "updatedAt": "2026-01-27T10:00:00.000Z"
+  }
+]
+```
+
+### POST /api/tasting-notes
+
+新しいテイスティングノートを作成します。
+
+**リクエストボディ:**
+
+```json
+{
+  "tastingEntryId": 1, // 必須
+  "recordedBy": "田中", // 任意
+  "acidity": 4, // 任意（1-5）
+  "bitterness": 3, // 任意（1-5）
+  "sweetness": 4, // 任意（1-5）
+  "body": "MEDIUM", // 任意（LIGHT/MEDIUM/HEAVY）
+  "aftertaste": 4, // 任意（1-5）
+  "flavorTags": "[\"BERRY\"]", // 任意（JSON文字列）
+  "overallRating": 4, // 任意（1-5）
+  "notes": "コメント" // 任意
+}
+```
+
+**バリデーション:**
+
+- `tastingEntryId`: 必須、存在する試飲記録ID
+- 評価値（acidity, bitterness, sweetness, aftertaste, overallRating）: 1-5の範囲
+- `body`: LIGHT/MEDIUM/HEAVYのいずれか
+
+**エラー:**
+
+- 400: tastingEntryIdが未指定、または値が範囲外
+- 404: 試飲記録が存在しない
+
+### GET /api/tasting-notes/[id]
+
+指定したIDのテイスティングノートを取得します。
+
+**レスポンス:** TastingNoteオブジェクト
+
+**エラー:**
+
+- 400: IDが数値でない
+- 404: テイスティングノートが存在しない
+
+### PUT /api/tasting-notes/[id]
+
+テイスティングノートを更新します。
+
+**リクエストボディ:** POST と同様（tastingEntryIdは不要）
+
+**エラー:**
+
+- 400: IDが数値でない、または値が範囲外
+- 404: テイスティングノートが存在しない
+
+### DELETE /api/tasting-notes/[id]
+
+テイスティングノートを削除します。
+
+**レスポンス:** 204 No Content
+
+**エラー:**
+
+- 400: IDが数値でない
+- 404: テイスティングノートが存在しない

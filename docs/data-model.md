@@ -15,6 +15,7 @@ erDiagram
     CoffeeBean ||--o{ TastingEntry : "試飲"
     Dripper ||--o{ TastingEntry : "使用"
     Filter ||--o{ TastingEntry : "使用"
+    TastingEntry ||--o{ TastingNote : "評価"
 
     OriginMaster {
         int id PK
@@ -105,6 +106,24 @@ erDiagram
         int overallRating "総合評価（1-5）"
         string notes "テイスティングノート"
         string imagePath "画像パス"
+        string brewedBy "淹れた人"
+        string recordedBy "入力した人"
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    TastingNote {
+        int id PK
+        int tastingEntryId FK "試飲記録（必須）"
+        string recordedBy "記録者名"
+        int acidity "酸味（1-5）"
+        int bitterness "苦味（1-5）"
+        int sweetness "甘味（1-5）"
+        string body "ボディ"
+        int aftertaste "後味（1-5）"
+        string flavorTags "フレーバータグ（JSON）"
+        int overallRating "総合評価（1-5）"
+        string notes "テイスティングノート"
         datetime createdAt
         datetime updatedAt
     }
@@ -299,15 +318,50 @@ JSON配列として保存します。
 
 パフォーマンス最適化のためのインデックス：
 
-| テーブル     | カラム        | 用途                       |
-| ------------ | ------------- | -------------------------- |
-| CoffeeBean   | status        | 在庫中の豆のフィルタリング |
-| CoffeeBean   | shopId        | 店舗別の豆一覧             |
-| CoffeeBean   | origin        | 産地でのフィルタリング     |
-| CoffeeBean   | roastLevel    | 焙煎度でのフィルタリング   |
-| TastingEntry | coffeeBeanId  | 豆ごとの試飲記録一覧       |
-| TastingEntry | brewDate      | 日付順の並び替え           |
-| TastingEntry | overallRating | 評価でのフィルタリング     |
+| テーブル     | カラム         | 用途                       |
+| ------------ | -------------- | -------------------------- |
+| CoffeeBean   | status         | 在庫中の豆のフィルタリング |
+| CoffeeBean   | shopId         | 店舗別の豆一覧             |
+| CoffeeBean   | origin         | 産地でのフィルタリング     |
+| CoffeeBean   | roastLevel     | 焙煎度でのフィルタリング   |
+| TastingEntry | coffeeBeanId   | 豆ごとの試飲記録一覧       |
+| TastingEntry | brewDate       | 日付順の並び替え           |
+| TastingEntry | overallRating  | 評価でのフィルタリング     |
+| TastingNote  | tastingEntryId | 試飲記録ごとのノート一覧   |
+
+---
+
+### 7. TastingNote（テイスティングノート）
+
+1つの試飲記録（TastingEntry）に対して、複数人がテイスティングノートを追加できる機能です。
+同じコーヒーを複数人で試飲し、それぞれの感想を記録する際に使用します。
+
+| フィールド     | 型       | 必須 | 説明                     |
+| -------------- | -------- | ---- | ------------------------ |
+| id             | Int      | ○    | 主キー（自動採番）       |
+| tastingEntryId | Int      | ○    | 試飲記録ID（外部キー）   |
+| recordedBy     | String   | -    | 記録者名                 |
+| acidity        | Int      | -    | 酸味（1-5）              |
+| bitterness     | Int      | -    | 苦味（1-5）              |
+| sweetness      | Int      | -    | 甘味（1-5）              |
+| body           | Body     | -    | ボディ（軽い/中程度/重い）|
+| aftertaste     | Int      | -    | 後味（1-5）              |
+| flavorTags     | String   | -    | フレーバータグ（JSON配列）|
+| overallRating  | Int      | -    | 総合評価（1-5）          |
+| notes          | String   | -    | テイスティングノート     |
+| createdAt      | DateTime | ○    | 作成日時                 |
+| updatedAt      | DateTime | ○    | 更新日時                 |
+
+#### リレーション
+
+- **TastingEntry** → **TastingNote**: 1対多（1つの試飲記録に複数のノート）
+- **カスケード削除**: 試飲記録を削除すると、関連するノートも自動削除
+
+#### 用途・想定シーン
+
+1. **複数人での試飲会**: 同じコーヒーを複数人で飲み、それぞれの感想を記録
+2. **時間経過での再評価**: 同じ試飲記録に対して、時間を置いて再度評価を追加
+3. **ゲストの感想記録**: 来客時に試飲してもらい、感想を記録
 
 ## 制約
 

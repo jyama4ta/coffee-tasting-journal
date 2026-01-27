@@ -560,3 +560,66 @@ npx playwright test --headed
 3. **レスポンシブ対応**: モバイル/デスクトップ両方でのUI動作を確認
 
 ---
+
+## TastingNote API テスト
+
+**ファイル:** `src/__tests__/api/tastingNotes.test.ts`
+
+### 概要
+
+1つの試飲記録に対して、複数人がテイスティングノートを追加できる機能のAPIテストです。
+
+### テストケース一覧
+
+| #   | カテゴリ                       | テストケース                           | 期待結果               |
+| --- | ------------------------------ | -------------------------------------- | ---------------------- |
+| 1   | GET /api/tasting-notes         | 全てのテイスティングノートを取得できる | 200 + ノート配列       |
+| 2   | GET /api/tasting-notes         | tastingEntryIdでフィルタリングできる   | 200 + フィルタ済み配列 |
+| 3   | POST /api/tasting-notes        | 新しいテイスティングノートを作成できる | 201 + 作成データ       |
+| 4   | POST /api/tasting-notes        | tastingEntryIdが必須                   | 400 + エラー           |
+| 5   | POST /api/tasting-notes        | 存在しない試飲記録IDでエラー           | 404 + エラー           |
+| 6   | POST /api/tasting-notes        | 評価値は1-5の範囲                      | 400 + エラー           |
+| 7   | GET /api/tasting-notes/[id]    | 指定したIDのノートを取得できる         | 200 + ノートデータ     |
+| 8   | GET /api/tasting-notes/[id]    | 存在しないIDで404                      | 404 + エラー           |
+| 9   | PUT /api/tasting-notes/[id]    | テイスティングノートを更新できる       | 200 + 更新データ       |
+| 10  | PUT /api/tasting-notes/[id]    | 存在しないIDで404                      | 404 + エラー           |
+| 11  | DELETE /api/tasting-notes/[id] | テイスティングノートを削除できる       | 204                    |
+| 12  | DELETE /api/tasting-notes/[id] | 存在しないIDで404                      | 404 + エラー           |
+
+### テスト設計方針
+
+1. **前提データ**: 各テストで豆と試飲記録を作成してからノートをテスト
+2. **バリデーション**: 評価値の範囲チェック（1-5）、必須フィールドの検証
+3. **フィルタリング**: tastingEntryIdによる一覧フィルタの動作確認
+4. **カスケード削除**: 試飲記録削除時にノートも削除されることを確認（TastingEntry APIテストで確認）
+
+### テストデータ管理
+
+```typescript
+// 各テスト前にテストデータを作成
+beforeEach(async () => {
+  await prisma.tastingNote.deleteMany();
+  await prisma.tastingEntry.deleteMany();
+  await prisma.coffeeBean.deleteMany();
+
+  // テスト用の豆を作成
+  testBean = await prisma.coffeeBean.create({
+    data: {
+      name: "テスト豆",
+      status: "IN_STOCK",
+    },
+  });
+
+  // テスト用の試飲記録を作成
+  testTasting = await prisma.tastingEntry.create({
+    data: {
+      coffeeBeanId: testBean.id,
+      brewDate: new Date("2026-01-25"),
+      grindSize: 5.0,
+      brewedBy: "テスト抽出者",
+    },
+  });
+});
+```
+
+---

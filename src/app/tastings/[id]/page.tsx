@@ -38,6 +38,9 @@ async function getTasting(id: number) {
       },
       dripper: true,
       filter: true,
+      tastingNotes: {
+        orderBy: { createdAt: "desc" },
+      },
     },
   });
 }
@@ -255,6 +258,101 @@ export default async function TastingDetailPage({ params }: Props) {
           <p className="text-gray-700 whitespace-pre-wrap">{tasting.notes}</p>
         </div>
       )}
+
+      {/* Tasting Notes from Other Tasters */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">
+            みんなのテイスティングノート
+          </h2>
+          <Button href={`/tastings/${tasting.id}/notes/new`} variant="primary">
+            ノートを追加
+          </Button>
+        </div>
+        {tasting.tastingNotes && tasting.tastingNotes.length > 0 ? (
+          <div className="space-y-4">
+            {tasting.tastingNotes.map((note) => {
+              const noteFlavorTags: string[] = note.flavorTags
+                ? (() => {
+                    try {
+                      const parsed = JSON.parse(note.flavorTags);
+                      return Array.isArray(parsed) ? parsed : [];
+                    } catch {
+                      return [];
+                    }
+                  })()
+                : [];
+              return (
+                <div
+                  key={note.id}
+                  className="border border-gray-200 rounded-lg p-4"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-medium text-gray-900">
+                      {note.recordedBy || "匿名"}
+                    </span>
+                    {note.overallRating && (
+                      <span className="text-amber-500">
+                        {"★".repeat(note.overallRating)}
+                        {"☆".repeat(5 - note.overallRating)}
+                      </span>
+                    )}
+                  </div>
+                  {/* Taste ratings */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm mb-3">
+                    {[
+                      { label: "酸味", value: note.acidity },
+                      { label: "苦味", value: note.bitterness },
+                      { label: "甘味", value: note.sweetness },
+                      { label: "後味", value: note.aftertaste },
+                    ].map(
+                      (item) =>
+                        item.value && (
+                          <div key={item.label} className="text-gray-600">
+                            {item.label}:{" "}
+                            <span className="text-amber-500">
+                              {"★".repeat(item.value)}
+                            </span>
+                          </div>
+                        ),
+                    )}
+                    {note.body && (
+                      <div className="text-gray-600">
+                        ボディ: {BODY_LABELS[note.body] || note.body}
+                      </div>
+                    )}
+                  </div>
+                  {/* Flavor tags */}
+                  {noteFlavorTags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {noteFlavorTags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full text-xs"
+                        >
+                          {FLAVOR_TAG_LABELS[tag] || tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {/* Notes text */}
+                  {note.notes && (
+                    <p className="text-gray-600 text-sm whitespace-pre-wrap">
+                      {note.notes}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center py-4">
+            まだテイスティングノートがありません。
+            <br />
+            最初のノートを追加してみましょう！
+          </p>
+        )}
+      </div>
 
       {/* Back Link */}
       <div>

@@ -2,6 +2,34 @@
 
 ## 完了した作業
 
+### 2026-01-27: テイスティングノート（TastingNote）機能実装
+
+1. **データモデル追加**
+   - `prisma/schema.prisma`: TastingNote モデル追加
+     - フィールド: id, tastingEntryId（FK）, recordedBy, acidity, bitterness, sweetness, body, aftertaste, flavorTags, overallRating, notes, createdAt, updatedAt
+     - TastingEntry との1対多リレーション（カスケード削除）
+   - マイグレーション実行: `20260127141702_add_tasting_notes`
+
+2. **API実装（TDD）**
+   - `src/app/api/tasting-notes/route.ts`: GET（一覧取得、tastingEntryIdフィルタ対応）、POST（新規作成）
+   - `src/app/api/tasting-notes/[id]/route.ts`: GET、PUT、DELETE
+   - バリデーション: 評価値1-5範囲チェック、tastingEntryId存在チェック、body列挙値チェック
+
+3. **テスト追加**
+   - `src/__tests__/api/tastingNotes.test.ts`: 12テストケース
+   - CRUD操作、バリデーション、フィルタリングのテスト
+
+4. **UI実装**
+   - `src/app/tastings/[id]/page.tsx`: 試飲記録詳細ページにテイスティングノート一覧セクション追加
+   - `src/app/tastings/[id]/notes/new/page.tsx`: テイスティングノート追加フォームページ
+
+5. **ドキュメント更新**
+   - `docs/api-specification.md`: TastingNote API 仕様追加
+   - `docs/test-specification.md`: TastingNote テストケース追加
+   - `docs/data-model.md`: TastingNote エンティティ・ER図追加
+
+6. **テスト結果**: 全281ユニットテストがパス（upload.testを除く）
+
 ### 2026-01-27: 銘柄マスター（BeanMaster）スキーマ変更
 
 1. **スキーマ変更（TDD）**
