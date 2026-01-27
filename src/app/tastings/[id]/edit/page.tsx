@@ -11,6 +11,7 @@ interface Bean {
   id: number;
   name: string;
   purchaseDate: string | null;
+  isDecaf: boolean;
 }
 
 interface Dripper {
@@ -181,7 +182,7 @@ export default function EditTastingPage({ params }: Props) {
               htmlFor="coffeeBeanId"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              豆 <span className="text-red-500">*</span>
+              コーヒー豆 <span className="text-red-500">*</span>
             </label>
             <select
               id="coffeeBeanId"
@@ -194,10 +195,12 @@ export default function EditTastingPage({ params }: Props) {
                 const datePrefix = bean.purchaseDate
                   ? `(${new Date(bean.purchaseDate).toLocaleDateString("ja-JP", { month: "2-digit", day: "2-digit" })}) `
                   : "";
+                const decafSuffix = bean.isDecaf ? " デカフェ" : "";
                 return (
                   <option key={bean.id} value={bean.id}>
                     {datePrefix}
                     {bean.name}
+                    {decafSuffix}
                   </option>
                 );
               })}

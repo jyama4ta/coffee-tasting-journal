@@ -12,6 +12,7 @@ interface Bean {
   name: string;
   status: string;
   purchaseDate: string | null;
+  isDecaf: boolean;
 }
 
 interface Dripper {
@@ -118,7 +119,7 @@ export default function NewTastingForm() {
             htmlFor="coffeeBeanId"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            豆 <span className="text-red-500">*</span>
+            コーヒー豆 <span className="text-red-500">*</span>
           </label>
           <select
             id="coffeeBeanId"
@@ -132,19 +133,21 @@ export default function NewTastingForm() {
               const datePrefix = bean.purchaseDate
                 ? `(${new Date(bean.purchaseDate).toLocaleDateString("ja-JP", { month: "2-digit", day: "2-digit" })}) `
                 : "";
+              const decafSuffix = bean.isDecaf ? " デカフェ" : "";
               return (
                 <option key={bean.id} value={bean.id}>
                   {datePrefix}
                   {bean.name}
+                  {decafSuffix}
                 </option>
               );
             })}
           </select>
           {beans.length === 0 && (
             <p className="mt-1 text-sm text-gray-500">
-              在庫中の豆がありません。先に
+              在庫中のコーヒー豆がありません。先に
               <a href="/beans/new" className="text-amber-600 hover:underline">
-                豆を登録
+                コーヒー豆を登録
               </a>
               してください。
             </p>
