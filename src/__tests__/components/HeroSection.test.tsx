@@ -27,10 +27,10 @@ describe("HeroSection コンポーネント", () => {
       ).toBeInTheDocument();
     });
 
-    it("豆を追加ボタンが表示される", () => {
+    it("コーヒー豆を登録ボタンが表示される", () => {
       render(<HeroSection />);
       expect(
-        screen.getByRole("link", { name: /豆を追加/ }),
+        screen.getByRole("link", { name: /コーヒー豆を登録/ }),
       ).toBeInTheDocument();
     });
   });
@@ -42,9 +42,9 @@ describe("HeroSection コンポーネント", () => {
       expect(link).toHaveAttribute("href", "/tastings/new");
     });
 
-    it("豆追加ボタンが正しいhrefを持つ", () => {
+    it("コーヒー豆登録ボタンが正しいhrefを持つ", () => {
       render(<HeroSection />);
-      const link = screen.getByRole("link", { name: /豆を追加/ });
+      const link = screen.getByRole("link", { name: /コーヒー豆を登録/ });
       expect(link).toHaveAttribute("href", "/beans/new");
     });
   });

@@ -1,5 +1,4 @@
 import HeroSection from "@/components/HeroSection";
-import StatsSection from "@/components/StatsSection";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
@@ -8,23 +7,7 @@ import { formatDateTimeShort } from "@/lib/dateUtils";
 // 常に最新のデータを取得する（キャッシュ無効化）
 export const dynamic = "force-dynamic";
 
-async function getStats() {
-  const [
-    shopsCount,
-    drippersCount,
-    filtersCount,
-    beansCount,
-    tastingsCount,
-    inStockBeansCount,
-  ] = await Promise.all([
-    prisma.shop.count(),
-    prisma.dripper.count(),
-    prisma.filter.count(),
-    prisma.coffeeBean.count(),
-    prisma.tastingEntry.count(),
-    prisma.coffeeBean.count({ where: { status: "IN_STOCK" } }),
-  ]);
-
+async function getRecentTastings() {
   // 最近の試飲記録
   const recentTastings = await prisma.tastingEntry.findMany({
     take: 5,
@@ -34,27 +17,16 @@ async function getStats() {
     },
   });
 
-  return {
-    shopsCount,
-    drippersCount,
-    filtersCount,
-    beansCount,
-    tastingsCount,
-    inStockBeansCount,
-    recentTastings,
-  };
+  return recentTastings;
 }
 
 export default async function Home() {
-  const stats = await getStats();
+  const recentTastings = await getRecentTastings();
 
   return (
     <div className="space-y-8">
       {/* Hero Section */}
       <HeroSection />
-
-      {/* Stats Cards */}
-      <StatsSection stats={stats} />
 
       {/* Recent Tastings */}
       <section>
@@ -67,7 +39,7 @@ export default async function Home() {
           </Button>
         </div>
 
-        {stats.recentTastings.length > 0 ? (
+        {recentTastings.length > 0 ? (
           <>
             {/* デスクトップ: テーブル表示 */}
             <div className="hidden sm:block bg-white rounded-lg shadow overflow-hidden">
@@ -83,7 +55,7 @@ export default async function Home() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {stats.recentTastings.map((tasting) => (
+                  {recentTastings.map((tasting) => (
                     <tr key={tasting.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatDateTimeShort(tasting.brewDate)}
@@ -99,7 +71,7 @@ export default async function Home() {
 
             {/* モバイル: カード表示 */}
             <div className="sm:hidden space-y-3">
-              {stats.recentTastings.map((tasting) => (
+              {recentTastings.map((tasting) => (
                 <Link
                   key={tasting.id}
                   href={`/tastings/${tasting.id}`}

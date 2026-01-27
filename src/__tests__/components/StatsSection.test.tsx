@@ -21,7 +21,7 @@ describe("StatsSection コンポーネント", () => {
     it("すべての統計カードが表示される", () => {
       render(<StatsSection stats={mockStats} />);
       expect(screen.getByText("ドリップ記録")).toBeInTheDocument();
-      expect(screen.getByText("豆")).toBeInTheDocument();
+      expect(screen.getByText("コーヒー豆")).toBeInTheDocument();
       expect(screen.getByText("在庫中")).toBeInTheDocument();
       expect(screen.getByText("店舗")).toBeInTheDocument();
       expect(screen.getByText("ドリッパー")).toBeInTheDocument();
