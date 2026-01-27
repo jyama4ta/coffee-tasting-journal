@@ -14,7 +14,7 @@ export default function HeroSection() {
           + ドリップ記録を追加
         </Button>
         <Button href="/beans/new" variant="outline-light">
-          + 豆を追加
+          + コーヒー豆を登録
         </Button>
       </div>
     </section>

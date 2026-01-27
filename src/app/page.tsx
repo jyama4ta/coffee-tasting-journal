@@ -139,7 +139,7 @@ export default async function Home() {
             variant="secondary"
             className="justify-start"
           >
-            🫘 豆を登録
+            🫘 コーヒー豆を登録
           </Button>
           <Button
             href="/shops/new"

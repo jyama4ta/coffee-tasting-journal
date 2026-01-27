@@ -28,7 +28,7 @@ export default function StatsSection({ stats }: StatsSectionProps) {
         <Card
           href="/beans"
           icon="🫘"
-          title="豆"
+          title="コーヒー豆"
           description="登録済み"
           count={stats.beansCount}
         />
