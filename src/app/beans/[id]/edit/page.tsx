@@ -14,6 +14,17 @@ interface Shop {
   displayName: string;
 }
 
+interface OriginMaster {
+  id: number;
+  name: string;
+}
+
+interface BeanMaster {
+  id: number;
+  name: string;
+  origin: OriginMaster | null;
+}
+
 interface Bean {
   id: number;
   name: string;
@@ -32,6 +43,7 @@ interface Bean {
   price: number | null;
   amount: number | null;
   shopId: number | null;
+  beanMasterId: number | null;
   imagePath: string | null;
 }
 
@@ -43,6 +55,9 @@ export default function EditBeanPage({ params }: Props) {
   const router = useRouter();
   const [bean, setBean] = useState<Bean | null>(null);
   const [shops, setShops] = useState<Shop[]>([]);
+  const [beanMasters, setBeanMasters] = useState<BeanMaster[]>([]);
+  const [selectedBeanMaster, setSelectedBeanMaster] =
+    useState<BeanMaster | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -56,9 +71,10 @@ export default function EditBeanPage({ params }: Props) {
     async function fetchData() {
       const { id } = await params;
       try {
-        const [beanRes, shopsRes] = await Promise.all([
+        const [beanRes, shopsRes, beanMastersRes] = await Promise.all([
           fetch(`/api/beans/${id}`),
           fetch("/api/shops"),
+          fetch("/api/bean-masters"),
         ]);
 
         if (!beanRes.ok) {
@@ -77,6 +93,20 @@ export default function EditBeanPage({ params }: Props) {
           const shopsData = await shopsRes.json();
           setShops(shopsData);
         }
+
+        if (beanMastersRes.ok) {
+          const beanMastersData = await beanMastersRes.json();
+          setBeanMasters(beanMastersData);
+          // 既存の銘柄マスター参照がある場合は選択状態にする
+          if (beanData.beanMasterId) {
+            const master = beanMastersData.find(
+              (m: BeanMaster) => m.id === beanData.beanMasterId,
+            );
+            if (master) {
+              setSelectedBeanMaster(master);
+            }
+          }
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : "エラーが発生しました");
       } finally {
@@ -85,6 +115,16 @@ export default function EditBeanPage({ params }: Props) {
     }
     fetchData();
   }, [params]);
+
+  const handleBeanMasterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const masterId = parseInt(e.target.value, 10);
+    if (isNaN(masterId)) {
+      setSelectedBeanMaster(null);
+    } else {
+      const master = beanMasters.find((m) => m.id === masterId);
+      setSelectedBeanMaster(master || null);
+    }
+  };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -113,6 +153,7 @@ export default function EditBeanPage({ params }: Props) {
       shopId: formData.get("shopId")
         ? parseInt(formData.get("shopId") as string, 10)
         : null,
+      beanMasterId: selectedBeanMaster?.id || null,
       imagePath,
       acidityScore,
       bitternessScore,
@@ -185,6 +226,34 @@ export default function EditBeanPage({ params }: Props) {
             基本情報
           </h2>
 
+          {/* 銘柄マスター選択 */}
+          <div>
+            <label
+              htmlFor="beanMasterId"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              銘柄マスターから選択
+            </label>
+            <select
+              id="beanMasterId"
+              name="beanMasterId"
+              value={selectedBeanMaster?.id || ""}
+              onChange={handleBeanMasterChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            >
+              <option value="">-- 銘柄マスターを使用しない --</option>
+              {beanMasters.map((master) => (
+                <option key={master.id} value={master.id}>
+                  {master.name}
+                  {master.origin ? ` (${master.origin.name})` : ""}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-1">
+              銘柄マスターを選択すると、名前・産地などが自動入力されます
+            </p>
+          </div>
+
           <div>
             <label
               htmlFor="name"
@@ -197,7 +266,8 @@ export default function EditBeanPage({ params }: Props) {
               id="name"
               name="name"
               required
-              defaultValue={bean.name}
+              defaultValue={selectedBeanMaster?.name || bean.name}
+              key={`name-${selectedBeanMaster?.id || "none"}-${bean.id}`}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
             />
           </div>
@@ -214,7 +284,10 @@ export default function EditBeanPage({ params }: Props) {
                 type="text"
                 id="origin"
                 name="origin"
-                defaultValue={bean.origin || ""}
+                defaultValue={
+                  selectedBeanMaster?.origin?.name || bean.origin || ""
+                }
+                key={`origin-${selectedBeanMaster?.id || "none"}-${bean.id}`}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               />
             </div>

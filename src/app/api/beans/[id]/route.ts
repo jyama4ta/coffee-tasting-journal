@@ -224,6 +224,8 @@ export async function PUT(request: Request, context: Context) {
         price: body.price !== undefined ? body.price : undefined,
         amount: body.amount !== undefined ? body.amount : undefined,
         shopId: body.shopId !== undefined ? body.shopId : undefined,
+        beanMasterId:
+          body.beanMasterId !== undefined ? body.beanMasterId : undefined,
         imagePath: body.imagePath !== undefined ? body.imagePath : undefined,
         ...scores,
       },
