@@ -74,13 +74,22 @@ export default async function TastingDetailPage({ params }: Props) {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Breadcrumb */}
+      <nav className="flex items-center space-x-2 text-sm text-gray-600">
+        <Link href="/tastings" className="hover:text-gray-900">
+          試飲記録一覧
+        </Link>
+        <span>/</span>
+        <span className="text-gray-900">
+          {formatDateTime(tasting.brewDate)}の記録
+        </span>
+      </nav>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">📝 試飲記録</h1>
-          <p className="text-gray-600">
-            {formatDateTime(tasting.brewDate)}の記録
-          </p>
+          <p className="text-gray-600">{tasting.coffeeBean.name}の記録</p>
         </div>
         <div className="flex gap-2">
           <Button href={`/tastings/${tasting.id}/edit`} variant="outline">

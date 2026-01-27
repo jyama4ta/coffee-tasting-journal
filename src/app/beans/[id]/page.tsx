@@ -103,6 +103,15 @@ export default async function BeanDetailPage({ params }: Props) {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Breadcrumb */}
+      <nav className="flex items-center space-x-2 text-sm text-gray-600">
+        <Link href="/beans" className="hover:text-gray-900">
+          豆一覧
+        </Link>
+        <span>/</span>
+        <span className="text-gray-900">{bean.name}</span>
+      </nav>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>

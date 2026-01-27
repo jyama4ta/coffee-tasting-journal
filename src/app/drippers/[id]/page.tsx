@@ -43,6 +43,15 @@ export default async function DripperDetailPage({ params }: Props) {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
+      {/* Breadcrumb */}
+      <nav className="flex items-center space-x-2 text-sm text-gray-600">
+        <Link href="/drippers" className="hover:text-gray-900">
+          ドリッパー一覧
+        </Link>
+        <span>/</span>
+        <span className="text-gray-900">{dripper.name}</span>
+      </nav>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
