@@ -3,7 +3,7 @@
 # ============================================
 # Base stage
 # ============================================
-FROM node:22-slim AS base
+FROM node:24-slim AS base
 WORKDIR /app
 
 # Install OpenSSL for Prisma
