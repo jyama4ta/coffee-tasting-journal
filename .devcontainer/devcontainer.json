@@ -16,7 +16,8 @@
         "bradlc.vscode-tailwindcss",
         "Prisma.prisma",
         "ms-azuretools.vscode-docker",
-        "vitest.explorer"
+        "vitest.explorer",
+        "ms-playwright.playwright"
       ],
       "settings": {
         "editor.formatOnSave": true,
@@ -45,9 +46,13 @@
     }
   },
 
-  // コンテナ作成後に実行するコマンド（node_modulesボリュームの所有権を修正してからnpm install）
-  // npm rebuild: ネイティブモジュール（better-sqlite3等）をNode.jsバージョンに合わせて再コンパイル
-  "postCreateCommand": "sudo chown node:node node_modules && npm install && npm rebuild && npx prisma generate",
+  // コンテナ作成後に実行するコマンド
+  // 1. node_modulesボリュームの所有権を修正
+  // 2. npm install
+  // 3. ネイティブモジュール再コンパイル
+  // 4. Prisma Client生成
+  // 5. Playwrightブラウザとシステム依存関係をインストール
+  "postCreateCommand": "sudo chown node:node node_modules && npm install && npm rebuild && npx prisma generate && npx playwright install --with-deps chromium",
 
   // コンテナ起動時に実行するコマンド（毎回）
   "postStartCommand": "cp -n .env.example .env 2>/dev/null || true",
