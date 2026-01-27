@@ -165,7 +165,7 @@ export default async function BeanDetailPage({ params }: Props) {
           </div>
           {bean.status === "IN_STOCK" && (
             <Button href={`/tastings/new?beanId=${bean.id}`} size="sm">
-              + 試飲記録を追加
+              + ドリップ記録を追加
             </Button>
           )}
         </div>
@@ -291,7 +291,7 @@ export default async function BeanDetailPage({ params }: Props) {
       {/* Related Tastings */}
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">試飲記録</h2>
+          <h2 className="text-lg font-semibold text-gray-900">ドリップ記録</h2>
           {bean.status === "IN_STOCK" && (
             <Button
               href={`/tastings/new?beanId=${bean.id}`}
@@ -333,7 +333,7 @@ export default async function BeanDetailPage({ params }: Props) {
           </ul>
         ) : (
           <p className="text-gray-500 text-center py-4">
-            まだ試飲記録がありません
+            まだドリップ記録がありません
           </p>
         )}
       </div>

@@ -147,7 +147,7 @@ export default async function DripperDetailPage({ params }: Props) {
       {/* Related Tastings */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          このドリッパーを使用した試飲記録
+          このドリッパーを使用したドリップ記録
         </h2>
 
         {dripper.tastingEntries.length > 0 ? (
@@ -177,7 +177,7 @@ export default async function DripperDetailPage({ params }: Props) {
           </ul>
         ) : (
           <p className="text-gray-500 text-center py-4">
-            まだ試飲記録がありません
+            まだドリップ記録がありません
           </p>
         )}
       </div>

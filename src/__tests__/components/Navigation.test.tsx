@@ -27,7 +27,7 @@ describe("Navigation コンポーネント", () => {
       render(<Navigation />);
 
       expect(screen.getByText(/ホーム/)).toBeInTheDocument();
-      expect(screen.getByText(/試飲記録/)).toBeInTheDocument();
+      expect(screen.getByText(/ドリップ記録/)).toBeInTheDocument();
       expect(screen.getByText(/豆/)).toBeInTheDocument();
       expect(screen.getByText(/管理/)).toBeInTheDocument();
     });
@@ -69,13 +69,13 @@ describe("Navigation コンポーネント", () => {
       expect(homeNavLink?.className).toContain("bg-amber-800");
     });
 
-    it("試飲記録ページで試飲記録リンクがアクティブスタイルを持つ", () => {
+    it("ドリップ記録ページでドリップ記録リンクがアクティブスタイルを持つ", () => {
       mockUsePathname.mockReturnValue("/tastings");
       render(<Navigation />);
 
       const links = screen.getAllByRole("link");
       const tastingsLink = links.find((link) =>
-        link.textContent?.includes("試飲記録"),
+        link.textContent?.includes("ドリップ記録"),
       );
 
       expect(tastingsLink?.className).toContain("bg-amber-800");
@@ -87,7 +87,7 @@ describe("Navigation コンポーネント", () => {
 
       const links = screen.getAllByRole("link");
       const tastingsLink = links.find((link) =>
-        link.textContent?.includes("試飲記録"),
+        link.textContent?.includes("ドリップ記録"),
       );
 
       expect(tastingsLink?.className).toContain("bg-amber-800");
@@ -146,7 +146,7 @@ describe("Navigation コンポーネント", () => {
 
       const mobileMenu = screen.getByTestId("mobile-menu");
       expect(mobileMenu).toHaveTextContent("ホーム");
-      expect(mobileMenu).toHaveTextContent("試飲記録");
+      expect(mobileMenu).toHaveTextContent("ドリップ記録");
       expect(mobileMenu).toHaveTextContent("豆");
       expect(mobileMenu).toHaveTextContent("管理");
     });
@@ -198,7 +198,7 @@ describe("Navigation コンポーネント", () => {
       // （実際のナビゲーションはjsdomでは発生しないが、クリック可能であることを確認）
     });
 
-    it("試飲記録リンクをクリックできる", async () => {
+    it("ドリップ記録リンクをクリックできる", async () => {
       const user = userEvent.setup();
       render(<Navigation />);
 
@@ -206,7 +206,7 @@ describe("Navigation コンポーネント", () => {
       const tastingsLink = links.find(
         (link) =>
           link.getAttribute("href") === "/tastings" &&
-          link.textContent?.includes("試飲記録"),
+          link.textContent?.includes("ドリップ記録"),
       );
 
       expect(tastingsLink).toBeInTheDocument();
@@ -260,7 +260,7 @@ describe("Navigation コンポーネント", () => {
       expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
     });
 
-    it("モバイルメニューの試飲記録リンクをクリックするとメニューが閉じる", async () => {
+    it("モバイルメニューのドリップ記録リンクをクリックするとメニューが閉じる", async () => {
       const user = userEvent.setup();
       render(<Navigation />);
 

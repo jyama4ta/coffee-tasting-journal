@@ -21,7 +21,7 @@ export default function StatsSection({ stats }: StatsSectionProps) {
         <Card
           href="/tastings"
           icon="📝"
-          title="試飲記録"
+          title="ドリップ記録"
           description="全ての記録"
           count={stats.tastingsCount}
         />

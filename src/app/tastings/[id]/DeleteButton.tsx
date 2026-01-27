@@ -13,7 +13,9 @@ export default function DeleteButton({ tastingId }: DeleteButtonProps) {
   const [loading, setLoading] = useState(false);
 
   async function handleDelete() {
-    if (!confirm("この試飲記録を削除しますか？\nこの操作は取り消せません。")) {
+    if (
+      !confirm("このドリップ記録を削除しますか？\nこの操作は取り消せません。")
+    ) {
       return;
     }
 

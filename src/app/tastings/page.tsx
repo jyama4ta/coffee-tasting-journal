@@ -91,12 +91,12 @@ export default async function TastingsPage({ searchParams }: Props) {
   // フィルタ状態に応じた説明文
   const getFilterDescription = () => {
     if (selectedBean) {
-      return `「${selectedBean.name}」の試飲記録`;
+      return `「${selectedBean.name}」のドリップ記録`;
     }
     if (selectedBeanMaster) {
-      return `銘柄「${selectedBeanMaster.name}」の試飲記録`;
+      return `銘柄「${selectedBeanMaster.name}」のドリップ記録`;
     }
-    return "すべての試飲記録";
+    return "すべてのドリップ記録";
   };
 
   return (
@@ -104,7 +104,7 @@ export default async function TastingsPage({ searchParams }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">📝 試飲記録</h1>
+          <h1 className="text-2xl font-bold text-gray-900">📝 ドリップ記録</h1>
           <p className="text-gray-600">{getFilterDescription()}</p>
         </div>
         <Button href="/tastings/new">+ 新規記録</Button>
@@ -198,12 +198,12 @@ export default async function TastingsPage({ searchParams }: Props) {
         <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
           <p className="mb-4">
             {selectedBean
-              ? `「${selectedBean.name}」の試飲記録がありません`
+              ? `「${selectedBean.name}」のドリップ記録がありません`
               : selectedBeanMaster
-                ? `銘柄「${selectedBeanMaster.name}」の試飲記録がありません`
-                : "まだ試飲記録がありません"}
+                ? `銘柄「${selectedBeanMaster.name}」のドリップ記録がありません`
+                : "まだドリップ記録がありません"}
           </p>
-          <Button href="/tastings/new">試飲記録を追加</Button>
+          <Button href="/tastings/new">ドリップ記録を追加</Button>
         </div>
       )}
     </div>

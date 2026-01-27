@@ -60,7 +60,7 @@ export default async function Home() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
-            🕐 最近の試飲記録
+            🕐 最近のドリップ記録
           </h2>
           <Button href="/tastings" variant="outline" size="sm">
             すべて見る →
@@ -149,7 +149,7 @@ export default async function Home() {
           </>
         ) : (
           <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
-            <p className="mb-4">まだ試飲記録がありません</p>
+            <p className="mb-4">まだドリップ記録がありません</p>
             <Button href="/tastings/new">最初の記録を追加</Button>
           </div>
         )}
@@ -162,7 +162,7 @@ export default async function Home() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <Button href="/tastings/new" className="justify-start">
-            📝 試飲記録を追加
+            📝 ドリップ記録を追加
           </Button>
           <Button
             href="/beans/new"

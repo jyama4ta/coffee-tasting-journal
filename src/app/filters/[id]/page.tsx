@@ -143,7 +143,7 @@ export default async function FilterDetailPage({ params }: Props) {
       {/* Related Tastings */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">
-          このフィルターを使用した試飲記録
+          このフィルターを使用したドリップ記録
         </h2>
 
         {filter.tastingEntries.length > 0 ? (
@@ -173,7 +173,7 @@ export default async function FilterDetailPage({ params }: Props) {
           </ul>
         ) : (
           <p className="text-gray-500 text-center py-4">
-            まだ試飲記録がありません
+            まだドリップ記録がありません
           </p>
         )}
       </div>

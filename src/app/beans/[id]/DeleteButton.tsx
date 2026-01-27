@@ -16,7 +16,7 @@ export default function DeleteButton({ beanId, beanName }: DeleteButtonProps) {
   async function handleDelete() {
     if (
       !confirm(
-        `「${beanName}」を削除しますか？\n関連する試飲記録も削除されます。\nこの操作は取り消せません。`,
+        `「${beanName}」を削除しますか？\n関連するドリップ記録も削除されます。\nこの操作は取り消せません。`,
       )
     ) {
       return;

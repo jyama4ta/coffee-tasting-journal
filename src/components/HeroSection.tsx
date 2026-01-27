@@ -7,11 +7,11 @@ export default function HeroSection() {
         ☕ Coffee Tasting Journal
       </h1>
       <p className="text-amber-100 mb-6">
-        ハンドドリップコーヒーの試飲記録を管理しましょう
+        ハンドドリップコーヒーのドリップ記録を管理しましょう
       </p>
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
         <Button href="/tastings/new" variant="outline-light">
-          + 試飲記録を追加
+          + ドリップ記録を追加
         </Button>
         <Button href="/beans/new" variant="outline-light">
           + 豆を追加

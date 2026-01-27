@@ -107,7 +107,7 @@ export default function EditTastingPage({ params }: Props) {
           ]);
 
         if (!tastingRes.ok) {
-          throw new Error("試飲記録が見つかりません");
+          throw new Error("ドリップ記録が見つかりません");
         }
 
         const tastingData = await tastingRes.json();
@@ -204,9 +204,11 @@ export default function EditTastingPage({ params }: Props) {
   if (!tasting) {
     return (
       <div className="max-w-2xl mx-auto text-center py-8">
-        <p className="text-red-600">{error || "試飲記録が見つかりません"}</p>
+        <p className="text-red-600">
+          {error || "ドリップ記録が見つかりません"}
+        </p>
         <Button href="/tastings" variant="outline" className="mt-4">
-          試飲記録一覧に戻る
+          ドリップ記録一覧に戻る
         </Button>
       </div>
     );
@@ -226,7 +228,9 @@ export default function EditTastingPage({ params }: Props) {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">📝 試飲記録編集</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          📝 ドリップ記録編集
+        </h1>
         <p className="text-gray-600">記録を編集します</p>
       </div>
 

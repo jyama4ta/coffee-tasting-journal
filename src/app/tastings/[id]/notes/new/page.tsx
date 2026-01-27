@@ -105,11 +105,11 @@ export default function NewTastingNotePage() {
       {/* Breadcrumb */}
       <nav className="flex items-center space-x-2 text-sm text-gray-600">
         <Link href="/tastings" className="hover:text-gray-900">
-          試飲記録一覧
+          ドリップ記録一覧
         </Link>
         <span>/</span>
         <Link href={`/tastings/${tastingId}`} className="hover:text-gray-900">
-          試飲記録詳細
+          ドリップ記録詳細
         </Link>
         <span>/</span>
         <span className="text-gray-900">ノートを追加</span>

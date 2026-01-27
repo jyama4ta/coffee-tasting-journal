@@ -14,14 +14,16 @@ describe("HeroSection コンポーネント", () => {
     it("説明文が表示される", () => {
       render(<HeroSection />);
       expect(
-        screen.getByText(/ハンドドリップコーヒーの試飲記録を管理しましょう/),
+        screen.getByText(
+          /ハンドドリップコーヒーのドリップ記録を管理しましょう/,
+        ),
       ).toBeInTheDocument();
     });
 
-    it("試飲記録を追加ボタンが表示される", () => {
+    it("ドリップ記録を追加ボタンが表示される", () => {
       render(<HeroSection />);
       expect(
-        screen.getByRole("link", { name: /試飲記録を追加/ }),
+        screen.getByRole("link", { name: /ドリップ記録を追加/ }),
       ).toBeInTheDocument();
     });
 
@@ -34,9 +36,9 @@ describe("HeroSection コンポーネント", () => {
   });
 
   describe("リンク", () => {
-    it("試飲記録追加ボタンが正しいhrefを持つ", () => {
+    it("ドリップ記録追加ボタンが正しいhrefを持つ", () => {
       render(<HeroSection />);
-      const link = screen.getByRole("link", { name: /試飲記録を追加/ });
+      const link = screen.getByRole("link", { name: /ドリップ記録を追加/ });
       expect(link).toHaveAttribute("href", "/tastings/new");
     });
 
@@ -51,7 +53,7 @@ describe("HeroSection コンポーネント", () => {
     it("ボタンコンテナがレスポンシブクラスを持つ", () => {
       render(<HeroSection />);
       const buttonContainer = screen
-        .getByRole("link", { name: /試飲記録を追加/ })
+        .getByRole("link", { name: /ドリップ記録を追加/ })
         .closest("div");
       // スマホで縦並び、タブレット以上で横並び
       expect(buttonContainer?.className).toContain("flex-col");

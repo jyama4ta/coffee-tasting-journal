@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Coffee Tasting Journal",
-  description: "コーヒー試飲記録アプリ - ハンドドリップの記録を管理",
+  description: "コーヒードリップ記録アプリ - ハンドドリップの記録を管理",
 };
 
 export default function RootLayout({

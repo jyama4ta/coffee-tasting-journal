@@ -336,21 +336,21 @@ JSON配列として保存します。
 1つの試飲記録（TastingEntry）に対して、複数人がテイスティングノートを追加できる機能です。
 同じコーヒーを複数人で試飲し、それぞれの感想を記録する際に使用します。
 
-| フィールド     | 型       | 必須 | 説明                     |
-| -------------- | -------- | ---- | ------------------------ |
-| id             | Int      | ○    | 主キー（自動採番）       |
-| tastingEntryId | Int      | ○    | 試飲記録ID（外部キー）   |
-| recordedBy     | String   | -    | 記録者名                 |
-| acidity        | Int      | -    | 酸味（1-5）              |
-| bitterness     | Int      | -    | 苦味（1-5）              |
-| sweetness      | Int      | -    | 甘味（1-5）              |
-| body           | Body     | -    | ボディ（軽い/中程度/重い）|
-| aftertaste     | Int      | -    | 後味（1-5）              |
-| flavorTags     | String   | -    | フレーバータグ（JSON配列）|
-| overallRating  | Int      | -    | 総合評価（1-5）          |
-| notes          | String   | -    | テイスティングノート     |
-| createdAt      | DateTime | ○    | 作成日時                 |
-| updatedAt      | DateTime | ○    | 更新日時                 |
+| フィールド     | 型       | 必須 | 説明                       |
+| -------------- | -------- | ---- | -------------------------- |
+| id             | Int      | ○    | 主キー（自動採番）         |
+| tastingEntryId | Int      | ○    | 試飲記録ID（外部キー）     |
+| recordedBy     | String   | -    | 記録者名                   |
+| acidity        | Int      | -    | 酸味（1-5）                |
+| bitterness     | Int      | -    | 苦味（1-5）                |
+| sweetness      | Int      | -    | 甘味（1-5）                |
+| body           | Body     | -    | ボディ（軽い/中程度/重い） |
+| aftertaste     | Int      | -    | 後味（1-5）                |
+| flavorTags     | String   | -    | フレーバータグ（JSON配列） |
+| overallRating  | Int      | -    | 総合評価（1-5）            |
+| notes          | String   | -    | テイスティングノート       |
+| createdAt      | DateTime | ○    | 作成日時                   |
+| updatedAt      | DateTime | ○    | 更新日時                   |
 
 #### リレーション
 

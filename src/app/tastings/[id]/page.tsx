@@ -80,7 +80,7 @@ export default async function TastingDetailPage({ params }: Props) {
       {/* Breadcrumb */}
       <nav className="flex items-center space-x-2 text-sm text-gray-600">
         <Link href="/tastings" className="hover:text-gray-900">
-          試飲記録一覧
+          ドリップ記録一覧
         </Link>
         <span>/</span>
         <span className="text-gray-900">
@@ -91,7 +91,7 @@ export default async function TastingDetailPage({ params }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">📝 試飲記録</h1>
+          <h1 className="text-2xl font-bold text-gray-900">📝 ドリップ記録</h1>
           <p className="text-gray-600">{tasting.coffeeBean.name}の記録</p>
         </div>
         <div className="flex gap-2">
@@ -357,7 +357,7 @@ export default async function TastingDetailPage({ params }: Props) {
       {/* Back Link */}
       <div>
         <Link href="/tastings" className="text-amber-600 hover:text-amber-800">
-          ← 試飲記録一覧に戻る
+          ← ドリップ記録一覧に戻る
         </Link>
       </div>
     </div>
