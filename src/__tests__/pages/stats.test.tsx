@@ -47,7 +47,7 @@ describe("StatsPage", () => {
     // 平均評価のモック
     vi.mocked(prisma.tastingNote.aggregate).mockResolvedValue({
       _avg: { overallRating: 3.8 },
-      _count: 30,
+      _count: {},
       _sum: {},
       _min: {},
       _max: {},
@@ -62,7 +62,7 @@ describe("StatsPage", () => {
       },
       { id: 2, name: "コロンビア スプレモ", _count: { tastingEntries: 4 } },
       { id: 3, name: "ブラジル サントス", _count: { tastingEntries: 3 } },
-    ] as any);
+    ] as unknown as Awaited<ReturnType<typeof prisma.coffeeBean.findMany>>);
 
     // 最近のドリップ記録のモック
     vi.mocked(prisma.tastingEntry.findMany).mockResolvedValue([]);
