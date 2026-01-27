@@ -6,6 +6,8 @@ import DeleteButton from "./DeleteButton";
 import { ROAST_LEVEL_LABELS } from "@/lib/constants";
 import { formatDate } from "@/lib/dateUtils";
 
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   params: Promise<{ id: string }>;
 };

@@ -210,3 +210,46 @@ function parseFlavorTags(flavorTags: string | null): string[] {
 
 - **APIテスト**: データの保存・取得が正しく動作することを確認
 - **ページコンポーネント/E2Eテスト**: 表示時にエッジケースでクラッシュしないことを確認
+
+## Next.js App Router の注意点
+
+### 動的データ取得ページは静的生成を無効化すること
+
+Next.js App Router では、デフォルトでページが静的生成（Static Generation）される場合があります。
+**DBからデータを取得するページでは、必ず `dynamic = 'force-dynamic'` を設定すること。**
+
+```typescript
+// ❌ 静的生成されるため、DBの変更が反映されない
+import { prisma } from "@/lib/prisma";
+
+export default async function ListPage() {
+  const items = await prisma.item.findMany();
+  // ...
+}
+
+// ✅ 動的レンダリングを強制し、常に最新データを取得
+import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+export default async function ListPage() {
+  const items = await prisma.item.findMany();
+  // ...
+}
+```
+
+### 対象ページ
+
+以下のページには必ず `export const dynamic = "force-dynamic";` を追加すること：
+
+- 一覧ページ（`page.tsx`）: DBから一覧を取得
+- 詳細ページ（`[id]/page.tsx`）: DBから個別データを取得
+- 編集ページ（`[id]/edit/page.tsx`）: Client Component の場合は不要（useEffect で取得するため）
+- 新規作成ページ（`new/page.tsx`）: 選択肢をDBから取得する場合は必要
+
+### 静的生成が適切なページ
+
+以下のページは静的生成のままで問題ない：
+
+- 管理画面トップ（`/admin/page.tsx`）: DBアクセスなし、メニュー表示のみ
+- 純粋なClient Component: useEffectでデータ取得するため

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import Button from "@/components/Button";
 import { formatDate } from "@/lib/dateUtils";
 
+export const dynamic = "force-dynamic";
+
 async function getOrigins() {
   return await prisma.originMaster.findMany({
     orderBy: { name: "asc" },
