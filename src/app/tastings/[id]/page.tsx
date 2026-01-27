@@ -203,12 +203,20 @@ export default async function TastingDetailPage({ params }: Props) {
                     <span className="font-medium text-gray-900">
                       {note.recordedBy || "匿名"}
                     </span>
-                    {note.overallRating && (
-                      <span className="text-amber-500">
-                        {"★".repeat(note.overallRating)}
-                        {"☆".repeat(5 - note.overallRating)}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-3">
+                      {note.overallRating && (
+                        <span className="text-amber-500">
+                          {"★".repeat(note.overallRating)}
+                          {"☆".repeat(5 - note.overallRating)}
+                        </span>
+                      )}
+                      <Link
+                        href={`/tastings/${tasting.id}/notes/${note.id}/edit`}
+                        className="text-xs text-gray-500 hover:text-amber-600"
+                      >
+                        編集
+                      </Link>
+                    </div>
                   </div>
                   {/* Taste ratings */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm mb-3">
