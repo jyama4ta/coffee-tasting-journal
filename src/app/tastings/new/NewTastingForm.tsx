@@ -33,8 +33,8 @@ export default function NewTastingForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 挽き目のState
-  const [grindSize, setGrindSize] = useState<number | null>(null);
+  // 挽き目のState（デフォルト: 5.0）
+  const [grindSize, setGrindSize] = useState<number | null>(5.0);
 
   // 画像パスのState
   const [imagePath, setImagePath] = useState<string | null>(null);
