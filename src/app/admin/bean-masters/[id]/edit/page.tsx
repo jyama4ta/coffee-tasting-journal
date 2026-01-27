@@ -92,7 +92,7 @@ export default function EditBeanMasterPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[200px]">
+      <div className="flex justify-center items-center min-h-50">
         <p className="text-gray-500">読み込み中...</p>
       </div>
     );
