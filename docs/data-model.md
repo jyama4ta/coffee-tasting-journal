@@ -97,17 +97,8 @@ erDiagram
         int filterId FK "フィルター"
         float grindSize "挽き方（1.0-10.0）"
         date brewDate "抽出日"
-        int acidity "酸味（1-5）"
-        int bitterness "苦味（1-5）"
-        int sweetness "甘味（1-5）"
-        string body "ボディ"
-        int aftertaste "後味（1-5）"
-        string flavorTags "フレーバータグ（JSON）"
-        int overallRating "総合評価（1-5）"
-        string notes "テイスティングノート"
         string imagePath "画像パス"
         string brewedBy "淹れた人"
-        string recordedBy "入力した人"
         datetime createdAt
         datetime updatedAt
     }
@@ -257,62 +248,22 @@ erDiagram
 | IN_STOCK | 在庫中   |
 | FINISHED | 飲み切り |
 
-### 5. TastingEntry（試飲記録）
+### 5. TastingEntry（ドリップ記録）
 
-実際にコーヒーを淹れて試飲した記録を管理します。
+実際にコーヒーを淹れた抽出記録を管理します。評価情報はTastingNoteで管理します。
 
-| フィールド    | 型       | 必須 | 説明                         |
-| ------------- | -------- | ---- | ---------------------------- |
-| id            | Int      | ○    | 主キー（自動採番）           |
-| coffeeBeanId  | Int      | ○    | 豆（外部キー）               |
-| dripperId     | Int      | -    | ドリッパー（外部キー）       |
-| filterId      | Int      | -    | フィルター（外部キー）       |
-| grindSize     | Float    | -    | 挽き方（1.0-10.0、0.5刻み）  |
-| brewDate      | Date     | ○    | 抽出日                       |
-| acidity       | Int      | -    | 酸味（1-5）                  |
-| bitterness    | Int      | -    | 苦味（1-5）                  |
-| sweetness     | Int      | -    | 甘味（1-5）                  |
-| body          | String   | -    | ボディ（LIGHT/MEDIUM/HEAVY） |
-| aftertaste    | Int      | -    | 後味（1-5）                  |
-| flavorTags    | String   | -    | フレーバータグ（JSON配列）   |
-| overallRating | Int      | -    | 総合評価（1-5）              |
-| notes         | String   | -    | テイスティングノート         |
-| imagePath     | String   | -    | 画像ファイルパス             |
-| createdAt     | DateTime | ○    | 作成日時                     |
-| updatedAt     | DateTime | ○    | 更新日時                     |
-
-#### ボディ（Body）の値
-
-| 値     | 表示名 |
-| ------ | ------ |
-| LIGHT  | 軽い   |
-| MEDIUM | 中程度 |
-| HEAVY  | 重い   |
-
-#### フレーバータグ（FlavorTags）の値
-
-JSON配列として保存します。
-
-**フルーツ系**
-
-- BERRY（ベリー）
-- CITRUS（シトラス）
-- TROPICAL（トロピカル）
-- STONE_FRUIT（ストーンフルーツ）
-
-**ナッツ/甘味系**
-
-- CHOCOLATE（チョコレート）
-- NUTTY（ナッツ）
-- CARAMEL（キャラメル）
-- HONEY（はちみつ）
-
-**その他**
-
-- FLORAL（フローラル）
-- SPICY（スパイス）
-- HERBAL（ハーブ）
-- EARTHY（アーシー）
+| フィールド   | 型       | 必須 | 説明                        |
+| ------------ | -------- | ---- | --------------------------- |
+| id           | Int      | ○    | 主キー（自動採番）          |
+| coffeeBeanId | Int      | ○    | 豆（外部キー）              |
+| dripperId    | Int      | -    | ドリッパー（外部キー）      |
+| filterId     | Int      | -    | フィルター（外部キー）      |
+| grindSize    | Float    | -    | 挽き方（1.0-10.0、0.5刻み） |
+| brewDate     | Date     | ○    | 抽出日                      |
+| imagePath    | String   | -    | 画像ファイルパス            |
+| brewedBy     | String   | -    | 淹れた人                    |
+| createdAt    | DateTime | ○    | 作成日時                    |
+| updatedAt    | DateTime | ○    | 更新日時                    |
 
 ## インデックス
 
@@ -326,12 +277,11 @@ JSON配列として保存します。
 | CoffeeBean   | roastLevel     | 焙煎度でのフィルタリング   |
 | TastingEntry | coffeeBeanId   | 豆ごとの試飲記録一覧       |
 | TastingEntry | brewDate       | 日付順の並び替え           |
-| TastingEntry | overallRating  | 評価でのフィルタリング     |
 | TastingNote  | tastingEntryId | 試飲記録ごとのノート一覧   |
 
 ---
 
-### 7. TastingNote（テイスティングノート）
+### 6. TastingNote（テイスティングノート）
 
 1つの試飲記録（TastingEntry）に対して、複数人がテイスティングノートを追加できる機能です。
 同じコーヒーを複数人で試飲し、それぞれの感想を記録する際に使用します。

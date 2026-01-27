@@ -166,11 +166,6 @@ export default async function FilterDetailPage({ params }: Props) {
                       {new Date(tasting.brewDate).toLocaleDateString("ja-JP")}
                     </span>
                   </div>
-                  {tasting.overallRating && (
-                    <span className="text-amber-500">
-                      {"★".repeat(tasting.overallRating)}
-                    </span>
-                  )}
                 </Link>
               </li>
             ))}

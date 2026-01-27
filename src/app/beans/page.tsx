@@ -159,7 +159,7 @@ export default async function BeansPage({ searchParams }: Props) {
                     購入店
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    試飲数
+                    ドリップ回数
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     状態

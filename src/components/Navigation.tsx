@@ -7,7 +7,7 @@ import { useState } from "react";
 const navItems = [
   { href: "/", label: "ホーム", icon: "☕" },
   { href: "/tastings", label: "ドリップ記録", icon: "📝" },
-  { href: "/beans", label: "豆", icon: "🫘" },
+  { href: "/beans", label: "コーヒー豆", icon: "🫘" },
   { href: "/admin", label: "管理", icon: "⚙️" },
 ];
 

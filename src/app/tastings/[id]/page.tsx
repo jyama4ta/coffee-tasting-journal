@@ -63,18 +63,6 @@ export default async function TastingDetailPage({ params }: Props) {
     notFound();
   }
 
-  // flavorTagsはJSON文字列として保存されているのでパース
-  const flavorTags: string[] = tasting.flavorTags
-    ? (() => {
-        try {
-          const parsed = JSON.parse(tasting.flavorTags);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
-      })()
-    : [];
-
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Breadcrumb */}
@@ -130,140 +118,64 @@ export default async function TastingDetailPage({ params }: Props) {
         </div>
       )}
 
-      {/* Overall Rating */}
-      {tasting.overallRating && (
-        <div className="bg-white rounded-lg shadow p-6 text-center">
-          <h2 className="text-sm font-medium text-gray-500 mb-2">総合評価</h2>
-          <div className="text-4xl text-amber-500">
-            {"★".repeat(tasting.overallRating)}
-            {"☆".repeat(5 - tasting.overallRating)}
+      {/* Extraction Info */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">抽出情報</h2>
+        <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex justify-between">
+            <dt className="text-gray-500">抽出日時</dt>
+            <dd className="text-gray-900">
+              {formatDateTime(tasting.brewDate)}
+            </dd>
           </div>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Extraction Info */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">抽出情報</h2>
-          <dl className="space-y-3">
-            <div className="flex justify-between">
-              <dt className="text-gray-500">抽出日時</dt>
-              <dd className="text-gray-900">
-                {formatDateTime(tasting.brewDate)}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">ドリッパー</dt>
-              <dd>
-                {tasting.dripper ? (
-                  <Link
-                    href={`/drippers/${tasting.dripper.id}`}
-                    className="text-amber-600 hover:text-amber-800"
-                  >
-                    {tasting.dripper.name}
-                  </Link>
-                ) : (
-                  "-"
-                )}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">フィルター</dt>
-              <dd>
-                {tasting.filter ? (
-                  <Link
-                    href={`/filters/${tasting.filter.id}`}
-                    className="text-amber-600 hover:text-amber-800"
-                  >
-                    {tasting.filter.name}
-                  </Link>
-                ) : (
-                  "-"
-                )}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">挽き目</dt>
-              <dd className="text-gray-900">
-                {tasting.grindSize ? tasting.grindSize.toFixed(1) : "-"}
-              </dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">淹れた人</dt>
-              <dd className="text-gray-900">{tasting.brewedBy || "-"}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-gray-500">入力した人</dt>
-              <dd className="text-gray-900">{tasting.recordedBy || "-"}</dd>
-            </div>
-          </dl>
-        </div>
-
-        {/* Taste Profile */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">味の評価</h2>
-          <div className="space-y-3">
-            {[
-              { label: "酸味", value: tasting.acidity },
-              { label: "苦味", value: tasting.bitterness },
-              { label: "甘味", value: tasting.sweetness },
-              { label: "後味", value: tasting.aftertaste },
-            ].map((item) => (
-              <div key={item.label}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-500">{item.label}</span>
-                  <span className="text-amber-500">
-                    {item.value
-                      ? "★".repeat(item.value) + "☆".repeat(5 - item.value)
-                      : "-"}
-                  </span>
-                </div>
-              </div>
-            ))}
-            <div className="flex justify-between pt-2 border-t">
-              <span className="text-gray-500">ボディ</span>
-              <span className="text-gray-900">
-                {tasting.body ? BODY_LABELS[tasting.body] || tasting.body : "-"}
-              </span>
-            </div>
+          <div className="flex justify-between">
+            <dt className="text-gray-500">ドリッパー</dt>
+            <dd>
+              {tasting.dripper ? (
+                <Link
+                  href={`/drippers/${tasting.dripper.id}`}
+                  className="text-amber-600 hover:text-amber-800"
+                >
+                  {tasting.dripper.name}
+                </Link>
+              ) : (
+                "-"
+              )}
+            </dd>
           </div>
-        </div>
+          <div className="flex justify-between">
+            <dt className="text-gray-500">フィルター</dt>
+            <dd>
+              {tasting.filter ? (
+                <Link
+                  href={`/filters/${tasting.filter.id}`}
+                  className="text-amber-600 hover:text-amber-800"
+                >
+                  {tasting.filter.name}
+                </Link>
+              ) : (
+                "-"
+              )}
+            </dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-gray-500">挽き目</dt>
+            <dd className="text-gray-900">
+              {tasting.grindSize ? tasting.grindSize.toFixed(1) : "-"}
+            </dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-gray-500">淹れた人</dt>
+            <dd className="text-gray-900">{tasting.brewedBy || "-"}</dd>
+          </div>
+        </dl>
       </div>
 
-      {/* Flavor Tags */}
-      {flavorTags.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            フレーバータグ
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {flavorTags.map((tag) => (
-              <span
-                key={tag}
-                className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm"
-              >
-                {FLAVOR_TAG_LABELS[tag] || tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Notes */}
-      {tasting.notes && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            テイスティングノート
-          </h2>
-          <p className="text-gray-700 whitespace-pre-wrap">{tasting.notes}</p>
-        </div>
-      )}
-
-      {/* Tasting Notes from Other Tasters */}
+      {/* Tasting Notes */}
       <div className="bg-white rounded-lg shadow p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900">
-            みんなのテイスティングノート
+            テイスティングノート
           </h2>
           <Button href={`/tastings/${tasting.id}/notes/new`} variant="primary">
             ノートを追加

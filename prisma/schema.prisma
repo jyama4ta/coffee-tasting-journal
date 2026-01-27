@@ -202,25 +202,16 @@ enum BeanStatus {
 }
 
 // ============================================
-// 試飲記録
+// ドリップ記録
 // ============================================
 model TastingEntry {
-  id            Int      @id @default(autoincrement())
-  grindSize     Float? // 挽き方（1.0-10.0、0.5刻み）
-  brewDate      DateTime // 抽出日（必須）
-  acidity       Int? // 酸味（1-5）
-  bitterness    Int? // 苦味（1-5）
-  sweetness     Int? // 甘味（1-5）
-  body          Body? // ボディ
-  aftertaste    Int? // 後味（1-5）
-  flavorTags    String? // フレーバータグ（JSON配列として保存）
-  overallRating Int? // 総合評価（1-5）
-  notes         String? // テイスティングノート
-  imagePath     String? // 画像パス
-  brewedBy      String? // 淹れた人
-  recordedBy    String? // 入力した人
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  grindSize Float? // 挽き方（1.0-10.0、0.5刻み）
+  brewDate  DateTime // 抽出日（必須）
+  imagePath String? // 画像パス
+  brewedBy  String? // 淹れた人
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // 外部キー
   coffeeBeanId Int
@@ -238,7 +229,6 @@ model TastingEntry {
   // インデックス
   @@index([coffeeBeanId])
   @@index([brewDate])
-  @@index([overallRating])
   @@map("tasting_entries")
 }
 

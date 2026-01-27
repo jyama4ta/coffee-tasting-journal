@@ -37,6 +37,7 @@ describe("TastingEntry API", () => {
 
   // 各テスト前にDBをクリーンアップしてテストデータを作成
   beforeEach(async () => {
+    await prisma.tastingNote.deleteMany();
     await prisma.tastingEntry.deleteMany();
     await prisma.coffeeBean.deleteMany();
     await prisma.dripper.deleteMany();
@@ -69,6 +70,7 @@ describe("TastingEntry API", () => {
 
   // テスト後もクリーンアップ
   afterEach(async () => {
+    await prisma.tastingNote.deleteMany();
     await prisma.tastingEntry.deleteMany();
     await prisma.coffeeBean.deleteMany();
     await prisma.dripper.deleteMany();
@@ -151,16 +153,72 @@ describe("TastingEntry API", () => {
       expect(data[0].filter).toBeDefined();
       expect(data[0].filter.name).toBe("テストフィルター");
     });
+
+    it("テイスティングノートの平均評価を含めて返す", async () => {
+      const tasting = await prisma.tastingEntry.create({
+        data: {
+          coffeeBeanId: testBeanId,
+          brewDate: new Date(),
+        },
+      });
+
+      // テイスティングノートを追加
+      await prisma.tastingNote.createMany({
+        data: [
+          {
+            tastingEntryId: tasting.id,
+            recordedBy: "田中",
+            overallRating: 4,
+            acidity: 3,
+            bitterness: 2,
+          },
+          {
+            tastingEntryId: tasting.id,
+            recordedBy: "鈴木",
+            overallRating: 5,
+            acidity: 5,
+            bitterness: 4,
+          },
+        ],
+      });
+
+      const request = createRequest("GET");
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data[0].averageRating).toBeDefined();
+      expect(data[0].averageRating.overall).toBe(4.5); // (4+5)/2
+      expect(data[0].averageRating.acidity).toBe(4); // (3+5)/2
+      expect(data[0].averageRating.bitterness).toBe(3); // (2+4)/2
+      expect(data[0].noteCount).toBe(2);
+    });
+
+    it("テイスティングノートがない場合、平均評価はnull", async () => {
+      await prisma.tastingEntry.create({
+        data: {
+          coffeeBeanId: testBeanId,
+          brewDate: new Date(),
+        },
+      });
+
+      const request = createRequest("GET");
+      const response = await GET(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data[0].averageRating).toBeNull();
+      expect(data[0].noteCount).toBe(0);
+    });
   });
 
   describe("POST /api/tastings", () => {
-    it("新しい試飲記録を作成する", async () => {
+    it("新しいドリップ記録を作成する（抽出情報のみ）", async () => {
       const tastingData = {
         coffeeBeanId: testBeanId,
         brewDate: "2026-01-25",
         grindSize: 5.5,
-        overallRating: 4,
-        notes: "美味しかった",
+        brewedBy: "山田",
       };
 
       const request = createRequest("POST", tastingData);
@@ -170,8 +228,7 @@ describe("TastingEntry API", () => {
       expect(response.status).toBe(201);
       expect(data.coffeeBeanId).toBe(testBeanId);
       expect(data.grindSize).toBe(5.5);
-      expect(data.overallRating).toBe(4);
-      expect(data.notes).toBe("美味しかった");
+      expect(data.brewedBy).toBe("山田");
       expect(data.id).toBeDefined();
     });
 
@@ -188,49 +245,6 @@ describe("TastingEntry API", () => {
       expect(response.status).toBe(201);
       expect(data.coffeeBeanId).toBe(testBeanId);
       expect(data.grindSize).toBeNull();
-      expect(data.overallRating).toBeNull();
-    });
-
-    it("評価値（酸味、苦味など）を設定できる", async () => {
-      const tastingData = {
-        coffeeBeanId: testBeanId,
-        brewDate: "2026-01-25",
-        acidity: 4,
-        bitterness: 3,
-        sweetness: 5,
-        body: "MEDIUM",
-        aftertaste: 2,
-      };
-
-      const request = createRequest("POST", tastingData);
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(201);
-      expect(data.acidity).toBe(4);
-      expect(data.bitterness).toBe(3);
-      expect(data.sweetness).toBe(5);
-      expect(data.body).toBe("MEDIUM");
-      expect(data.aftertaste).toBe(2);
-    });
-
-    it("フレーバータグを複数設定できる", async () => {
-      const tastingData = {
-        coffeeBeanId: testBeanId,
-        brewDate: "2026-01-25",
-        flavorTags: ["BERRY", "CITRUS", "CHOCOLATE"],
-      };
-
-      const request = createRequest("POST", tastingData);
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(201);
-      // flavorTagsはJSON文字列として保存される
-      const tags = JSON.parse(data.flavorTags);
-      expect(tags).toContain("BERRY");
-      expect(tags).toContain("CITRUS");
-      expect(tags).toContain("CHOCOLATE");
     });
 
     it("ドリッパーとフィルターを紐づけて作成できる", async () => {
@@ -314,60 +328,15 @@ describe("TastingEntry API", () => {
       expect(response.status).toBe(400);
       expect(data.error).toContain("在庫中");
     });
-
-    it("無効なボディ値の場合は400エラー", async () => {
-      const tastingData = {
-        coffeeBeanId: testBeanId,
-        brewDate: "2026-01-25",
-        body: "INVALID",
-      };
-
-      const request = createRequest("POST", tastingData);
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(data.error).toBeDefined();
-    });
-
-    it("評価値が範囲外の場合は400エラー（1-5）", async () => {
-      const tastingData = {
-        coffeeBeanId: testBeanId,
-        brewDate: "2026-01-25",
-        acidity: 6, // 範囲外（1-5）
-      };
-
-      const request = createRequest("POST", tastingData);
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(data.error).toBeDefined();
-    });
-
-    it("総合評価が範囲外の場合は400エラー（1-5）", async () => {
-      const tastingData = {
-        coffeeBeanId: testBeanId,
-        brewDate: "2026-01-25",
-        overallRating: 10, // 範囲外
-      };
-
-      const request = createRequest("POST", tastingData);
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(data.error).toBeDefined();
-    });
   });
 
   describe("GET /api/tastings/[id]", () => {
-    it("指定したIDの試飲記録を返す", async () => {
+    it("指定したIDのドリップ記録を返す", async () => {
       const tasting = await prisma.tastingEntry.create({
         data: {
           coffeeBeanId: testBeanId,
           brewDate: new Date(),
-          overallRating: 4,
+          grindSize: 5.0,
         },
       });
 
@@ -384,8 +353,41 @@ describe("TastingEntry API", () => {
 
       expect(response.status).toBe(200);
       expect(data.id).toBe(tasting.id);
-      expect(data.overallRating).toBe(4);
+      expect(data.grindSize).toBe(5.0);
       expect(data.coffeeBean).toBeDefined();
+    });
+
+    it("テイスティングノートを含めて返す", async () => {
+      const tasting = await prisma.tastingEntry.create({
+        data: {
+          coffeeBeanId: testBeanId,
+          brewDate: new Date(),
+        },
+      });
+
+      await prisma.tastingNote.create({
+        data: {
+          tastingEntryId: tasting.id,
+          recordedBy: "田中",
+          overallRating: 4,
+        },
+      });
+
+      const request = createRequest(
+        "GET",
+        undefined,
+        `http://localhost:3000/api/tastings/${tasting.id}`,
+      );
+      const response = await GET_BY_ID(
+        request,
+        createContext(String(tasting.id)),
+      );
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.tastingNotes).toBeDefined();
+      expect(data.tastingNotes).toHaveLength(1);
+      expect(data.tastingNotes[0].recordedBy).toBe("田中");
     });
 
     it("存在しないIDの場合は404エラー", async () => {
@@ -416,19 +418,18 @@ describe("TastingEntry API", () => {
   });
 
   describe("PUT /api/tastings/[id]", () => {
-    it("試飲記録を更新する", async () => {
+    it("ドリップ記録を更新する（抽出情報のみ）", async () => {
       const tasting = await prisma.tastingEntry.create({
         data: {
           coffeeBeanId: testBeanId,
           brewDate: new Date(),
-          overallRating: 3,
+          grindSize: 5.0,
         },
       });
 
       const updateData = {
-        overallRating: 5,
-        notes: "更新メモ",
-        acidity: 4,
+        grindSize: 6.0,
+        brewedBy: "鈴木",
       };
 
       const request = createRequest(
@@ -440,9 +441,8 @@ describe("TastingEntry API", () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.overallRating).toBe(5);
-      expect(data.notes).toBe("更新メモ");
-      expect(data.acidity).toBe(4);
+      expect(data.grindSize).toBe(6.0);
+      expect(data.brewedBy).toBe("鈴木");
     });
 
     it("画像パスを更新できる", async () => {
@@ -472,7 +472,7 @@ describe("TastingEntry API", () => {
     it("存在しないIDの場合は404エラー", async () => {
       const request = createRequest(
         "PUT",
-        { overallRating: 5 },
+        { grindSize: 5.0 },
         "http://localhost:3000/api/tastings/99999",
       );
       const response = await PUT(request, createContext("99999"));
@@ -481,30 +481,10 @@ describe("TastingEntry API", () => {
       expect(response.status).toBe(404);
       expect(data.error).toBeDefined();
     });
-
-    it("評価値が範囲外の場合は400エラー", async () => {
-      const tasting = await prisma.tastingEntry.create({
-        data: {
-          coffeeBeanId: testBeanId,
-          brewDate: new Date(),
-        },
-      });
-
-      const request = createRequest(
-        "PUT",
-        { acidity: 6 },
-        `http://localhost:3000/api/tastings/${tasting.id}`,
-      );
-      const response = await PUT(request, createContext(String(tasting.id)));
-      const data = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(data.error).toBeDefined();
-    });
   });
 
   describe("DELETE /api/tastings/[id]", () => {
-    it("試飲記録を削除する", async () => {
+    it("ドリップ記録を削除する", async () => {
       const tasting = await prisma.tastingEntry.create({
         data: {
           coffeeBeanId: testBeanId,
@@ -528,6 +508,37 @@ describe("TastingEntry API", () => {
       expect(deleted).toBeNull();
     });
 
+    it("関連するテイスティングノートも削除される", async () => {
+      const tasting = await prisma.tastingEntry.create({
+        data: {
+          coffeeBeanId: testBeanId,
+          brewDate: new Date(),
+        },
+      });
+
+      await prisma.tastingNote.create({
+        data: {
+          tastingEntryId: tasting.id,
+          recordedBy: "田中",
+        },
+      });
+
+      const request = createRequest(
+        "DELETE",
+        undefined,
+        `http://localhost:3000/api/tastings/${tasting.id}`,
+      );
+      const response = await DELETE(request, createContext(String(tasting.id)));
+
+      expect(response.status).toBe(204);
+
+      // テイスティングノートも削除されたことを確認
+      const notes = await prisma.tastingNote.findMany({
+        where: { tastingEntryId: tasting.id },
+      });
+      expect(notes).toHaveLength(0);
+    });
+
     it("存在しないIDの場合は404エラー", async () => {
       const request = createRequest(
         "DELETE",
@@ -539,103 +550,6 @@ describe("TastingEntry API", () => {
 
       expect(response.status).toBe(404);
       expect(data.error).toBeDefined();
-    });
-  });
-
-  describe("flavorTags エッジケース", () => {
-    it("flavorTagsが空配列の場合、空のJSON配列文字列として保存される", async () => {
-      const tastingData = {
-        coffeeBeanId: testBeanId,
-        brewDate: "2026-01-25",
-        flavorTags: [],
-      };
-
-      const request = createRequest("POST", tastingData);
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(201);
-      expect(data.flavorTags).toBe("[]");
-      // パースしても空配列
-      expect(JSON.parse(data.flavorTags)).toEqual([]);
-    });
-
-    it("flavorTagsが未指定の場合、nullとして保存される", async () => {
-      const tastingData = {
-        coffeeBeanId: testBeanId,
-        brewDate: "2026-01-25",
-      };
-
-      const request = createRequest("POST", tastingData);
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(201);
-      expect(data.flavorTags).toBeNull();
-    });
-
-    it("flavorTagsがnullの場合も正常に保存される", async () => {
-      const tastingData = {
-        coffeeBeanId: testBeanId,
-        brewDate: "2026-01-25",
-        flavorTags: null,
-      };
-
-      const request = createRequest("POST", tastingData);
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(201);
-      expect(data.flavorTags).toBeNull();
-    });
-
-    it("既存の試飲記録のflavorTagsが空配列文字列でもGETで正常に取得できる", async () => {
-      // 空配列のflavorTagsを持つデータを直接作成
-      const tasting = await prisma.tastingEntry.create({
-        data: {
-          coffeeBeanId: testBeanId,
-          brewDate: new Date(),
-          flavorTags: "[]",
-        },
-      });
-
-      const request = createRequest(
-        "GET",
-        undefined,
-        `http://localhost:3000/api/tastings/${tasting.id}`,
-      );
-      const response = await GET_BY_ID(
-        request,
-        createContext(String(tasting.id)),
-      );
-      const data = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(data.flavorTags).toBe("[]");
-    });
-
-    it("既存の試飲記録のflavorTagsがnullでもGETで正常に取得できる", async () => {
-      const tasting = await prisma.tastingEntry.create({
-        data: {
-          coffeeBeanId: testBeanId,
-          brewDate: new Date(),
-          flavorTags: null,
-        },
-      });
-
-      const request = createRequest(
-        "GET",
-        undefined,
-        `http://localhost:3000/api/tastings/${tasting.id}`,
-      );
-      const response = await GET_BY_ID(
-        request,
-        createContext(String(tasting.id)),
-      );
-      const data = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(data.flavorTags).toBeNull();
     });
   });
 });

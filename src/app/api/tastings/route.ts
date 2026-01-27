@@ -1,37 +1,78 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-// 有効なBody値
-const VALID_BODY_VALUES = ["LIGHT", "MEDIUM", "HEAVY"];
+// 平均評価を計算するヘルパー関数
+function calculateAverageRating(
+  notes: {
+    acidity: number | null;
+    bitterness: number | null;
+    sweetness: number | null;
+    body: string | null;
+    aftertaste: number | null;
+    overallRating: number | null;
+  }[],
+): {
+  overall: number | null;
+  acidity: number | null;
+  bitterness: number | null;
+  sweetness: number | null;
+  aftertaste: number | null;
+} | null {
+  if (notes.length === 0) {
+    return null;
+  }
 
-// 評価値のバリデーション（1-5）
-function validateRating(
-  value: number | undefined | null,
-  fieldName: string,
-): string | null {
-  if (value !== undefined && value !== null) {
-    if (value < 1 || value > 5) {
-      return `${fieldName}は1から5の範囲で指定してください`;
+  const sum = {
+    overall: 0,
+    overallCount: 0,
+    acidity: 0,
+    acidityCount: 0,
+    bitterness: 0,
+    bitternessCount: 0,
+    sweetness: 0,
+    sweetnessCount: 0,
+    aftertaste: 0,
+    aftertasteCount: 0,
+  };
+
+  for (const note of notes) {
+    if (note.overallRating !== null) {
+      sum.overall += note.overallRating;
+      sum.overallCount++;
+    }
+    if (note.acidity !== null) {
+      sum.acidity += note.acidity;
+      sum.acidityCount++;
+    }
+    if (note.bitterness !== null) {
+      sum.bitterness += note.bitterness;
+      sum.bitternessCount++;
+    }
+    if (note.sweetness !== null) {
+      sum.sweetness += note.sweetness;
+      sum.sweetnessCount++;
+    }
+    if (note.aftertaste !== null) {
+      sum.aftertaste += note.aftertaste;
+      sum.aftertasteCount++;
     }
   }
-  return null;
-}
 
-// 総合評価のバリデーション（1-5）
-function validateOverallRating(
-  value: number | undefined | null,
-): string | null {
-  if (value !== undefined && value !== null) {
-    if (value < 1 || value > 5) {
-      return "総合評価は1から5の範囲で指定してください";
-    }
-  }
-  return null;
+  return {
+    overall: sum.overallCount > 0 ? sum.overall / sum.overallCount : null,
+    acidity: sum.acidityCount > 0 ? sum.acidity / sum.acidityCount : null,
+    bitterness:
+      sum.bitternessCount > 0 ? sum.bitterness / sum.bitternessCount : null,
+    sweetness:
+      sum.sweetnessCount > 0 ? sum.sweetness / sum.sweetnessCount : null,
+    aftertaste:
+      sum.aftertasteCount > 0 ? sum.aftertaste / sum.aftertasteCount : null,
+  };
 }
 
 /**
  * GET /api/tastings
- * 試飲記録一覧を取得
+ * ドリップ記録一覧を取得
  * クエリパラメータ:
  *   - coffeeBeanId: 豆IDでフィルタリング
  */
@@ -50,16 +91,27 @@ export async function GET(request: Request) {
       coffeeBean: true,
       dripper: true,
       filter: true,
+      tastingNotes: true,
     },
     orderBy: { brewDate: "desc" },
   });
 
-  return NextResponse.json(tastings);
+  // 平均評価とノート数を追加
+  const tastingsWithAverageRating = tastings.map((tasting) => {
+    const { tastingNotes, ...rest } = tasting;
+    return {
+      ...rest,
+      noteCount: tastingNotes.length,
+      averageRating: calculateAverageRating(tastingNotes),
+    };
+  });
+
+  return NextResponse.json(tastingsWithAverageRating);
 }
 
 /**
  * POST /api/tastings
- * 新しい試飲記録を作成
+ * 新しいドリップ記録を作成（抽出情報のみ）
  */
 export async function POST(request: Request) {
   const body = await request.json();
@@ -69,17 +121,8 @@ export async function POST(request: Request) {
     filterId,
     grindSize,
     brewDate,
-    acidity,
-    bitterness,
-    sweetness,
-    body: bodyValue,
-    aftertaste,
-    flavorTags,
-    overallRating,
-    notes,
     imagePath,
     brewedBy,
-    recordedBy,
   } = body;
 
   // 必須フィールドのバリデーション
@@ -110,46 +153,6 @@ export async function POST(request: Request) {
     );
   }
 
-  // ボディのバリデーション
-  if (bodyValue && !VALID_BODY_VALUES.includes(bodyValue)) {
-    return NextResponse.json(
-      {
-        error: `無効なボディ値です。有効な値: ${VALID_BODY_VALUES.join(", ")}`,
-      },
-      { status: 400 },
-    );
-  }
-
-  // 評価値のバリデーション
-  const acidityError = validateRating(acidity, "酸味");
-  if (acidityError) {
-    return NextResponse.json({ error: acidityError }, { status: 400 });
-  }
-
-  const bitternessError = validateRating(bitterness, "苦味");
-  if (bitternessError) {
-    return NextResponse.json({ error: bitternessError }, { status: 400 });
-  }
-
-  const sweetnessError = validateRating(sweetness, "甘味");
-  if (sweetnessError) {
-    return NextResponse.json({ error: sweetnessError }, { status: 400 });
-  }
-
-  const aftertasteError = validateRating(aftertaste, "後味");
-  if (aftertasteError) {
-    return NextResponse.json({ error: aftertasteError }, { status: 400 });
-  }
-
-  // 総合評価のバリデーション
-  const overallRatingError = validateOverallRating(overallRating);
-  if (overallRatingError) {
-    return NextResponse.json({ error: overallRatingError }, { status: 400 });
-  }
-
-  // フレーバータグをJSON文字列に変換
-  const flavorTagsJson = flavorTags ? JSON.stringify(flavorTags) : null;
-
   const tasting = await prisma.tastingEntry.create({
     data: {
       coffeeBeanId,
@@ -157,17 +160,8 @@ export async function POST(request: Request) {
       filterId: filterId || null,
       grindSize: grindSize || null,
       brewDate: new Date(brewDate),
-      acidity: acidity || null,
-      bitterness: bitterness || null,
-      sweetness: sweetness || null,
-      body: bodyValue || null,
-      aftertaste: aftertaste || null,
-      flavorTags: flavorTagsJson,
-      overallRating: overallRating || null,
-      notes: notes || null,
       imagePath: imagePath || null,
       brewedBy: brewedBy || null,
-      recordedBy: recordedBy || null,
     },
   });
 

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Button from "@/components/Button";
-import StarRating from "@/components/StarRating";
 import GrindSizeSlider from "@/components/GrindSizeSlider";
 import ImageUpload from "@/components/ImageUpload";
 import { getNowForDatetimeLocal } from "@/lib/dateUtils";
@@ -25,44 +24,14 @@ interface Filter {
   name: string;
 }
 
-const BODY_OPTIONS = [
-  { value: "", label: "選択なし" },
-  { value: "LIGHT", label: "軽い" },
-  { value: "MEDIUM", label: "中程度" },
-  { value: "HEAVY", label: "重い" },
-];
-
-const FLAVOR_TAGS = [
-  { value: "BERRY", label: "ベリー", category: "フルーツ系" },
-  { value: "CITRUS", label: "シトラス", category: "フルーツ系" },
-  { value: "TROPICAL", label: "トロピカル", category: "フルーツ系" },
-  { value: "STONE_FRUIT", label: "ストーンフルーツ", category: "フルーツ系" },
-  { value: "CHOCOLATE", label: "チョコレート", category: "ナッツ/甘味系" },
-  { value: "NUTTY", label: "ナッツ", category: "ナッツ/甘味系" },
-  { value: "CARAMEL", label: "キャラメル", category: "ナッツ/甘味系" },
-  { value: "HONEY", label: "はちみつ", category: "ナッツ/甘味系" },
-  { value: "FLORAL", label: "フローラル", category: "その他" },
-  { value: "SPICE", label: "スパイス", category: "その他" },
-  { value: "HERBAL", label: "ハーブ", category: "その他" },
-  { value: "EARTHY", label: "アーシー", category: "その他" },
-];
-
 export default function NewTastingForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [beans, setBeans] = useState<Bean[]>([]);
   const [drippers, setDrippers] = useState<Dripper[]>([]);
   const [filters, setFilters] = useState<Filter[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // 評価のState（5段階）
-  const [acidity, setAcidity] = useState<number | null>(null);
-  const [bitterness, setBitterness] = useState<number | null>(null);
-  const [sweetness, setSweetness] = useState<number | null>(null);
-  const [aftertaste, setAftertaste] = useState<number | null>(null);
-  const [overallRating, setOverallRating] = useState<number | null>(null);
 
   // 挽き目のState
   const [grindSize, setGrindSize] = useState<number | null>(null);
@@ -87,12 +56,6 @@ export default function NewTastingForm() {
     fetchData();
   }, []);
 
-  function toggleTag(tag: string) {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
-    );
-  }
-
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
@@ -110,17 +73,8 @@ export default function NewTastingForm() {
         : null,
       grindSize,
       brewDate: brewDateValue || getNowForDatetimeLocal(),
-      acidity,
-      bitterness,
-      sweetness,
-      body: (formData.get("body") as string) || null,
-      aftertaste,
-      flavorTags: selectedTags.length > 0 ? selectedTags : null,
-      overallRating,
-      notes: (formData.get("notes") as string) || null,
       imagePath,
       brewedBy: (formData.get("brewedBy") as string) || null,
-      recordedBy: (formData.get("recordedBy") as string) || null,
     };
 
     try {
@@ -143,15 +97,6 @@ export default function NewTastingForm() {
       setLoading(false);
     }
   }
-
-  const groupedTags = FLAVOR_TAGS.reduce(
-    (acc, tag) => {
-      if (!acc[tag.category]) acc[tag.category] = [];
-      acc[tag.category].push(tag);
-      return acc;
-    },
-    {} as Record<string, typeof FLAVOR_TAGS>,
-  );
 
   return (
     <form
@@ -272,145 +217,21 @@ export default function NewTastingForm() {
         </div>
       </div>
 
-      {/* 評価 */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900 border-b pb-2">
-          評価
-        </h2>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StarRating
-            name="acidity"
-            label="酸味"
-            value={acidity}
-            onChange={setAcidity}
-          />
-          <StarRating
-            name="bitterness"
-            label="苦味"
-            value={bitterness}
-            onChange={setBitterness}
-          />
-          <StarRating
-            name="sweetness"
-            label="甘味"
-            value={sweetness}
-            onChange={setSweetness}
-          />
-          <StarRating
-            name="aftertaste"
-            label="後味"
-            value={aftertaste}
-            onChange={setAftertaste}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label
-              htmlFor="body"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              ボディ
-            </label>
-            <select
-              id="body"
-              name="body"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            >
-              {BODY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <StarRating
-            name="overallRating"
-            label="総合評価"
-            value={overallRating}
-            onChange={setOverallRating}
-          />
-        </div>
-      </div>
-
-      {/* フレーバータグ */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900 border-b pb-2">
-          フレーバータグ
-        </h2>
-        {Object.entries(groupedTags).map(([category, tags]) => (
-          <div key={category}>
-            <p className="text-sm text-gray-600 mb-2">{category}</p>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <button
-                  key={tag.value}
-                  type="button"
-                  onClick={() => toggleTag(tag.value)}
-                  className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                    selectedTags.includes(tag.value)
-                      ? "bg-amber-500 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  {tag.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* メモ */}
+      {/* 淹れた人 */}
       <div>
         <label
-          htmlFor="notes"
+          htmlFor="brewedBy"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          テイスティングノート
+          淹れた人
         </label>
-        <textarea
-          id="notes"
-          name="notes"
-          rows={4}
+        <input
+          type="text"
+          id="brewedBy"
+          name="brewedBy"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-          placeholder="味の感想、抽出時の工夫など"
+          placeholder="名前を入力"
         />
-      </div>
-
-      {/* 淹れた人・入力した人 */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label
-            htmlFor="brewedBy"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            淹れた人
-          </label>
-          <input
-            type="text"
-            id="brewedBy"
-            name="brewedBy"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            placeholder="名前を入力"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="recordedBy"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            入力した人
-          </label>
-          <input
-            type="text"
-            id="recordedBy"
-            name="recordedBy"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            placeholder="名前を入力"
-          />
-        </div>
       </div>
 
       {/* 画像 */}

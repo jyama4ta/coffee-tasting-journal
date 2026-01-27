@@ -408,7 +408,6 @@ describe("CoffeeBean API", () => {
         data: {
           coffeeBeanId: bean.id,
           brewDate: new Date(),
-          overallRating: 4,
         },
       });
 

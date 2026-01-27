@@ -78,13 +78,7 @@ export default async function Home() {
                       日付
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      豆
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      評価
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      メモ
+                      コーヒー豆
                     </th>
                   </tr>
                 </thead>
@@ -96,19 +90,6 @@ export default async function Home() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {tasting.coffeeBean.name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {tasting.overallRating ? (
-                          <span className="text-amber-500">
-                            {"★".repeat(tasting.overallRating)}
-                            {"☆".repeat(5 - tasting.overallRating)}
-                          </span>
-                        ) : (
-                          <span className="text-gray-400">-</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                        {tasting.notes || "-"}
                       </td>
                     </tr>
                   ))}
@@ -128,21 +109,10 @@ export default async function Home() {
                     <span className="font-medium text-gray-900">
                       {tasting.coffeeBean.name}
                     </span>
-                    {tasting.overallRating ? (
-                      <span className="text-amber-500 text-sm">
-                        {"★".repeat(tasting.overallRating)}
-                        {"☆".repeat(5 - tasting.overallRating)}
-                      </span>
-                    ) : null}
                   </div>
                   <div className="text-sm text-gray-500">
                     {formatDateTimeShort(tasting.brewDate)}
                   </div>
-                  {tasting.notes && (
-                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">
-                      {tasting.notes}
-                    </p>
-                  )}
                 </Link>
               ))}
             </div>

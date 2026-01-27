@@ -35,13 +35,13 @@ export default function NewTastingNotePage() {
 
   const [formData, setFormData] = useState({
     recordedBy: "",
-    acidity: 0,
-    bitterness: 0,
-    sweetness: 0,
+    acidity: null as number | null,
+    bitterness: null as number | null,
+    sweetness: null as number | null,
     body: "",
-    aftertaste: 0,
+    aftertaste: null as number | null,
     flavorTags: [] as string[],
-    overallRating: 0,
+    overallRating: null as number | null,
     notes: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -146,61 +146,45 @@ export default function NewTastingNotePage() {
         <div className="bg-white rounded-lg shadow p-6 space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">味の評価</h2>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                酸味
-              </label>
-              <StarRating
-                value={formData.acidity}
-                onChange={(value) =>
-                  setFormData({ ...formData, acidity: value })
-                }
-                maxRating={5}
-              />
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StarRating
+              name="acidity"
+              label="酸味"
+              value={formData.acidity}
+              onChange={(value) => setFormData({ ...formData, acidity: value })}
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                苦味
-              </label>
-              <StarRating
-                value={formData.bitterness}
-                onChange={(value) =>
-                  setFormData({ ...formData, bitterness: value })
-                }
-                maxRating={5}
-              />
-            </div>
+            <StarRating
+              name="bitterness"
+              label="苦味"
+              value={formData.bitterness}
+              onChange={(value) =>
+                setFormData({ ...formData, bitterness: value })
+              }
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                甘味
-              </label>
-              <StarRating
-                value={formData.sweetness}
-                onChange={(value) =>
-                  setFormData({ ...formData, sweetness: value })
-                }
-                maxRating={5}
-              />
-            </div>
+            <StarRating
+              name="sweetness"
+              label="甘味"
+              value={formData.sweetness}
+              onChange={(value) =>
+                setFormData({ ...formData, sweetness: value })
+              }
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                後味
-              </label>
-              <StarRating
-                value={formData.aftertaste}
-                onChange={(value) =>
-                  setFormData({ ...formData, aftertaste: value })
-                }
-                maxRating={5}
-              />
-            </div>
+            <StarRating
+              name="aftertaste"
+              label="後味"
+              value={formData.aftertaste}
+              onChange={(value) =>
+                setFormData({ ...formData, aftertaste: value })
+              }
+            />
+          </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 ボディ
               </label>
               <select
@@ -217,6 +201,14 @@ export default function NewTastingNotePage() {
                 ))}
               </select>
             </div>
+            <StarRating
+              name="overallRating"
+              label="総合評価"
+              value={formData.overallRating}
+              onChange={(value) =>
+                setFormData({ ...formData, overallRating: value })
+              }
+            />
           </div>
         </div>
 
@@ -241,21 +233,6 @@ export default function NewTastingNotePage() {
               </button>
             ))}
           </div>
-        </div>
-
-        {/* Overall Rating */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            総合評価
-          </label>
-          <StarRating
-            value={formData.overallRating}
-            onChange={(value) =>
-              setFormData({ ...formData, overallRating: value })
-            }
-            maxRating={5}
-            size="lg"
-          />
         </div>
 
         {/* Notes */}

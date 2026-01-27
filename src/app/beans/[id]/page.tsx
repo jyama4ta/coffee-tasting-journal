@@ -321,12 +321,6 @@ export default async function BeanDetailPage({ params }: Props) {
                       </span>
                     )}
                   </div>
-                  {tasting.overallRating && (
-                    <span className="text-amber-500">
-                      {"★".repeat(tasting.overallRating)}
-                      {"☆".repeat(5 - tasting.overallRating)}
-                    </span>
-                  )}
                 </Link>
               </li>
             ))}

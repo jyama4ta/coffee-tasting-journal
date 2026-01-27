@@ -2,6 +2,44 @@
 
 ## 完了した作業
 
+### 2026-01-27: TastingEntry から評価フィールドを分離
+
+1. **データモデル変更**
+   - `prisma/schema.prisma`: TastingEntry から9つの評価フィールドを削除
+     - 削除: acidity, bitterness, sweetness, body, aftertaste, flavorTags, overallRating, notes, recordedBy
+     - 残存: id, coffeeBeanId, dripperId, filterId, grindSize, brewDate, imagePath, brewedBy
+   - マイグレーション実行: `20260127145617_remove_evaluation_fields_from_tasting_entry`
+     - データ移行: 既存の評価データをTastingNoteに自動移行するカスタムSQL
+
+2. **API更新（TDD）**
+   - `src/app/api/tastings/route.ts`:
+     - POST: 抽出情報のみ受け付け（評価フィールドなし）
+     - GET: tastingNotesを含め、平均評価(averageRating)とノート件数(noteCount)を追加
+   - `src/app/api/tastings/[id]/route.ts`:
+     - PUT: 抽出情報のみ更新
+     - GET: tastingNotesを含めて返す
+   - `src/__tests__/api/tastings.test.ts`: 評価関連テストを削除、平均評価テストを追加
+
+3. **UI更新**
+   - `src/app/tastings/new/NewTastingForm.tsx`: 評価セクション削除、抽出情報のみ入力
+   - `src/app/tastings/[id]/page.tsx`: 直接評価表示削除、TastingNotesセクションのみ表示
+   - `src/app/tastings/[id]/edit/page.tsx`: 評価セクション削除
+   - `src/app/tastings/page.tsx`: ノート追加ボタン、平均評価表示を追加
+   - `src/app/beans/[id]/page.tsx`: overallRating表示を削除
+   - `src/app/drippers/[id]/page.tsx`: overallRating表示を削除
+   - `src/app/filters/[id]/page.tsx`: overallRating表示を削除
+   - `src/app/page.tsx`: overallRating、notes表示を削除
+   - `src/app/admin/drippers/[id]/page.tsx`: overallRating表示を削除
+   - `src/app/admin/filters/[id]/page.tsx`: overallRating表示を削除
+
+4. **設計方針**
+   - TastingEntry: 「いつ、どの豆を、どう淹れたか」の抽出情報のみ
+   - TastingNote: 「誰が、どう感じたか」の評価情報（複数人が追加可能）
+   - 一覧ページでノート追加ボタンを設置し、詳細を経由せず直接追加可能
+   - 平均評価は各TastingNoteから計算して表示
+
+5. **テスト結果**: 全24テスト（tastings.test.ts）がパス、ビルド成功
+
 ### 2026-01-27: テイスティングノート（TastingNote）機能実装
 
 1. **データモデル追加**

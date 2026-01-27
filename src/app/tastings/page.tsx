@@ -7,15 +7,38 @@ import { formatDateTimeShort } from "@/lib/dateUtils";
 // 常に最新のデータを取得する（キャッシュ無効化）
 export const dynamic = "force-dynamic";
 
-// 安全にflavorTagsをパースする関数
-function parseFlavorTags(flavorTags: string | null): string[] {
-  if (!flavorTags || flavorTags === "[]") return [];
-  try {
-    const parsed = JSON.parse(flavorTags);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+// 平均評価を計算する関数
+function calculateAverageRating(
+  notes: {
+    overallRating: number | null;
+    acidity: number | null;
+    bitterness: number | null;
+    sweetness: number | null;
+    aftertaste: number | null;
+  }[],
+): {
+  overall: number | null;
+  acidity: number | null;
+  bitterness: number | null;
+  sweetness: number | null;
+  aftertaste: number | null;
+} | null {
+  if (notes.length === 0) return null;
+
+  const avg = (values: (number | null)[]) => {
+    const valid = values.filter((v): v is number => v !== null);
+    return valid.length > 0
+      ? Math.round((valid.reduce((a, b) => a + b, 0) / valid.length) * 10) / 10
+      : null;
+  };
+
+  return {
+    overall: avg(notes.map((n) => n.overallRating)),
+    acidity: avg(notes.map((n) => n.acidity)),
+    bitterness: avg(notes.map((n) => n.bitterness)),
+    sweetness: avg(notes.map((n) => n.sweetness)),
+    aftertaste: avg(notes.map((n) => n.aftertaste)),
+  };
 }
 
 async function getTastings(beanId?: string, beanMasterId?: string) {
@@ -32,7 +55,7 @@ async function getTastings(beanId?: string, beanMasterId?: string) {
     };
   }
 
-  return prisma.tastingEntry.findMany({
+  const tastings = await prisma.tastingEntry.findMany({
     where,
     orderBy: { brewDate: "desc" },
     include: {
@@ -43,8 +66,24 @@ async function getTastings(beanId?: string, beanMasterId?: string) {
       },
       dripper: true,
       filter: true,
+      tastingNotes: {
+        select: {
+          overallRating: true,
+          acidity: true,
+          bitterness: true,
+          sweetness: true,
+          aftertaste: true,
+        },
+      },
     },
   });
+
+  // 平均評価を追加
+  return tastings.map((tasting) => ({
+    ...tasting,
+    noteCount: tasting.tastingNotes.length,
+    averageRating: calculateAverageRating(tasting.tastingNotes),
+  }));
 }
 
 async function getBeans() {
@@ -126,71 +165,81 @@ export default async function TastingsPage({ searchParams }: Props) {
               key={tasting.id}
               className="bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow"
             >
-              <Link href={`/tastings/${tasting.id}`} className="block">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-500">
-                        {formatDateTimeShort(tasting.brewDate)}
+              <div className="flex items-start justify-between">
+                <Link href={`/tastings/${tasting.id}`} className="flex-1 block">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-500">
+                      {formatDateTimeShort(tasting.brewDate)}
+                    </span>
+                    {tasting.averageRating?.overall && (
+                      <span className="text-amber-500">
+                        {"★".repeat(Math.round(tasting.averageRating.overall))}
+                        {"☆".repeat(
+                          5 - Math.round(tasting.averageRating.overall),
+                        )}
                       </span>
-                      {tasting.overallRating && (
-                        <span className="text-amber-500">
-                          {"★".repeat(tasting.overallRating)}
-                          {"☆".repeat(5 - tasting.overallRating)}
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="text-lg font-medium text-gray-900 mt-1">
-                      {tasting.coffeeBean.name}
-                    </h3>
-                    <div className="flex flex-wrap gap-2 mt-2 text-sm text-gray-600">
-                      {tasting.grindSize && (
-                        <span className="bg-gray-100 px-2 py-0.5 rounded">
-                          挽き目: {tasting.grindSize.toFixed(1)}
-                        </span>
-                      )}
-                      {tasting.dripper && (
-                        <span className="bg-gray-100 px-2 py-0.5 rounded">
-                          {tasting.dripper.name}
-                        </span>
-                      )}
-                      {tasting.filter && (
-                        <span className="bg-gray-100 px-2 py-0.5 rounded">
-                          {tasting.filter.name}
-                        </span>
-                      )}
-                    </div>
-                    {/* Flavor Tags */}
-                    {parseFlavorTags(tasting.flavorTags).length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {parseFlavorTags(tasting.flavorTags).map((tag) => (
-                          <span
-                            key={tag}
-                            className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-xs"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                    )}
+                    {tasting.noteCount > 0 && (
+                      <span className="text-xs text-gray-500">
+                        ({tasting.noteCount}件のノート)
+                      </span>
                     )}
                   </div>
-                  {/* Ratings Preview */}
-                  <div className="ml-4 text-right text-xs text-gray-500">
-                    {tasting.acidity && <div>酸味: {tasting.acidity}/5</div>}
-                    {tasting.bitterness && (
-                      <div>苦味: {tasting.bitterness}/5</div>
+                  <h3 className="text-lg font-medium text-gray-900 mt-1">
+                    {tasting.coffeeBean.name}
+                  </h3>
+                  <div className="flex flex-wrap gap-2 mt-2 text-sm text-gray-600">
+                    {tasting.grindSize && (
+                      <span className="bg-gray-100 px-2 py-0.5 rounded">
+                        挽き目: {tasting.grindSize.toFixed(1)}
+                      </span>
                     )}
-                    {tasting.sweetness && (
-                      <div>甘味: {tasting.sweetness}/5</div>
+                    {tasting.dripper && (
+                      <span className="bg-gray-100 px-2 py-0.5 rounded">
+                        {tasting.dripper.name}
+                      </span>
+                    )}
+                    {tasting.filter && (
+                      <span className="bg-gray-100 px-2 py-0.5 rounded">
+                        {tasting.filter.name}
+                      </span>
+                    )}
+                    {tasting.brewedBy && (
+                      <span className="bg-gray-100 px-2 py-0.5 rounded">
+                        淹れた人: {tasting.brewedBy}
+                      </span>
                     )}
                   </div>
+                </Link>
+                {/* ノート追加ボタン */}
+                <div className="ml-4 flex flex-col items-end gap-2">
+                  {tasting.averageRating && (
+                    <div className="text-right text-xs text-gray-500">
+                      {tasting.averageRating.acidity && (
+                        <div>
+                          酸味: {tasting.averageRating.acidity.toFixed(1)}
+                        </div>
+                      )}
+                      {tasting.averageRating.bitterness && (
+                        <div>
+                          苦味: {tasting.averageRating.bitterness.toFixed(1)}
+                        </div>
+                      )}
+                      {tasting.averageRating.sweetness && (
+                        <div>
+                          甘味: {tasting.averageRating.sweetness.toFixed(1)}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  <Link
+                    href={`/tastings/${tasting.id}/notes/new`}
+                    className="text-xs px-3 py-1 bg-amber-500 text-white rounded-full hover:bg-amber-600 transition-colors whitespace-nowrap"
+                  >
+                    + ノート追加
+                  </Link>
                 </div>
-                {tasting.notes && (
-                  <p className="mt-2 text-sm text-gray-600 line-clamp-2">
-                    {tasting.notes}
-                  </p>
-                )}
-              </Link>
+              </div>
             </div>
           ))}
         </div>
