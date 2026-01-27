@@ -106,7 +106,7 @@ export default async function BeanDetailPage({ params }: Props) {
       {/* Breadcrumb */}
       <nav className="flex items-center space-x-2 text-sm text-gray-600">
         <Link href="/beans" className="hover:text-gray-900">
-          豆一覧
+          コーヒー豆一覧
         </Link>
         <span>/</span>
         <span className="text-gray-900">{bean.name}</span>
@@ -335,7 +335,7 @@ export default async function BeanDetailPage({ params }: Props) {
       {/* Back Link */}
       <div>
         <Link href="/beans" className="text-amber-600 hover:text-amber-800">
-          ← 豆一覧に戻る
+          ← コーヒー豆一覧に戻る
         </Link>
       </div>
     </div>

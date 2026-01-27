@@ -195,7 +195,7 @@ export default function EditBeanPage({ params }: Props) {
       <div className="max-w-2xl mx-auto text-center py-8">
         <p className="text-red-600">{error || "豆が見つかりません"}</p>
         <Button href="/beans" variant="outline" className="mt-4">
-          豆一覧に戻る
+          コーヒー豆一覧に戻る
         </Button>
       </div>
     );

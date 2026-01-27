@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("豆一覧ページ", () => {
+test.describe("コーヒー豆一覧ページ", () => {
   test.describe("デスクトップ表示", () => {
     test.use({ viewport: { width: 1280, height: 720 } });
 
@@ -8,7 +8,7 @@ test.describe("豆一覧ページ", () => {
       await page.goto("/beans");
 
       // ページタイトルが表示される
-      await expect(page.locator("h1")).toContainText("豆一覧");
+      await expect(page.locator("h1")).toContainText("コーヒー豆一覧");
 
       // テーブルが存在する場合は表示される（データがある場合）
       const tableContainer = page.locator('[data-testid="beans-table"]');
@@ -37,7 +37,7 @@ test.describe("豆一覧ページ", () => {
       await page.goto("/beans");
 
       // ページタイトルが表示される
-      await expect(page.locator("h1")).toContainText("豆一覧");
+      await expect(page.locator("h1")).toContainText("コーヒー豆一覧");
 
       // カードが存在する場合は表示される（データがある場合）
       const tableContainer = page.locator('[data-testid="beans-table"]');
