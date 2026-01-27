@@ -13,33 +13,83 @@
 ```
 
 **禁止事項:**
+
 ```
 ❌ 実装してからテストを書く
 ❌ テストを書かずに実装を完了する
 ```
 
 **必須フロー:**
+
 ```
 ✅ テストファイル作成 → テスト失敗確認 → 実装 → テスト成功確認
 ```
 
-### 2. 日本語での対応
+### 2. コミット前の全テスト実行（絶対厳守）
+
+**コミット操作を行う前に、必ず以下のテストを全て実行し、成功を確認すること:**
+
+```bash
+# 1. ユニットテスト（Vitest）
+npm test
+
+# 2. E2Eテスト（Playwright）
+npx playwright test
+```
+
+**禁止事項:**
+
+```
+❌ テストを実行せずにコミットする
+❌ テストが失敗している状態でコミットする
+❌ 「ローカル環境でPlaywrightが動かない」を理由にE2Eテストをスキップする
+❌ 一部のテストのみ実行してコミットする
+```
+
+**必須フロー:**
+
+```
+✅ npm test → 全テスト成功を確認
+✅ npx playwright test → 全テスト成功を確認
+✅ 両方成功した場合のみ git commit を実行
+```
+
+**テスト失敗時:**
+
+```
+1. コミットを中断
+2. 失敗の原因を特定（実装の問題 or テストの問題）
+3. 原因に応じて実装またはテストを修正
+4. 再度全テストを実行
+5. 全テスト成功を確認してからコミット
+```
+
+### 3. 日本語での対応
 
 - すべての回答・コメント・ドキュメントは**日本語**で記述
 - コミットメッセージも日本語
 
-### 3. ドキュメント同期
+### 4. ドキュメント同期
 
 - コード変更時は `/docs` 配下の関連ドキュメントも更新
 - 特に `test-specification.md` はテスト追加時に必ず更新
 
+### 5. テストファイルの保護
+
+**禁止事項:**
+
+```
+❌ テストファイル（*.test.ts, *.test.tsx）を削除する
+❌ テストケースを削除してテストを通す
+```
+
 ## 詳細仕様（別ファイル参照）
 
-| ファイル | 内容 |
-|---------|------|
-| [data-model.instructions.md](instructions/data-model.instructions.md) | データモデル定義 |
-| [development.instructions.md](instructions/development.instructions.md) | 開発ガイドライン・TDD詳細 |
-| [tech-stack.instructions.md](instructions/tech-stack.instructions.md) | 技術スタック・アーキテクチャ |
+| ファイル                                                                | 内容                         |
+| ----------------------------------------------------------------------- | ---------------------------- |
+| [data-model.instructions.md](instructions/data-model.instructions.md)   | データモデル定義             |
+| [development.instructions.md](instructions/development.instructions.md) | 開発ガイドライン・TDD詳細    |
+| [tech-stack.instructions.md](instructions/tech-stack.instructions.md)   | 技術スタック・アーキテクチャ |
 
 ## プロジェクト概要
 
