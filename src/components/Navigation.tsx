@@ -8,10 +8,6 @@ const navItems = [
   { href: "/", label: "ホーム", icon: "☕" },
   { href: "/tastings", label: "試飲記録", icon: "📝" },
   { href: "/beans", label: "豆", icon: "🫘" },
-  { href: "/bean-masters", label: "銘柄", icon: "📋" },
-  { href: "/shops", label: "店舗", icon: "🏪" },
-  { href: "/drippers", label: "ドリッパー", icon: "🫖" },
-  { href: "/filters", label: "フィルター", icon: "📄" },
   { href: "/admin", label: "管理", icon: "⚙️" },
 ];
 

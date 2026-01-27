@@ -30,7 +30,8 @@ export default function NewBeanForm() {
   const searchParams = useSearchParams();
   const [shops, setShops] = useState<Shop[]>([]);
   const [beanMasters, setBeanMasters] = useState<BeanMaster[]>([]);
-  const [selectedBeanMaster, setSelectedBeanMaster] = useState<BeanMaster | null>(null);
+  const [selectedBeanMaster, setSelectedBeanMaster] =
+    useState<BeanMaster | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imagePath, setImagePath] = useState<string | null>(null);
@@ -61,7 +62,7 @@ export default function NewBeanForm() {
         // URLパラメータで銘柄マスターが指定されている場合
         if (defaultBeanMasterId) {
           const master = data.find(
-            (m: BeanMaster) => m.id === parseInt(defaultBeanMasterId, 10)
+            (m: BeanMaster) => m.id === parseInt(defaultBeanMasterId, 10),
           );
           if (master) {
             setSelectedBeanMaster(master);
@@ -169,7 +170,8 @@ export default function NewBeanForm() {
             <option value="">-- 新規銘柄を直接入力 --</option>
             {beanMasters.map((master) => (
               <option key={master.id} value={master.id}>
-                {master.name}{master.origin ? ` (${master.origin.name})` : ""}
+                {master.name}
+                {master.origin ? ` (${master.origin.name})` : ""}
               </option>
             ))}
           </select>
@@ -183,7 +185,8 @@ export default function NewBeanForm() {
             htmlFor="name"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            銘柄 {!selectedBeanMaster && <span className="text-red-500">*</span>}
+            銘柄{" "}
+            {!selectedBeanMaster && <span className="text-red-500">*</span>}
           </label>
           <input
             type="text"

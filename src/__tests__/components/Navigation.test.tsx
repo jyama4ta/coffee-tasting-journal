@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Navigation from "@/components/Navigation";
 
@@ -29,9 +29,7 @@ describe("Navigation コンポーネント", () => {
       expect(screen.getByText(/ホーム/)).toBeInTheDocument();
       expect(screen.getByText(/試飲記録/)).toBeInTheDocument();
       expect(screen.getByText(/豆/)).toBeInTheDocument();
-      expect(screen.getByText(/店舗/)).toBeInTheDocument();
-      expect(screen.getByText(/ドリッパー/)).toBeInTheDocument();
-      expect(screen.getByText(/フィルター/)).toBeInTheDocument();
+      expect(screen.getByText(/管理/)).toBeInTheDocument();
     });
 
     it("ロゴがホームへのリンクを持つ", () => {
@@ -51,9 +49,7 @@ describe("Navigation コンポーネント", () => {
       expect(hrefs).toContain("/");
       expect(hrefs).toContain("/tastings");
       expect(hrefs).toContain("/beans");
-      expect(hrefs).toContain("/shops");
-      expect(hrefs).toContain("/drippers");
-      expect(hrefs).toContain("/filters");
+      expect(hrefs).toContain("/admin");
     });
   });
 
@@ -102,17 +98,17 @@ describe("Navigation コンポーネント", () => {
       render(<Navigation />);
 
       const links = screen.getAllByRole("link");
-      const shopsLink = links.find((link) =>
-        link.textContent?.includes("店舗"),
+      const adminLink = links.find((link) =>
+        link.textContent?.includes("管理"),
       );
 
       // アクティブスタイル（bg-amber-800 text-white）ではなく、
       // 非アクティブスタイル（text-amber-100）が適用されていることを確認
       // hover:bg-amber-800 は含まれるが、それ以外のbg-amber-800は含まれない
-      expect(shopsLink?.className).toContain("text-amber-100");
-      expect(shopsLink?.className).toContain("hover:bg-amber-800");
+      expect(adminLink?.className).toContain("text-amber-100");
+      expect(adminLink?.className).toContain("hover:bg-amber-800");
       // classNameをスペースで分割して、独立した"bg-amber-800"クラスがないことを確認
-      const classes = shopsLink?.className.split(" ") || [];
+      const classes = adminLink?.className.split(" ") || [];
       expect(classes).not.toContain("bg-amber-800");
     });
   });
@@ -152,9 +148,7 @@ describe("Navigation コンポーネント", () => {
       expect(mobileMenu).toHaveTextContent("ホーム");
       expect(mobileMenu).toHaveTextContent("試飲記録");
       expect(mobileMenu).toHaveTextContent("豆");
-      expect(mobileMenu).toHaveTextContent("店舗");
-      expect(mobileMenu).toHaveTextContent("ドリッパー");
-      expect(mobileMenu).toHaveTextContent("フィルター");
+      expect(mobileMenu).toHaveTextContent("管理");
     });
 
     it("モバイルメニューが開いている時に再度ボタンをクリックすると閉じる", async () => {
@@ -234,49 +228,19 @@ describe("Navigation コンポーネント", () => {
       await user.click(beansLink!);
     });
 
-    it("店舗リンクをクリックできる", async () => {
+    it("管理リンクをクリックできる", async () => {
       const user = userEvent.setup();
       render(<Navigation />);
 
       const links = screen.getAllByRole("link");
-      const shopsLink = links.find(
+      const adminLink = links.find(
         (link) =>
-          link.getAttribute("href") === "/shops" &&
-          link.textContent?.includes("店舗"),
+          link.getAttribute("href") === "/admin" &&
+          link.textContent?.includes("管理"),
       );
 
-      expect(shopsLink).toBeInTheDocument();
-      await user.click(shopsLink!);
-    });
-
-    it("ドリッパーリンクをクリックできる", async () => {
-      const user = userEvent.setup();
-      render(<Navigation />);
-
-      const links = screen.getAllByRole("link");
-      const drippersLink = links.find(
-        (link) =>
-          link.getAttribute("href") === "/drippers" &&
-          link.textContent?.includes("ドリッパー"),
-      );
-
-      expect(drippersLink).toBeInTheDocument();
-      await user.click(drippersLink!);
-    });
-
-    it("フィルターリンクをクリックできる", async () => {
-      const user = userEvent.setup();
-      render(<Navigation />);
-
-      const links = screen.getAllByRole("link");
-      const filtersLink = links.find(
-        (link) =>
-          link.getAttribute("href") === "/filters" &&
-          link.textContent?.includes("フィルター"),
-      );
-
-      expect(filtersLink).toBeInTheDocument();
-      await user.click(filtersLink!);
+      expect(adminLink).toBeInTheDocument();
+      await user.click(adminLink!);
     });
   });
 
@@ -326,7 +290,7 @@ describe("Navigation コンポーネント", () => {
       expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
     });
 
-    it("モバイルメニューの店舗リンクをクリックするとメニューが閉じる", async () => {
+    it("モバイルメニューの管理リンクをクリックするとメニューが閉じる", async () => {
       const user = userEvent.setup();
       render(<Navigation />);
 
@@ -334,40 +298,10 @@ describe("Navigation コンポーネント", () => {
       await user.click(menuButton);
 
       const mobileMenu = screen.getByTestId("mobile-menu");
-      const shopsLink = mobileMenu.querySelector('a[href="/shops"]');
-      expect(shopsLink).toBeInTheDocument();
+      const adminLink = mobileMenu.querySelector('a[href="/admin"]');
+      expect(adminLink).toBeInTheDocument();
 
-      await user.click(shopsLink!);
-      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
-    });
-
-    it("モバイルメニューのドリッパーリンクをクリックするとメニューが閉じる", async () => {
-      const user = userEvent.setup();
-      render(<Navigation />);
-
-      const menuButton = screen.getByRole("button", { name: /メニュー/i });
-      await user.click(menuButton);
-
-      const mobileMenu = screen.getByTestId("mobile-menu");
-      const drippersLink = mobileMenu.querySelector('a[href="/drippers"]');
-      expect(drippersLink).toBeInTheDocument();
-
-      await user.click(drippersLink!);
-      expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
-    });
-
-    it("モバイルメニューのフィルターリンクをクリックするとメニューが閉じる", async () => {
-      const user = userEvent.setup();
-      render(<Navigation />);
-
-      const menuButton = screen.getByRole("button", { name: /メニュー/i });
-      await user.click(menuButton);
-
-      const mobileMenu = screen.getByTestId("mobile-menu");
-      const filtersLink = mobileMenu.querySelector('a[href="/filters"]');
-      expect(filtersLink).toBeInTheDocument();
-
-      await user.click(filtersLink!);
+      await user.click(adminLink!);
       expect(screen.queryByTestId("mobile-menu")).not.toBeInTheDocument();
     });
   });

@@ -107,9 +107,11 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     // バリデーション: 豆名または銘柄マスターIDのいずれかは必須
-    const hasName = body.name && typeof body.name === "string" && body.name.trim() !== "";
-    const hasBeanMasterId = body.beanMasterId !== undefined && body.beanMasterId !== null;
-    
+    const hasName =
+      body.name && typeof body.name === "string" && body.name.trim() !== "";
+    const hasBeanMasterId =
+      body.beanMasterId !== undefined && body.beanMasterId !== null;
+
     if (!hasName && !hasBeanMasterId) {
       return NextResponse.json(
         { error: "豆の銘柄名または銘柄マスターの指定が必要です" },

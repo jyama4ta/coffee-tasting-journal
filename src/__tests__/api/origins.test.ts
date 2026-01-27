@@ -6,17 +6,10 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { prisma } from "@/lib/prisma";
 import { GET, POST } from "@/app/api/origins/route";
-import {
-  GET as GET_BY_ID,
-  PUT,
-  DELETE,
-} from "@/app/api/origins/[id]/route";
+import { GET as GET_BY_ID, PUT, DELETE } from "@/app/api/origins/[id]/route";
 
 // テスト用リクエスト作成ヘルパー
-function createRequest(
-  method: string,
-  body?: object,
-) {
+function createRequest(method: string, body?: object) {
   const url = new URL("http://localhost:3000/api/origins");
   return new Request(url.toString(), {
     method,
@@ -71,7 +64,7 @@ describe("Origins API", () => {
   describe("POST /api/origins", () => {
     it("産地を作成できる", async () => {
       const response = await POST(
-        createRequest("POST", { name: "エチオピア" })
+        createRequest("POST", { name: "エチオピア" }),
       );
 
       expect(response.status).toBe(201);
@@ -86,7 +79,7 @@ describe("Origins API", () => {
         createRequest("POST", {
           name: "エチオピア",
           notes: "フルーティーな豆が多い",
-        })
+        }),
       );
 
       expect(response.status).toBe(201);
@@ -97,22 +90,18 @@ describe("Origins API", () => {
     });
 
     it("名前が空の場合はエラー", async () => {
-      const response = await POST(
-        createRequest("POST", { name: "" })
-      );
+      const response = await POST(createRequest("POST", { name: "" }));
 
       expect(response.status).toBe(400);
     });
 
     it("名前が重複する場合はエラー", async () => {
       // 最初の作成
-      await POST(
-        createRequest("POST", { name: "エチオピア" })
-      );
+      await POST(createRequest("POST", { name: "エチオピア" }));
 
       // 重複作成
       const response = await POST(
-        createRequest("POST", { name: "エチオピア" })
+        createRequest("POST", { name: "エチオピア" }),
       );
 
       expect(response.status).toBe(400);
@@ -158,7 +147,7 @@ describe("Origins API", () => {
 
       const response = await PUT(
         createRequest("PUT", { name: "ケニア", notes: "更新後メモ" }),
-        { params: Promise.resolve({ id: origin.id.toString() }) }
+        { params: Promise.resolve({ id: origin.id.toString() }) },
       );
 
       expect(response.status).toBe(200);
@@ -169,10 +158,9 @@ describe("Origins API", () => {
     });
 
     it("存在しないIDの場合は404", async () => {
-      const response = await PUT(
-        createRequest("PUT", { name: "ケニア" }),
-        { params: Promise.resolve({ id: "99999" }) }
-      );
+      const response = await PUT(createRequest("PUT", { name: "ケニア" }), {
+        params: Promise.resolve({ id: "99999" }),
+      });
 
       expect(response.status).toBe(404);
     });
