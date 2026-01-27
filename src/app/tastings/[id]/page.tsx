@@ -92,18 +92,57 @@ export default async function TastingDetailPage({ params }: Props) {
 
       {/* Bean Info */}
       <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
-        <h2 className="text-sm font-medium text-amber-800 mb-2">使用した豆</h2>
-        <Link
-          href={`/beans/${tasting.coffeeBean.id}`}
-          className="text-lg font-semibold text-amber-900 hover:underline"
-        >
-          {tasting.coffeeBean.name}
-        </Link>
-        {tasting.coffeeBean.origin && (
-          <span className="ml-2 text-amber-700">
-            ({tasting.coffeeBean.origin})
-          </span>
-        )}
+        <h2 className="text-sm font-medium text-amber-800 mb-2">
+          使用したコーヒー豆
+        </h2>
+        <div className="space-y-2">
+          <div>
+            <Link
+              href={`/beans/${tasting.coffeeBean.id}`}
+              className="text-lg font-semibold text-amber-900 hover:underline"
+            >
+              {tasting.coffeeBean.name}
+            </Link>
+            {tasting.coffeeBean.origin && (
+              <span className="ml-2 text-amber-700">
+                ({tasting.coffeeBean.origin})
+              </span>
+            )}
+            {tasting.coffeeBean.isDecaf && (
+              <span className="ml-2 text-sm bg-amber-200 text-amber-800 px-2 py-0.5 rounded">
+                デカフェ
+              </span>
+            )}
+          </div>
+          {/* 味わいの特徴 */}
+          {(tasting.coffeeBean.acidityScore > 0 ||
+            tasting.coffeeBean.bitternessScore > 0 ||
+            tasting.coffeeBean.bodyScore > 0 ||
+            tasting.coffeeBean.flavorScore > 0) && (
+            <div className="text-sm text-amber-800 flex flex-wrap gap-3">
+              {tasting.coffeeBean.acidityScore > 0 && (
+                <span>酸味: {"★".repeat(tasting.coffeeBean.acidityScore)}</span>
+              )}
+              {tasting.coffeeBean.bitternessScore > 0 && (
+                <span>
+                  苦味: {"★".repeat(tasting.coffeeBean.bitternessScore)}
+                </span>
+              )}
+              {tasting.coffeeBean.bodyScore > 0 && (
+                <span>コク: {"★".repeat(tasting.coffeeBean.bodyScore)}</span>
+              )}
+              {tasting.coffeeBean.flavorScore > 0 && (
+                <span>風味: {"★".repeat(tasting.coffeeBean.flavorScore)}</span>
+              )}
+            </div>
+          )}
+          {/* メモ */}
+          {tasting.coffeeBean.notes && (
+            <p className="text-sm text-amber-700 whitespace-pre-wrap">
+              {tasting.coffeeBean.notes}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* 画像表示 */}

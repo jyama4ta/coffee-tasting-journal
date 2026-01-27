@@ -184,7 +184,8 @@ test.describe("ナビゲーション", () => {
 
     // ナビゲーションリンクが存在する（デスクトップでは常に表示）
     await expect(page.locator('a[href="/beans"]').first()).toBeVisible();
-    await expect(page.locator('a[href="/shops"]').first()).toBeVisible();
     await expect(page.locator('a[href="/tastings"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/stats"]').first()).toBeVisible();
+    await expect(page.locator('a[href="/admin"]').first()).toBeVisible();
   });
 });
