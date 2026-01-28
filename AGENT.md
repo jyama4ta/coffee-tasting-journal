@@ -14,7 +14,7 @@
 
 **禁止事項:**
 
-- テストファイル（*.test.ts, *.test.tsx）を削除する
+- テストファイル（`*.test.ts`, `*.test.tsx`）を削除する
 - テストケースを削除してテストを通す
 - 実装してからテストを書く
 
@@ -54,11 +54,11 @@ npx playwright test     # E2Eテスト（Playwright）
 
 ## 詳細仕様（別ファイル参照）
 
-| ファイル | 内容 |
-|---------|------|
-| [data-model.instructions.md](.github/instructions/data-model.instructions.md) | データモデル定義 |
-| [development.instructions.md](.github/instructions/development.instructions.md) | 開発ガイドライン・TDD詳細 |
-| [tech-stack.instructions.md](.github/instructions/tech-stack.instructions.md) | 技術スタック・アーキテクチャ |
+| ファイル                                                                        | 内容                         |
+| ------------------------------------------------------------------------------- | ---------------------------- |
+| [data-model.instructions.md](.github/instructions/data-model.instructions.md)   | データモデル定義             |
+| [development.instructions.md](.github/instructions/development.instructions.md) | 開発ガイドライン・TDD詳細    |
+| [tech-stack.instructions.md](.github/instructions/tech-stack.instructions.md)   | 技術スタック・アーキテクチャ |
 
 ## プロジェクト概要
 
