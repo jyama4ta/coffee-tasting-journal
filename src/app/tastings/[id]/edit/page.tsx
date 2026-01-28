@@ -279,7 +279,9 @@ export default function EditTastingPage({ params }: Props) {
               min="0"
               value={beanAmount ?? ""}
               onChange={(e) =>
-                setBeanAmount(e.target.value ? parseFloat(e.target.value) : null)
+                setBeanAmount(
+                  e.target.value ? parseFloat(e.target.value) : null,
+                )
               }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
               placeholder="例: 15"

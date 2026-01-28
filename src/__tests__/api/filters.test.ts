@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { prisma } from "@/lib/prisma";
 
+import type { EquipmentSize } from "@prisma/client";
+
 // テスト用のNext.js API Routeハンドラーをインポート
 import { GET, POST } from "@/app/api/filters/route";
 import { GET as GET_BY_ID, PUT, DELETE } from "@/app/api/filters/[id]/route";
@@ -371,7 +373,13 @@ describe("Filter API", () => {
     });
 
     it("全サイズ値を登録・取得できる", async () => {
-      const sizes = ["SIZE_01", "SIZE_02", "SIZE_03", "SIZE_04", "OTHER"];
+      const sizes: EquipmentSize[] = [
+        "SIZE_01",
+        "SIZE_02",
+        "SIZE_03",
+        "SIZE_04",
+        "OTHER",
+      ];
 
       for (const size of sizes) {
         await prisma.filter.create({

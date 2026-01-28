@@ -46,7 +46,7 @@ describe("BeanMaster API", () => {
 
   describe("GET /api/bean-masters", () => {
     it("空の配列を返す（銘柄が存在しない場合）", async () => {
-      const response = await GET(createRequest("GET"));
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -68,7 +68,7 @@ describe("BeanMaster API", () => {
         ],
       });
 
-      const response = await GET(createRequest("GET"));
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -83,7 +83,7 @@ describe("BeanMaster API", () => {
         ],
       });
 
-      const response = await GET(createRequest("GET"));
+      const response = await GET();
       const data = await response.json();
 
       expect(data[0].name).toBe("エチオピア イルガチェフェ");
@@ -99,7 +99,7 @@ describe("BeanMaster API", () => {
         data: { name: "エチオピア イルガチェフェ", originId: ethiopia.id },
       });
 
-      const response = await GET(createRequest("GET"));
+      const response = await GET();
       const data = await response.json();
 
       expect(data[0].origin).toBeDefined();
