@@ -205,13 +205,15 @@ enum BeanStatus {
 // ドリップ記録
 // ============================================
 model TastingEntry {
-  id        Int      @id @default(autoincrement())
-  grindSize Float? // 挽き方（1.0-10.0、0.5刻み）
-  brewDate  DateTime // 抽出日（必須）
-  imagePath String? // 画像パス
-  brewedBy  String? // 淹れた人
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  grindSize  Float? // 挽き方（1.0-10.0、0.5刻み）
+  beanAmount Float? // 使用した豆のグラム数
+  brewDate   DateTime // 抽出日（必須）
+  imagePath  String? // 画像パス
+  brewedBy   String? // 淹れた人
+  brewNotes  String? // 抽出メモ（湯温、蒸らし時間など）
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   // 外部キー
   coffeeBeanId Int

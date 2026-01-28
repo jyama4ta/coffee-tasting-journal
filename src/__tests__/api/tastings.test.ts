@@ -552,4 +552,96 @@ describe("TastingEntry API", () => {
       expect(data.error).toBeDefined();
     });
   });
+
+  describe("beanAmount と brewNotes フィールド", () => {
+    describe("POST /api/tastings", () => {
+      it("使用した豆のグラム数と抽出メモを含めて作成できる", async () => {
+        const tastingData = {
+          coffeeBeanId: testBeanId,
+          brewDate: "2026-01-25",
+          beanAmount: 15.5,
+          brewNotes: "湯温92度、蒸らし30秒",
+        };
+
+        const request = createRequest("POST", tastingData);
+        const response = await POST(request);
+        const data = await response.json();
+
+        expect(response.status).toBe(201);
+        expect(data.beanAmount).toBe(15.5);
+        expect(data.brewNotes).toBe("湯温92度、蒸らし30秒");
+      });
+
+      it("beanAmountとbrewNotesは省略可能", async () => {
+        const tastingData = {
+          coffeeBeanId: testBeanId,
+          brewDate: "2026-01-25",
+        };
+
+        const request = createRequest("POST", tastingData);
+        const response = await POST(request);
+        const data = await response.json();
+
+        expect(response.status).toBe(201);
+        expect(data.beanAmount).toBeNull();
+        expect(data.brewNotes).toBeNull();
+      });
+    });
+
+    describe("PUT /api/tastings/[id]", () => {
+      it("beanAmountとbrewNotesを更新できる", async () => {
+        const tasting = await prisma.tastingEntry.create({
+          data: {
+            coffeeBeanId: testBeanId,
+            brewDate: new Date(),
+          },
+        });
+
+        const updateData = {
+          beanAmount: 18.0,
+          brewNotes: "細挽きで抽出、少し濃いめ",
+        };
+
+        const request = createRequest(
+          "PUT",
+          updateData,
+          `http://localhost:3000/api/tastings/${tasting.id}`,
+        );
+        const response = await PUT(request, createContext(String(tasting.id)));
+        const data = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(data.beanAmount).toBe(18.0);
+        expect(data.brewNotes).toBe("細挽きで抽出、少し濃いめ");
+      });
+    });
+
+    describe("GET /api/tastings/[id]", () => {
+      it("beanAmountとbrewNotesを含めて返す", async () => {
+        const tasting = await prisma.tastingEntry.create({
+          data: {
+            coffeeBeanId: testBeanId,
+            brewDate: new Date(),
+            beanAmount: 20.0,
+            brewNotes: "氷出しコーヒー",
+          },
+        });
+
+        const request = createRequest(
+          "GET",
+          undefined,
+          `http://localhost:3000/api/tastings/${tasting.id}`,
+        );
+        const response = await GET_BY_ID(
+          request,
+          createContext(String(tasting.id)),
+        );
+        const data = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(data.beanAmount).toBe(20.0);
+        expect(data.brewNotes).toBe("氷出しコーヒー");
+      });
+    });
+  });
 });

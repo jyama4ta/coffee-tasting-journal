@@ -75,8 +75,16 @@ export async function PUT(request: Request, context: Context) {
   }
 
   const body = await request.json();
-  const { dripperId, filterId, grindSize, brewDate, imagePath, brewedBy } =
-    body;
+  const {
+    dripperId,
+    filterId,
+    grindSize,
+    beanAmount,
+    brewDate,
+    imagePath,
+    brewedBy,
+    brewNotes,
+  } = body;
 
   // 更新データの構築
   const updateData: Record<string, unknown> = {};
@@ -84,9 +92,11 @@ export async function PUT(request: Request, context: Context) {
   if (dripperId !== undefined) updateData.dripperId = dripperId || null;
   if (filterId !== undefined) updateData.filterId = filterId || null;
   if (grindSize !== undefined) updateData.grindSize = grindSize;
+  if (beanAmount !== undefined) updateData.beanAmount = beanAmount || null;
   if (brewDate !== undefined) updateData.brewDate = new Date(brewDate);
   if (imagePath !== undefined) updateData.imagePath = imagePath;
   if (brewedBy !== undefined) updateData.brewedBy = brewedBy || null;
+  if (brewNotes !== undefined) updateData.brewNotes = brewNotes || null;
 
   const updatedTasting = await prisma.tastingEntry.update({
     where: { id: parsedId.value },

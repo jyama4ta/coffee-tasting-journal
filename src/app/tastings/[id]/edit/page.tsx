@@ -30,9 +30,11 @@ interface Tasting {
   dripperId: number | null;
   filterId: number | null;
   grindSize: number | null;
+  beanAmount: number | null;
   brewDate: string;
   imagePath: string | null;
   brewedBy: string | null;
+  brewNotes: string | null;
 }
 
 interface Props {
@@ -51,7 +53,8 @@ export default function EditTastingPage({ params }: Props) {
 
   // 挽き目のState
   const [grindSize, setGrindSize] = useState<number | null>(null);
-
+  // 使用した豆のグラム数のState
+  const [beanAmount, setBeanAmount] = useState<number | null>(null);
   // 画像パスのState
   const [imagePath, setImagePath] = useState<string | null>(null);
 
@@ -74,6 +77,7 @@ export default function EditTastingPage({ params }: Props) {
         const tastingData = await tastingRes.json();
         setTasting(tastingData);
         setGrindSize(tastingData.grindSize);
+        setBeanAmount(tastingData.beanAmount);
         setImagePath(tastingData.imagePath);
 
         if (beansRes.ok) setBeans(await beansRes.json());
@@ -105,9 +109,11 @@ export default function EditTastingPage({ params }: Props) {
         ? parseInt(formData.get("filterId") as string, 10)
         : null,
       grindSize,
+      beanAmount,
       brewDate: formData.get("brewDate") as string,
       imagePath,
       brewedBy: (formData.get("brewedBy") as string) || null,
+      brewNotes: (formData.get("brewNotes") as string) || null,
     };
 
     try {
@@ -260,6 +266,28 @@ export default function EditTastingPage({ params }: Props) {
 
           <div>
             <label
+              htmlFor="beanAmount"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              使用した豆の量 (g)
+            </label>
+            <input
+              type="number"
+              id="beanAmount"
+              name="beanAmount"
+              step="0.1"
+              min="0"
+              value={beanAmount ?? ""}
+              onChange={(e) =>
+                setBeanAmount(e.target.value ? parseFloat(e.target.value) : null)
+              }
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+              placeholder="例: 15"
+            />
+          </div>
+
+          <div>
+            <label
               htmlFor="brewDate"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
@@ -292,7 +320,23 @@ export default function EditTastingPage({ params }: Props) {
             placeholder="名前を入力"
           />
         </div>
-
+        {/* 抽出メモ */}
+        <div>
+          <label
+            htmlFor="brewNotes"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            抽出メモ
+          </label>
+          <textarea
+            id="brewNotes"
+            name="brewNotes"
+            rows={3}
+            defaultValue={tasting.brewNotes || ""}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            placeholder="湯温、蒸らし時間、注ぎ方など"
+          />
+        </div>
         {/* 画像 */}
         <ImageUpload
           category="tastings"

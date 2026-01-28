@@ -37,6 +37,9 @@ export default function NewTastingForm() {
   // 挽き目のState（デフォルト: 5.0）
   const [grindSize, setGrindSize] = useState<number | null>(5.0);
 
+  // 使用した豆のグラム数のState
+  const [beanAmount, setBeanAmount] = useState<number | null>(null);
+
   // 画像パスのState
   const [imagePath, setImagePath] = useState<string | null>(null);
 
@@ -73,9 +76,11 @@ export default function NewTastingForm() {
         ? parseInt(formData.get("filterId") as string, 10)
         : null,
       grindSize,
+      beanAmount,
       brewDate: brewDateValue || getNowForDatetimeLocal(),
       imagePath,
       brewedBy: (formData.get("brewedBy") as string) || null,
+      brewNotes: (formData.get("brewNotes") as string) || null,
     };
 
     try {
@@ -205,6 +210,28 @@ export default function NewTastingForm() {
 
         <div>
           <label
+            htmlFor="beanAmount"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            使用した豆の量 (g)
+          </label>
+          <input
+            type="number"
+            id="beanAmount"
+            name="beanAmount"
+            step="0.1"
+            min="0"
+            value={beanAmount ?? ""}
+            onChange={(e) =>
+              setBeanAmount(e.target.value ? parseFloat(e.target.value) : null)
+            }
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+            placeholder="例: 15"
+          />
+        </div>
+
+        <div>
+          <label
             htmlFor="brewDate"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
@@ -234,6 +261,23 @@ export default function NewTastingForm() {
           name="brewedBy"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
           placeholder="名前を入力"
+        />
+      </div>
+
+      {/* 抽出メモ */}
+      <div>
+        <label
+          htmlFor="brewNotes"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          抽出メモ
+        </label>
+        <textarea
+          id="brewNotes"
+          name="brewNotes"
+          rows={3}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+          placeholder="湯温、蒸らし時間、注ぎ方など"
         />
       </div>
 

@@ -120,9 +120,11 @@ export async function POST(request: Request) {
     dripperId,
     filterId,
     grindSize,
+    beanAmount,
     brewDate,
     imagePath,
     brewedBy,
+    brewNotes,
   } = body;
 
   // 必須フィールドのバリデーション
@@ -159,9 +161,11 @@ export async function POST(request: Request) {
       dripperId: dripperId || null,
       filterId: filterId || null,
       grindSize: grindSize || null,
+      beanAmount: beanAmount || null,
       brewDate: new Date(brewDate),
       imagePath: imagePath || null,
       brewedBy: brewedBy || null,
+      brewNotes: brewNotes || null,
     },
   });
 

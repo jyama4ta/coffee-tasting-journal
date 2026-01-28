@@ -204,10 +204,27 @@ export default async function TastingDetailPage({ params }: Props) {
             </dd>
           </div>
           <div className="flex justify-between">
+            <dt className="text-gray-500">豆の量</dt>
+            <dd className="text-gray-900">
+              {tasting.beanAmount ? `${tasting.beanAmount}g` : "-"}
+            </dd>
+          </div>
+          <div className="flex justify-between">
             <dt className="text-gray-500">淹れた人</dt>
             <dd className="text-gray-900">{tasting.brewedBy || "-"}</dd>
           </div>
         </dl>
+        {/* 抽出メモ */}
+        {tasting.brewNotes && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <h3 className="text-sm font-medium text-gray-500 mb-2">
+              抽出メモ
+            </h3>
+            <p className="text-gray-900 whitespace-pre-wrap">
+              {tasting.brewNotes}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Tasting Notes */}
