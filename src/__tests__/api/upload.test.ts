@@ -2,6 +2,9 @@
  * 画像アップロードAPI テスト
  *
  * TDD: Red フェーズ - テストを先に作成
+ *
+ * 注意: このテストはNode環境で実行する必要があります（jsdomでは動作しない）
+ * @vitest-environment node
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { NextRequest } from "next/server";
