@@ -47,6 +47,10 @@ next-env.d.ts
 # temporary files
 prisma_output.txt
 
+# PWA Service Worker (generated)
+/public/sw.js
+/public/sw.js.map
+
 # Playwright
 node_modules/
 /test-results/

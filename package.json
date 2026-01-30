@@ -24,11 +24,13 @@
     "@prisma/adapter-better-sqlite3": "^7.3.0",
     "@prisma/adapter-libsql": "^7.3.0",
     "@prisma/client": "^7.3.0",
+    "@serwist/next": "^9.5.0",
     "better-sqlite3": "^12.6.2",
     "next": "16.1.4",
     "prisma": "^7.3.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "serwist": "^9.5.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",
@@ -42,6 +44,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.1.2",
+    "canvas": "^3.2.1",
     "eslint": "^9",
     "eslint-config-next": "16.1.4",
     "jsdom": "^27.4.0",
